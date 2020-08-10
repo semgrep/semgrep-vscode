@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-const BASE_URL = `https://semgrep.live`;
+const BASE_URL = `https://semgrep.dev`;
 const SNIPPET_URL = `/api/snippet`;
 
 interface Snippet {
@@ -29,7 +29,6 @@ async function apiRequest<B, RS>(
   const response = await fetch(`${BASE_URL}${path}`, {
     method,
     headers,
-    credentials: "same-origin",
     ...(hasBody ? { body: JSON.stringify(body) } : {}),
   });
 
