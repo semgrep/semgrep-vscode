@@ -2,9 +2,9 @@
   "name": "semgrep-vscode",
   "displayName": "semgrep-vscode",
   "description": "Shows findings from https://semgrep.dev",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
-    "vscode": "^1.46.0"
+    "vscode": "^1.47.0"
   },
   "categories": [
     "Linters"
@@ -50,6 +50,8 @@
       }
     }
   },
+  "publisher": "semgrep-vscode",
+  "repository": "https://github.com/returntocorp/semgrep-vscode",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
