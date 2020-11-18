@@ -38,6 +38,10 @@
       {
         "command": "semgrep.suggestLinePatterns",
         "title": "Suggest Semgrep Patterns for Line"
+      },
+      {
+        "command": "semgrep.autofixFile",
+        "title": "Autofix file with Semgrep"
       }
     ],
     "configuration": {
@@ -53,8 +57,11 @@
             "javascriptreact",
             "json",
             "ocaml",
+            "php",
             "python",
-            "ruby"
+            "ruby",
+            "typescript",
+            "typescriptreact"
           ],
           "description": "Languages to scan with semgrep. Defaults to all supported languages."
         },
