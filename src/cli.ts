@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { promisify } from "util";
 import { execFile } from "child_process";
+import * as path from "path";
+import { Finding, SearchResult } from "./search";
 
 const execFileAsync = promisify(execFile);
 
@@ -64,6 +66,70 @@ const getSeverity = (result: any): vscode.DiagnosticSeverity => {
     default:
       return vscode.DiagnosticSeverity.Information;
   }
+};
+
+//Checks a pattern based on path.
+export const searchPatternWorkspace = async (
+  filePath: string,
+  pattern: string,
+  lang: string
+): Promise<SearchResult[]> => {
+  const { stdout, stderr } = await execFileAsync(
+    "semgrep",
+    ["--json", "-e", pattern, "-l", lang, filePath],
+    { timeout: 30 * 1000 }
+  );
+
+  let results = new Map<string, SearchResult>();
+
+  JSON.parse(stdout).results.forEach((result: any) => {
+    if (results.has(path.basename(result.path))) {
+      results
+        .get(path.basename(result.path))
+        ?.fingings.push(
+          new Finding(
+            result.extra.lines,
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "semgrep.goToFile",
+              arguments: [result.path, result.start.line],
+              title: "Go to file",
+            }
+          )
+        );
+    } else {
+      results.set(
+        path.basename(result.path),
+        new SearchResult(
+          path.basename(result.path),
+          [
+            new Finding(
+              result.extra.lines,
+              vscode.TreeItemCollapsibleState.None,
+              {
+                command: "semgrep.goToFile",
+                arguments: [result.path, result.start.line],
+                title: "Go to file",
+              }
+            ),
+          ],
+          vscode.TreeItemCollapsibleState.Expanded,
+          vscode.Uri.parse( "file://" + result.path)
+        )
+      );
+    }
+  });
+
+  if(results.size == 0){
+    await vscode.window.showInformationMessage(
+      "No Results returned for that pattern"
+    );
+  }
+
+  return Array.from(results).map(([key, value]) => {
+    value.description = String(value.fingings.length); 
+    return value;
+  });
 };
 
 export const checkFile = async (
