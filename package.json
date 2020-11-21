@@ -2,7 +2,7 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Shows findings from https://semgrep.dev",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.31.0"
   },
@@ -70,6 +70,10 @@
         "command": "semgrep.deleteEntry",
         "title": "Delete Finding in Semgrep",
         "icon": "$(close)"
+      },
+      {
+        "command": "semgrep.autofixFile",
+        "title": "Autofix file with Semgrep"
       }
     ],
     "configuration": {
@@ -85,8 +89,11 @@
             "javascriptreact",
             "json",
             "ocaml",
+            "php",
             "python",
-            "ruby"
+            "ruby",
+            "typescript",
+            "typescriptreact"
           ],
           "description": "Languages to scan with semgrep. Defaults to all supported languages."
         },
