@@ -117,8 +117,19 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
         return
     }
 
-    const quickPickResult = await vscode.window.showQuickPick(['py', 'js', 'rb', 'go'], {
-      placeHolder: 'py, js, rb or go',});
+    const quickPickResult = await vscode.window.showQuickPick(["c",
+    "go",
+    "java",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "ocaml",
+    "php",
+    "python",
+    "ruby",
+    "typescript",
+    "typescriptreact"], {
+    placeHolder: 'select target language',});
 
 
     //User has canceled the request
