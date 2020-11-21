@@ -29,6 +29,29 @@
   "qna": "https://r2c.dev/slack",
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "semgrep-explorer",
+          "title": "Semgrep Explorer",
+          "icon": "semgrep-icon.png"
+        }
+      ]
+    },
+    "views": {
+      "semgrep-explorer": [
+        {
+          "id": "semgrepTreeView",
+          "name": "Results"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "semgrepTreeView",
+        "contents": "[Search Pattern](command:semgrep.searchPattern)"
+      }
+    ],
     "commands": [
       {
         "command": "semgrep.suggestSelectionPatterns",
@@ -38,6 +61,15 @@
       {
         "command": "semgrep.suggestLinePatterns",
         "title": "Suggest Semgrep Patterns for Line"
+      },
+      {
+        "command": "semgrep.searchPattern",
+        "title": "Search Semgrep Pattern"
+      },
+      {
+        "command": "semgrep.deleteEntry",
+        "title": "Delete Finding in Semgrep",
+        "icon": "$(close)"
       }
     ],
     "configuration": {
@@ -64,6 +96,27 @@
           "description": "The semgrep --config value to scan with."
         }
       }
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "semgrep.searchPattern",
+          "when": "view == semgrepTreeView"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "semgrep.deleteEntry",
+          "when": "view == semgrepTreeView && viewItem == finding",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+            "command": "semgrep.deleteEntry",
+            "when": "false"
+        }
+    ]
     }
   },
   "scripts": {
