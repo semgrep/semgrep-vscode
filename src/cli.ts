@@ -90,7 +90,14 @@ export const checkFile = async (
     );
     diagnostic.source = "Semgrep";
     diagnostic.code = result.check_id;
+
     return diagnostic;
+  });
+};
+
+export const fixFile = async (path: string, rules: string): Promise<void> => {
+  await execFileAsync("semgrep", ["--autofix", "--config", rules, path], {
+    timeout: 30 * 1000,
   });
 };
 
