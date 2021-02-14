@@ -7,16 +7,13 @@
 			"es6"
 		],
 		"sourceMap": true,
-		"rootDir": ".",
+		"rootDir": "src",
 		"strict": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"composite": true
 	},
+	"include": ["src"],
 	"exclude": [
-		"node_modules",
-		".vscode-test"
-	],
-	"references": [
-		{ "path": "./client" },
-		{ "path": "./server" }
+		"node_modules"
 	]
 }
