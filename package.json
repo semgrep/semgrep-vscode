@@ -38,10 +38,6 @@
       {
         "command": "semgrep.suggestLinePatterns",
         "title": "Suggest Semgrep Patterns for Line"
-      },
-      {
-        "command": "semgrep.autofixFile",
-        "title": "Autofix file with Semgrep"
       }
     ],
     "configuration": {
