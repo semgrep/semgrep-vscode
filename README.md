@@ -2,8 +2,8 @@
 
 A Visual Studio Code extension for [Semgrep](https://github.com/returntocorp/semgrep).
 
-- See Semgrep scan results in Visual Studio Code
-- Generate your own Semgrep search patterns based on selected source code
+- See Semgrep scan results inline each time you save a file
+- Choose which Semgrep rules you run by setting semgrep.rules in Visual Studio Code
 
 ## Prerequisites
 
@@ -24,7 +24,7 @@ on macOS. For other installation instructions, see the [Semgrep README](https://
 
 ## Configuration
 
-You can set the following options:
+You can set the following options by going to Preferences > Settings:
 
 ### `semgrep.languages`
 
