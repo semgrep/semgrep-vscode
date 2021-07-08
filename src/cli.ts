@@ -70,9 +70,11 @@ export const checkFile = async (
   path: string,
   rules: string
 ): Promise<vscode.Diagnostic[]> => {
+  const args = ['--json'];
+  rules.split(',').forEach(element => args.push('--config', element));
+  args.push(path);
   const { stdout, stderr } = await execFileAsync(
-    "semgrep",
-    ["--json", "--config", rules, path],
+    "semgrep", args,
     { timeout: 30 * 1000 }
   );
 
