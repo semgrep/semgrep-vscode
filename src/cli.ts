@@ -10,9 +10,9 @@ export const synthesizePatterns = async (
 ): Promise<vscode.QuickPickItem[]> => {
   let results: any[] | null = null;
   for (const range of ranges) {
-    const args = ["-m", "semgrep", "--quiet", "--synthesize-patterns", range, path];
+    const args = ["--quiet", "--synthesize-patterns", range, path];
     try {
-      var { stdout, stderr } = await execFileAsync("python3", args, {
+      var { stdout, stderr } = await execFileAsync("python3", ["-m", "semgrep"].concat(args), {
         timeout: 30 * 1000,
         encoding: "utf-8",
         shell: true,
