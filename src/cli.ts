@@ -71,8 +71,8 @@ export const checkFile = async (
   rules: string
 ): Promise<vscode.Diagnostic[]> => {
   const { stdout, stderr } = await execFileAsync(
-    "semgrep",
-    ["--json", "--config", rules, path],
+    "python3",
+    ["-m", "semgrep", "--json", "--config", rules, path],
     { timeout: 30 * 1000 }
   );
 
@@ -96,7 +96,7 @@ export const checkFile = async (
 
 export const getVersion = async (): Promise<string | undefined> => {
   try {
-    var { stdout, stderr } = await execFileAsync("semgrep", ["--version"], {
+    var { stdout, stderr } = await execFileAsync("python3", ["-m", "semgrep", "--version"], {
       timeout: 3 * 1000,
     });
   } catch (error) {
