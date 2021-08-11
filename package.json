@@ -2,7 +2,7 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Shows findings from https://semgrep.dev",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "engines": {
     "vscode": "^1.31.0"
   },
