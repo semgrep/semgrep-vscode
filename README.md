@@ -16,13 +16,7 @@ You can do so with
 pip install semgrep
 ```
 
-or
-
-```sh
-brew install semgrep
-```
-
-on macOS. For other installation instructions, see the [Semgrep README](https://github.com/returntocorp/semgrep#installation).
+For other installation instructions, see the [Semgrep README](https://github.com/returntocorp/semgrep#getting-started).
 
 ## Configuration
 
