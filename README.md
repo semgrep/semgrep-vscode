@@ -22,7 +22,11 @@ or
 brew install semgrep
 ```
 
-on macOS. For other installation instructions, see the [Semgrep README](https://github.com/returntocorp/semgrep#installation).
+on macOS.
+If you install via brew, you need to take [one extra step](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities)
+to let Visual Studio Code find where brew installed semgrep
+
+For other installation instructions, see the [Semgrep README](https://github.com/returntocorp/semgrep#installation).
 
 ## Configuration
 
