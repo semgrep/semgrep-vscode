@@ -7,7 +7,7 @@
 			"es6"
 		],
 		"sourceMap": true,
-		"rootDir": "src",
+		"rootDir": ".",
 		"strict": true   /* enable all strict type-checking options */
 		/* Additional Checks */
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
@@ -16,6 +16,12 @@
 	},
 	"exclude": [
 		"node_modules",
-		".vscode-test"
+		".vscode-test",
+		// TODO: remove once we ported all previous features
+		"_src"
+	],
+	"references": [
+		{ "path": "./client" },
+		{ "path": "./server" }
 	]
 }

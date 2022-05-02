@@ -1,4 +1,5 @@
 out
 node_modules
+*.tsbuildinfo
 .vscode-test/
 *.vsix
