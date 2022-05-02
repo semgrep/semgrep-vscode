@@ -94,6 +94,7 @@
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.7",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "vscode-jsonrpc": "^6.0.0"
   }
 }

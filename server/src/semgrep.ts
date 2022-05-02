@@ -7,6 +7,9 @@ import {
 import { spawn, ChildProcess } from "child_process";
 import { SOURCE_NAME } from "./constant";
 import { URL } from "url";
+import * as child_process from 'child_process';
+import * as https from 'https';
+import * as fs from 'fs';
 
 const getSeverity = (result: any): DiagnosticSeverity => {
   switch (result.extra.severity) {
@@ -79,6 +82,96 @@ const onExit = (child: ChildProcess): Promise<void> => {
 // };
 export const getSuggestions = () => {};
 
+class RulesCache {
+  ruleNameToText: Map<string, string> = new Map();
+  
+  isRegistryRule(rule: string): boolean {
+    return rule.startsWith("https://semgrep.dev/p/") || rule.startsWith("p/") || rule === 'auto'; 
+  }
+
+  ruleURL(rule: string): string {
+    if (rule.startsWith("https://semgrep.dev/p/")) {
+      return rule.replaceAll('https://semgrep.dev/p/', 'https://semgrep.dev/c/p/');
+    }
+    if (rule.startsWith("https://semgrep.dev/c/")) {
+      return rule;
+    }
+    return "https://semgrep.dev/c/" + rule;
+    // TODO support auto
+  }
+
+  getRuleText(rule: string): Promise<string> {
+    if (!this.isRegistryRule(rule)) {
+      return Promise.resolve(rule);
+    }
+
+    const cachedFile = this.ruleNameToText.get(rule);
+    if (cachedFile != null) {
+      return Promise.resolve(cachedFile);
+    }
+
+    // TODO use an https library with a sane interface
+    return new Promise((resolve, reject) => {
+      const ruleURL = this.ruleURL(rule);
+
+      // TODO handle errors
+      https.get(ruleURL, (res) => {
+        let str = '';
+        res.on('data', chunk => { str += chunk });
+        res.on('end', () => {
+          this.ruleNameToText.set(rule, str);
+          resolve(str);
+        });
+      });
+    });
+  }
+}
+
+const rulesCache: RulesCache = new RulesCache();
+
+export class SemgrepRPC {
+  constructor() {
+    // TODO start semgrep-rpc server
+  }
+
+  async getDiagnostics(uri: string, rules: string): Promise<Array<Diagnostic> | null> {
+    const ruleText = await rulesCache.getRuleText(rules);
+    // TODO async
+    const filename = uri.replace('file://', '');
+    const content = fs.readFileSync(filename).toString();
+    const request = {
+      method: 'scan',
+      params: {
+        rule: ruleText,
+        targets: [{name: "test.js", content}],
+        options: {strict: true, no_rewrite_rule_ids: true},
+        output: {output_time: true},
+      },
+      // TODO increment this, and probably use a real json-rpc library
+      id: 0,
+      jsonrpc: '2.0'
+    }
+    // TODO async
+    const output = child_process.execFileSync('curl', ['localhost:4000', '--data-raw', JSON.stringify(request)]).toString();
+    const result = JSON.parse(output);
+
+    return result.result.results.map((result: any) => {
+      const range = Range.create(
+        Position.create(result.start.line - 1, result.start.col - 1),
+        Position.create(result.end.line - 1, result.end.col - 1)
+      );
+      const diagnostic: Diagnostic = {
+        range,
+        message: result.extra.message,
+        severity: getSeverity(result),
+        source: SOURCE_NAME,
+        code: result.check_id,
+      };
+
+      return diagnostic;
+    });
+  }
+}
 // TODO: add ability to cache rules to speed up analysis?
 //       `curl -L -H 'User-Agent: Semgrep/0.90.0' https://semgrep.dev/p/r2c-ci`
 export const getDiagnostics = async (

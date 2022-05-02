@@ -9,7 +9,7 @@ import {
   TextDocumentItem,
 } from "vscode-languageserver/node";
 
-import { getVersion, getDiagnostics } from "./semgrep";
+import { getVersion, getDiagnostics, SemgrepRPC } from "./semgrep";
 import { SETTINGS_KEY } from "./constant";
 import { URL } from "url";
 
@@ -73,7 +73,10 @@ connection.onInitialize(async (params: InitializeParams) => {
   return result;
 });
 
+let semgrepRPC: SemgrepRPC | null = null
+
 connection.onInitialized(() => {
+  semgrepRPC = new SemgrepRPC();
   if (hasConfigurationCapability) {
     // Register for all configuration changes.
     connection.client.register(
@@ -191,7 +194,8 @@ async function validateTextDocument(
     "Scanning " + textDocument.uri + " with " + settings.rules
   );
 
-  const diagnostics = await getDiagnostics(textDocument.uri, settings.rules);
+  const diagnostics = await semgrepRPC?.getDiagnostics(textDocument.uri, settings.rules);
+  // const diagnostics = await getDiagnostics(textDocument.uri, settings.rules);
   if (Array.isArray(diagnostics)) {
     // Send the computed diagnostics to VSCode.
     connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
