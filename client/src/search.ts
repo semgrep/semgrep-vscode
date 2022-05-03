@@ -203,7 +203,7 @@ export const searchPatternWorkspace = async (
             vscode.TreeItemCollapsibleState.None,
             {
               command: "semgrep.goToFile",
-              arguments: [result.path, result.start.line],
+              arguments: [result.path, result.start.line - 1],
               title: "Go to file",
             }
           )
@@ -219,7 +219,7 @@ export const searchPatternWorkspace = async (
               vscode.TreeItemCollapsibleState.None,
               {
                 command: "semgrep.goToFile",
-                arguments: [result.path, result.start.line],
+                arguments: [result.path, result.start.line - 1],
                 title: "Go to file",
               }
             ),
