@@ -147,6 +147,7 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
     }
  
     
+    vscode.commands.executeCommand('semgrepTreeView.focus')
     const output = await searchPatternWorkspace(path[0].uri.fsPath, inputResult, quickPickResult)
 
     this.results = output;//TODO: should a pass this into the fire function instead of using the global scope?
