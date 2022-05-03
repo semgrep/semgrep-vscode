@@ -137,6 +137,8 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
     const lang = vscode.window.activeTextEditor?.document.languageId;
 
     if (lang != null) {
+      // Conveniently, Semgrep's language IDs seem to match up fairly well with
+      // VS Code's. At some point we might need to define a mapping here.
       const i = languageOptions.indexOf(lang);
       if (i !== -1) {
         languageOptions.splice(i, 1);
