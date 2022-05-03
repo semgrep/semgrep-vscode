@@ -5,6 +5,7 @@ import {
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
 } from "./constants";
+import activateSearch from './search';
 
 import {
   LanguageClient,
@@ -16,6 +17,7 @@ import {
 import { window, OutputChannel } from "vscode";
 
 import * as which from "which";
+import { searchPatternWorkspace } from "./search";
 
 let client: LanguageClient;
 
@@ -89,6 +91,7 @@ export function activate(context: ExtensionContext) {
 
   // Start the client. This will also launch the server
   client.start();
+  activateSearch(context);
 }
 
 export function deactivate(): Thenable<void> | undefined {

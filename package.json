@@ -29,6 +29,29 @@
   "qna": "https://r2c.dev/slack",
   "main": "./out/client/src/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "semgrep-explorer",
+          "title": "Semgrep Explorer",
+          "icon": "semgrep-icon.png"
+        }
+      ]
+    },
+    "views": {
+      "semgrep-explorer": [
+        {
+          "id": "semgrepTreeView",
+          "name": "Results"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "semgrepTreeView",
+        "contents": "[Search Pattern](command:semgrep.searchPattern)"
+      }
+    ],
     "commands": [
       {
         "command": "semgrep.suggestSelectionPatterns",
@@ -38,6 +61,10 @@
       {
         "command": "semgrep.suggestLinePatterns",
         "title": "Suggest Semgrep Patterns for Line"
+      },
+      {
+        "command": "semgrep.searchPattern",
+        "title": "Search Semgrep Pattern"
       }
     ],
     "configuration": {
