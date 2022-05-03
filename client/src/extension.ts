@@ -10,30 +10,62 @@ import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
-  TransportKind,
+  ExecutableOptions,
+  Executable
 } from "vscode-languageclient/node";
 import { window, OutputChannel } from "vscode";
+
+import * as which from "which";
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-  // The server is implemented in node
-  let serverModule = context.asAbsolutePath(
-    path.join("server", "out", "server.js")
-  );
+  // // The server is implemented in node
+  // let serverModule = context.asAbsolutePath(
+  //   path.join("server", "out", "server.js")
+  // );
+  
   // The debug options for the server
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
   let debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
-  let serverOptions: ServerOptions = {
-    run: { module: serverModule, transport: TransportKind.ipc },
-    debug: {
-      module: serverModule,
-      transport: TransportKind.ipc,
-      options: debugOptions,
-    },
+  // let serverOptions: ServerOptions = {
+  //   run: { module: serverModule, transport: TransportKind.ipc },
+  //   debug: {
+  //     module: serverModule,
+  //     transport: TransportKind.ipc,
+  //     options: debugOptions,
+  //   },
+  // };
+  
+  const serverName = "semgrep-rpc.sh";
+  const server = which.sync(serverName, {nothrow: true});
+  console.log("Found server binary at:", server);
+
+  let cwd = ".";
+  if (server) {
+    cwd = path.dirname(server);
+  }
+  let cmdlineOpts = [];
+  cmdlineOpts.push(...["--lsp"]);
+
+  let runOptions: ExecutableOptions = {
+    cwd: cwd,
+    // cwd?: string;
+    // env?: any;
+    // detached?: boolean;
+    // shell?: boolean;
+  };
+  const run: Executable = {
+    command: serverName,
+    args: cmdlineOpts,
+    options: runOptions,
+  };
+  const serverOptions: ServerOptions = {
+    run,
+    debug: run,
   };
 
   let outputChannel: OutputChannel = window.createOutputChannel(CLIENT_NAME);

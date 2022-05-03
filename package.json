@@ -27,7 +27,7 @@
     "theme": "light"
   },
   "qna": "https://r2c.dev/slack",
-  "main": "./client/out/extension.js",
+  "main": "./out/client/src/extension.js",
   "contributes": {
     "commands": [
       {
@@ -95,6 +95,7 @@
   "dependencies": {
     "@types/node-fetch": "^2.5.7",
     "node-fetch": "^2.6.0",
-    "vscode-jsonrpc": "^6.0.0"
+    "vscode-jsonrpc": "^6.0.0",
+    "vscode-languageclient": "^7.0.0"
   }
 }
