@@ -119,19 +119,32 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
         return
     }
 
-    const quickPickResult = await vscode.window.showQuickPick(["c",
-    "go",
-    "java",
-    "javascript",
-    "javascriptreact",
-    "json",
-    "ocaml",
-    "php",
-    "python",
-    "ruby",
-    "typescript",
-    "typescriptreact"], {
-    placeHolder: 'select target language',});
+    let languageOptions = [
+      "c",
+      "go",
+      "java",
+      "javascript",
+      "javascriptreact",
+      "json",
+      "ocaml",
+      "php",
+      "python",
+      "ruby",
+      "typescript",
+      "typescriptreact",
+    ];
+
+    const lang = vscode.window.activeTextEditor?.document.languageId;
+
+    if (lang != null) {
+      const i = languageOptions.indexOf(lang);
+      if (i !== -1) {
+        languageOptions.splice(i, 1);
+        languageOptions.splice(0, 0, lang);
+      }
+    }
+
+    const quickPickResult = await vscode.window.showQuickPick(languageOptions, {placeHolder: 'select target language',});
 
 
     //User has canceled the request
