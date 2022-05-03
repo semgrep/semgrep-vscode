@@ -14,14 +14,14 @@
 		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
 		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
 	},
+  "include": [
+    "client/src",
+    "server/src"
+  ],
 	"exclude": [
 		"node_modules",
 		".vscode-test",
 		// TODO: remove once we ported all previous features
 		"_src"
-	],
-	"references": [
-		{ "path": "./client" },
-		{ "path": "./server" }
 	]
 }
