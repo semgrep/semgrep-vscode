@@ -40,6 +40,7 @@ export function activate(context: ExtensionContext) {
   //   },
   // };
   
+  // Look up the binary path for the language server
   const serverName = "semgrep-rpc.sh";
   const server = which.sync(serverName, {nothrow: true});
   console.log("Found server binary at:", server);
@@ -49,6 +50,7 @@ export function activate(context: ExtensionContext) {
     cwd = path.dirname(server);
   }
   let cmdlineOpts = [];
+  // TODO: Add a --config flag to pass ruleset
   cmdlineOpts.push(...["--lsp"]);
 
   let runOptions: ExecutableOptions = {
