@@ -13,7 +13,7 @@ const activateSearch = async (context: vscode.ExtensionContext) => {
     subs.push(
       vscode.commands.registerCommand(
         "semgrep.searchPattern",
-        async (context: vscode.ExtensionContext) => await semgrepSearchProvider.search()
+        async (context: vscode.ExtensionContext) => await semgrepSearchProvider.search(customView)
       )
     );
     
@@ -108,7 +108,7 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
     editor.selection = new vscode.Selection(lineNumber,0,lineNumber,0)
   }
 
-  search = async () => {
+  search = async (customView: vscode.TreeView<SearchResult | Finding>) => {
     const inputResult = await vscode.window.showInputBox({
 		value: '',
 		placeHolder: 'Enter Search Pattern',
@@ -164,6 +164,8 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
     
     vscode.commands.executeCommand('semgrepTreeView.focus')
     const output = await searchPatternWorkspace(path[0].uri.fsPath, inputResult, quickPickResult)
+
+    customView.message = `Results for pattern: "${inputResult}"`
 
     this.results = output;//TODO: should a pass this into the fire function instead of using the global scope?
     this._onDidChangeTreeData.fire(null);
