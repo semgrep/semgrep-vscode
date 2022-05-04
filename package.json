@@ -29,17 +29,6 @@
   "qna": "https://r2c.dev/slack",
   "main": "./out/client/src/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "semgrep.suggestSelectionPatterns",
-        "title": "Suggest Semgrep Patterns for Selection",
-        "enablement": "editorHasSelection"
-      },
-      {
-        "command": "semgrep.suggestLinePatterns",
-        "title": "Suggest Semgrep Patterns for Line"
-      }
-    ],
     "configuration": {
       "title": "Semgrep",
       "properties": {
