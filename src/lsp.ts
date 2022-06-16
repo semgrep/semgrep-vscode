@@ -2,11 +2,11 @@ import * as fs from "fs";
 import * as path from "path";
 import { ExtensionContext } from "vscode";
 import {
+  SEMGREP_BINARY,
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
 } from "./constants";
-import activateSearch from './search';
 
 import {
   LanguageClient,
@@ -18,29 +18,23 @@ import {
 import { window, workspace, OutputChannel } from "vscode";
 
 import * as which from "which";
-import { searchPatternWorkspace } from "./search";
 
-let client: LanguageClient;
+let client: LanguageClient | undefined;
 
-export async function activate(context: ExtensionContext) {
-  void window.showInformationMessage('Starting Semgrep extension...');
-
-  // The debug options for the server
-  // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-  let debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
-
+export async function activateLsp(context: ExtensionContext) {
   // Look up the binary path for the language server
-  const serverName = "semgrep-rpc.sh";
-  const server = which.sync(serverName, {nothrow: true});
-  console.log("Found server binary at:", server);
-
+  const server = which.sync(SEMGREP_BINARY, {nothrow: true});
+  
   let cwd = ".";
   if (server) {
+    console.log("Found server binary at:", server);
     cwd = path.dirname(fs.realpathSync(server));
     console.log("  ... cwd := ", cwd);
   }
   let cmdlineOpts = [];
-  cmdlineOpts.push(...["--lsp"]);
+  cmdlineOpts.push(...["lsp"]);
+  // TODO: make logging configurable
+  // cmdlineOpts.push(...["--debug", "--logfile", "/tmp/semgrep-lsp.log"]);
 
   let semgrep_config = workspace.getConfiguration("semgrep");
   let semgrep_rules = semgrep_config["rules"];
@@ -50,13 +44,12 @@ export async function activate(context: ExtensionContext) {
 
   let runOptions: ExecutableOptions = {
     cwd: cwd,
-    // cwd?: string;
     // env?: any;
     // detached?: boolean;
     // shell?: boolean;
   };
   const run: Executable = {
-    command: serverName,
+    command: SEMGREP_BINARY,
     args: cmdlineOpts,
     options: runOptions,
   };
@@ -71,6 +64,7 @@ export async function activate(context: ExtensionContext) {
   // Options to control the language client
   let clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
+    // TODO: should we limit to support languages and keep the list manually updated?
     documentSelector: [{ language: "*" }],
     outputChannel,
   };
@@ -90,28 +84,21 @@ export async function activate(context: ExtensionContext) {
   workspace.onDidChangeConfiguration(() =>
     {restart(context);}, null, context.subscriptions
   );
-  activateSearch(context);
+  
 }
 
-export function deactivate(): Thenable<void> | undefined {
-  if (!client) {
-    return undefined;
-  }
+export async function deactivateLsp() {
   console.log("Stopping language client...");
-  let ret = client.stop();
-  console.log("Language client stopped... ret := ", ret);
-
-  // TODO: This promise is not resolved, even though the server has quit. Why?
-  // return ret;
-  return undefined;
+  await client?.stop();
+  client = undefined;
+  console.log("Language client stopped...");
 }
 
 // Using the same approach as the rust-analyzer extension
 // https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/main.ts
 export async function restart(context: ExtensionContext) {
-  void window.showInformationMessage('Reloading Semgrep extension...');
   console.log("Reloading language client...");
-  await deactivate();
+  await deactivateLsp();
   while (context.subscriptions.length > 0) {
     try {
       context.subscriptions.pop()!.dispose();
@@ -119,5 +106,5 @@ export async function restart(context: ExtensionContext) {
       console.log("Dispose error:", err);
     }
   }
-  await activate(context).catch(console.log);
+  await activateLsp(context).catch(console.log);
 }

@@ -1,5 +1,12 @@
+# npm & tsc
 out
 node_modules
 *.tsbuildinfo
+
+# Editor
 .vscode-test/
 *.vsix
+.vscode/
+
+# Misc
+.DS_Store

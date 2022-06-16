@@ -3,6 +3,10 @@ import * as vscode from "vscode";
 import {promisify} from 'util';
 import {execFile} from "child_process";
 
+import {
+  SEMGREP_BINARY
+} from "./constants";
+
 const execFileAsync = promisify(execFile);
 
 const activateSearch = async (context: vscode.ExtensionContext) => {
@@ -48,8 +52,8 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
   }
 
   getParent(element: SearchResult | Finding): SearchResult | Finding | undefined {
-
-    /*I thought about this for a long time.
+    /*
+      I thought about this for a long time.
       I know this is not the most effective way of doing this
       but it is the easiest. Computers are fast tell this becomes
       a problem i'm just going to leave it like this
@@ -61,7 +65,6 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
         }
       });
     });
-
 
     return undefined
   }
@@ -77,7 +80,7 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
         e.findings = e.findings.filter((f) => {
           if (f !== element) { return true }
 
-          //We are going to remove this element so we need to subtract one
+          // We are going to remove this element so we need to subtract one
           e.description = String(e.findings.length-1)
           
         })
@@ -114,7 +117,7 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
 		placeHolder: 'Enter Search Pattern',
     });
     
-    //User has canceled the request
+    // User has canceled the request
     if (inputResult == undefined) {
         return
     }
@@ -149,7 +152,7 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
     const quickPickResult = await vscode.window.showQuickPick(languageOptions, {placeHolder: 'select target language',});
 
 
-    //User has canceled the request
+    // User has canceled the request
     if (quickPickResult == undefined) {
       return
     }
@@ -167,7 +170,8 @@ readonly onDidChangeTreeData: vscode.Event<SearchResult | null> = this
 
     customView.message = `Results for pattern: "${inputResult}"`
 
-    this.results = output;//TODO: should a pass this into the fire function instead of using the global scope?
+    //TODO: should a pass this into the fire function instead of using the global scope?
+    this.results = output;
     this._onDidChangeTreeData.fire(null);
   }
 }
@@ -197,14 +201,14 @@ export class Finding extends vscode.TreeItem {
 
 export default activateSearch;
 
-//Checks a pattern based on path.
+// Checks a pattern based on path.
 export const searchPatternWorkspace = async (
   filePath: string,
   pattern: string,
   lang: string
 ): Promise<SearchResult[]> => {
   const { stdout, stderr } = await execFileAsync(
-    "semgrep",
+    SEMGREP_BINARY,
     ["--json", "-e", pattern, "-l", lang, filePath],
     { timeout: 30 * 1000 }
   );
