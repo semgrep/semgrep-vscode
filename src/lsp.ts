@@ -1,110 +1,140 @@
 import * as fs from "fs";
 import * as path from "path";
-import { ExtensionContext } from "vscode";
-import {
-  SEMGREP_BINARY,
-  CLIENT_ID,
-  CLIENT_NAME,
-  DIAGNOSTIC_COLLECTION_NAME,
-} from "./constants";
 
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
-  ExecutableOptions,
-  Executable
+  Executable,
 } from "vscode-languageclient/node";
-import { window, workspace, OutputChannel } from "vscode";
+import { window } from "vscode";
 
 import * as which from "which";
 
-let client: LanguageClient | undefined;
+import {
+  SEMGREP_BINARY,
+  CLIENT_ID,
+  CLIENT_NAME,
+  DEFAULT_RULESET,
+  DIAGNOSTIC_COLLECTION_NAME,
+} from "./constants";
+import { Environment } from "./env";
+import { DEFAULT_LSP_LOG_URI } from "./utils";
 
-export async function activateLsp(context: ExtensionContext) {
-  // Look up the binary path for the language server
-  const server = which.sync(SEMGREP_BINARY, {nothrow: true});
-  
-  let cwd = ".";
-  if (server) {
-    console.log("Found server binary at:", server);
-    cwd = path.dirname(fs.realpathSync(server));
-    console.log("  ... cwd := ", cwd);
+let global_client: LanguageClient | null;
+
+function findSemgrep(): string | null {
+  const server = which.sync(SEMGREP_BINARY, { nothrow: true });
+  if (!server) {
+    window.showErrorMessage('Cannot find Semgrep!');
   }
+  return server;
+}
+
+function semgrepCmdLineOpts(env: Environment): string[] {
   let cmdlineOpts = [];
-  cmdlineOpts.push(...["lsp"]);
-  // TODO: make logging configurable
-  // cmdlineOpts.push(...["--debug", "--logfile", "/tmp/semgrep-lsp.log"]);
 
-  let semgrep_config = workspace.getConfiguration("semgrep");
-  let semgrep_rules = semgrep_config["rules"];
-  if (semgrep_rules) {
-    cmdlineOpts.push(...["--config", semgrep_rules]);
+  // Subcommand
+  cmdlineOpts.push(...["lsp"]);
+
+  // Logging
+  if (env.config.logging) {
+    cmdlineOpts.push(
+      ...[
+        "--debug",
+        "--logfile",
+        env.config.semgrep_log.scheme === "file"
+          ? env.config.semgrep_log.fsPath
+          : DEFAULT_LSP_LOG_URI.fsPath,
+      ]
+    );
   }
 
-  let runOptions: ExecutableOptions = {
-    cwd: cwd,
-    // env?: any;
-    // detached?: boolean;
-    // shell?: boolean;
-  };
+  // Scan config
+  cmdlineOpts.push(
+    ...[
+      "--config",
+      env.config.rules !== "" ? env.config.rules : DEFAULT_RULESET,
+    ]
+  );
+
+  return cmdlineOpts;
+}
+
+function lspOptions(env: Environment): [ServerOptions | null, LanguageClientOptions] {
+  const server = findSemgrep();
+  
+  if (!server) return [null, {}];
+
+  env.logger.log(`Found server binary at: ${server}`);
+  const cwd = path.dirname(fs.realpathSync(server));
+  env.logger.log(`  ... cwd := ${cwd}`);
+ 
+  const cmdlineOpts = semgrepCmdLineOpts(env);
+
   const run: Executable = {
     command: SEMGREP_BINARY,
     args: cmdlineOpts,
-    options: runOptions,
+    options: { cwd: cwd },
   };
+
   const serverOptions: ServerOptions = {
     run,
     debug: run,
   };
-  console.log("Semgrep LSP server executable := ", run);
+  env.logger.log(`Semgrep LSP server configuration := ${JSON.stringify(run)}`);
 
-  let outputChannel: OutputChannel = window.createOutputChannel(CLIENT_NAME);
-
-  // Options to control the language client
   let clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
     documentSelector: [{ language: "*" }],
-    outputChannel,
+    outputChannel: env.channel,
   };
 
-  // Create the language client and start the client.
-  client = new LanguageClient(
-    CLIENT_ID,
-    CLIENT_NAME,
-    serverOptions,
-    clientOptions
-  );
+  return [serverOptions, clientOptions];
+
+}
+
+function start(env: Environment): LanguageClient | null {
+  // Compute LSP server and client options
+  const [serverOptions, clientOptions] = lspOptions(env);
+  
+  // If we cannot find Semgrep, there's no point
+  // in proceeding with the activation.
+  if (!serverOptions) return global_client;
+
+  // Create the language client.
+  let c = global_client ||
+    new LanguageClient(CLIENT_ID,
+      CLIENT_NAME,
+      serverOptions,
+      clientOptions);
 
   // Start the client. This will also launch the server
-  console.log("Starting language client...");
-  client.start();
+  env.logger.log("Starting language client...");
+  c.start();
 
-  workspace.onDidChangeConfiguration(() =>
-    {restart(context);}, null, context.subscriptions
-  );
-  
+  return c;
 }
 
-export async function deactivateLsp() {
-  console.log("Stopping language client...");
-  await client?.stop();
-  client = undefined;
-  console.log("Language client stopped...");
+async function stop(env: Environment | null): Promise<void> {
+  env?.logger.log("Stopping language client...");
+  await global_client?.stop();
+  env?.logger.log("Language client stopped...");
 }
 
-// Using the same approach as the rust-analyzer extension
-// https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/main.ts
-export async function restart(context: ExtensionContext) {
-  console.log("Reloading language client...");
-  await deactivateLsp();
-  while (context.subscriptions.length > 0) {
-    try {
-      context.subscriptions.pop()!.dispose();
-    } catch (err) {
-      console.log("Dispose error:", err);
-    }
+export function activateLsp(env: Environment) {
+  global_client = start(env);
+}
+
+export async function deactivateLsp(env: Environment | null): Promise<void> {
+  await stop(env);
+  global_client = null;
+}
+
+export async function restartLsp(env: Environment | null): Promise<void> {
+  await stop(env);
+  if (env) {
+    global_client = start(env);
   }
-  await activateLsp(context).catch(console.log);
 }

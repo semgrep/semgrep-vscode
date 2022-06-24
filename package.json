@@ -85,6 +85,12 @@
           "type": "string",
           "default": "https://semgrep.dev/p/r2c",
           "description": "The semgrep --config value to scan with."
+        },
+        "semgrep.logging": {
+          "scope": "window",
+          "type": "boolean",
+          "default": false,
+          "description": "Enable logging for the extension and the LSP server."
         }
       }
     }
