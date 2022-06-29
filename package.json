@@ -2,9 +2,9 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Shows findings from https://semgrep.dev",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "engines": {
-    "vscode": "^1.31.0"
+    "vscode": "^1.66.0"
   },
   "categories": [
     "Linters"
@@ -27,23 +27,47 @@
     "theme": "light"
   },
   "qna": "https://r2c.dev/slack",
-  "main": "./out/extension.js",
+  "main": "./out/src/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "semgrep-explorer",
+          "title": "Semgrep Explorer",
+          "icon": "semgrep-icon.png"
+        }
+      ]
+    },
+    "views": {
+      "semgrep-explorer": [
+        {
+          "id": "semgrepTreeView",
+          "name": "Results"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "semgrepTreeView",
+        "contents": "[Search Pattern](command:semgrep.searchPattern)"
+      }
+    ],
     "commands": [
       {
-        "command": "semgrep.suggestSelectionPatterns",
-        "title": "Suggest Semgrep Patterns for Selection",
-        "enablement": "editorHasSelection"
-      },
-      {
-        "command": "semgrep.suggestLinePatterns",
-        "title": "Suggest Semgrep Patterns for Line"
+        "command": "semgrep.searchPattern",
+        "title": "Search Semgrep Pattern"
       }
     ],
     "configuration": {
       "title": "Semgrep",
       "properties": {
+        "semgrep.path":{
+          "scope":"window",
+          "type":"string",
+          "default":"semgrep"
+        },
         "semgrep.languages": {
+          "scope": "window",
           "type": "array",
           "default": [
             "c",
@@ -62,36 +86,48 @@
           "description": "Languages to scan with semgrep. Defaults to all supported languages."
         },
         "semgrep.rules": {
+          "scope": "window",
           "type": "string",
           "default": "https://semgrep.dev/p/r2c",
           "description": "The semgrep --config value to scan with."
+        },
+        "semgrep.logging": {
+          "scope": "window",
+          "type": "boolean",
+          "default": false,
+          "description": "Enable logging for the extension and the LSP server."
         }
       }
     }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "tsc -b",
     "lint": "eslint src --ext ts",
-    "watch": "tsc -watch -p ./",
+    "watch": "tsc -b -w",
     "pretest": "npm run compile && npm run lint",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "clean": "rm -rf ./out"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
-    "@types/mocha": "^8.0.1",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^14.0.27",
-    "@types/vscode": "^1.31.0",
+    "@types/vscode": "1.66.0",
+    "@types/which": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
+    "@vscode/test-electron": "^2.1.3",
     "eslint": "^7.6.0",
     "glob": "^7.1.6",
-    "mocha": "^8.1.1",
-    "typescript": "^3.9.7",
-    "vscode-test": "^1.3.0"
+    "mocha": "^9.1.4",
+    "typescript": "^4.6.4"
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.7",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "vscode-jsonrpc": "^6.0.0",
+    "vscode-languageclient": "^8.0.1",
+    "which": "^2.0.2"
   }
 }

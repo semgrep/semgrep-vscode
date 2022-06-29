@@ -1,12 +1,51 @@
-import * as vscode from "vscode";
-import activateDiagnostics from "./diagnostics";
-import activateSuggestions from "./suggestions";
+import { workspace, ConfigurationChangeEvent, ExtensionContext } from "vscode";
 
-export const activate = async (context: vscode.ExtensionContext) => {
-  activateSuggestions(context);
-  activateDiagnostics(context);
-};
+import { VSCODE_CONFIG_KEY } from './constants';
+import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
+import activateSearch from "./search";
+import { Environment } from "./env";
 
-export const deactivate = () => {
-  console.log("semgrep deactivating...");
-};
+let global_env: Environment | null = null;
+
+async function initEnvironment(
+  context: ExtensionContext
+): Promise<Environment> {
+  global_env = await Environment.create(context);
+  return global_env;
+}
+
+async function createOrUpdateEnvironment(
+  context: ExtensionContext
+): Promise<Environment> {
+  return global_env ? global_env.reloadConfig() : initEnvironment(context);
+}
+
+export async function activate(context: ExtensionContext) {
+  const env: Environment = await createOrUpdateEnvironment(context);
+
+  activateLsp(env);
+  activateSearch(env);
+
+  // Handle configuration changes
+  context.subscriptions.push(workspace.onDidChangeConfiguration(
+    async (event: ConfigurationChangeEvent) => {
+      if (event.affectsConfiguration(VSCODE_CONFIG_KEY)) {
+        await restart(context);
+      }
+    }
+  ));
+}
+
+export async function deactivate() {
+  await deactivateLsp(global_env);
+  global_env?.dispose();
+  global_env = null;
+}
+
+export async function restart(context: ExtensionContext) {
+  const env: Environment = await createOrUpdateEnvironment(context);
+
+  env.logger.log("Restarting language client...");
+  await restartLsp(env);
+  env.logger.log("Restarted language client...");
+}
