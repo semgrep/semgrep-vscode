@@ -8,6 +8,7 @@ export class Config {
   logging: boolean = false;
   rules: string = "";
   semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
+  path: string = "";
 }
 
 export class Environment {
@@ -43,7 +44,7 @@ export class Environment {
     config.rules = workspace_config.get("rules", "");
     config.logging = workspace_config.get("logging", false);
     config.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
-
+    config.path = workspace_config.get("path","")
     if (config.logging) {
       await Environment.initLogDir(context);
     }

@@ -62,9 +62,11 @@ function semgrepCmdLineOpts(env: Environment): string[] {
 }
 
 function lspOptions(env: Environment): [ServerOptions | null, LanguageClientOptions] {
-  const server = findSemgrep();
-  
-  if (!server) return [null, {}];
+  var server = findSemgrep();
+  if (!server){
+    server = env.config.path
+  }
+  if (server === "") return [null, {}];
 
   env.logger.log(`Found server binary at: ${server}`);
   const cwd = path.dirname(fs.realpathSync(server));
@@ -87,7 +89,7 @@ function lspOptions(env: Environment): [ServerOptions | null, LanguageClientOpti
   let clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
-    documentSelector: [{ language: "*" }],
+    documentSelector: [{ language: "*", scheme: "file" }],
     outputChannel: env.channel,
   };
 
