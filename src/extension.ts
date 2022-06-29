@@ -1,7 +1,7 @@
 import { workspace, ConfigurationChangeEvent, ExtensionContext } from "vscode";
 
 import { VSCODE_CONFIG_KEY } from './constants';
-import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
+import { activateLsp, deactivateLsp, restartLsp, global_client } from "./lsp";
 import activateSearch from "./search";
 import { Environment } from "./env";
 
@@ -30,10 +30,12 @@ export async function activate(context: ExtensionContext) {
   context.subscriptions.push(workspace.onDidChangeConfiguration(
     async (event: ConfigurationChangeEvent) => {
       if (event.affectsConfiguration(VSCODE_CONFIG_KEY)) {
-        await restart(context);
+        await env.reloadConfig()
+        global_client?.sendNotification("workspace/didChangeConfiguration", { settings: env.config.cfg })
       }
     }
   ));
+
 }
 
 export async function deactivate() {

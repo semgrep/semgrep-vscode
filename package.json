@@ -62,12 +62,10 @@
       "title": "Semgrep",
       "properties": {
         "semgrep.path":{
-          "scope":"window",
           "type":"string",
           "default":"semgrep"
         },
         "semgrep.languages": {
-          "scope": "window",
           "type": "array",
           "default": [
             "c",
@@ -85,18 +83,87 @@
           ],
           "description": "Languages to scan with semgrep. Defaults to all supported languages."
         },
-        "semgrep.rules": {
-          "scope": "window",
-          "type": "string",
-          "default": "https://semgrep.dev/p/r2c",
-          "description": "The semgrep --config value to scan with."
-        },
         "semgrep.logging": {
           "scope": "window",
           "type": "boolean",
           "default": false,
           "description": "Enable logging for the extension and the LSP server."
+        },
+        "semgrep.scan.configuration": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Each item can be a YAML configuration file, directory of YAML files ending in .yml | .yaml, URL of a configuration file, or Semgrep registry entry name. Use \"auto\" to automatically obtain rules tailored to this project; your project URL will be used to log in to the Semgrep registry."
+        },
+        "semgrep.scan.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "List of files or directories to exclude."
+        },
+        "semgrep.scan.include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "List of files or directories to include."
+        },
+        "semgrep.scan.jobs": {
+          "type": "integer",
+          "default": 1,
+          "description": "Number of parallel jobs to run."
+        },
+        "semgrep.scan.disableNoSem": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable no-semgrep comments."
+        },
+        "semgrep.scan.baselineCommit": {
+          "type": "string",
+          "default": null,
+          "description": "Baseline commit to scan from"
+        },
+        "semgrep.scan.severity": {
+          "type": "array",
+          "default": ["INFO", "WARNING", "ERROR"],
+          "items": {
+            "type": "string",
+            "enum": ["INFO", "WARNING", "ERROR"]
+          },
+          "description": "Severity of rules to scan for.",
+          "uniqueItems": true
+        },
+        "semgrep.scan.maxMemory": {
+          "type": "integer",
+          "default": 0,
+          "description": "Maximum memory to use in megabytes."
+        },
+        "semgrep.scan.maxTargetBytes": {
+          "type": "integer",
+          "default": 0,
+          "description": "Maximum size of target in bytes to scan."
+        },
+        "semgrep.scan.timeoutThreshold": {
+          "type": "integer",
+          "default": 0,
+          "description": "Maximum time to scan in seconds."
+        },
+        "semgrep.scan.useGitIgnore": {
+          "type": "boolean",
+          "default": true,
+          "description": "Skip files ignored by git"
+        },
+        "semgrep.lsp.watchWorkspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Scan all workspace folders. Disable for per-file scanning only."
         }
+    
       }
     }
   },
