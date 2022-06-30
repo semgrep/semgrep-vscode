@@ -65,7 +65,10 @@ function lspOptions(env: Environment): [ServerOptions | null, LanguageClientOpti
     }
 
     env.logger.log(`Found server binary at: ${server}`);
-    const cwd = path.dirname(fs.realpathSync(server));
+    var cwd = path.dirname(fs.realpathSync(server));
+    if(workspace.workspaceFolders !== undefined) {
+      cwd = workspace.workspaceFolders[0].uri.path;
+    }
     env.logger.log(`  ... cwd := ${cwd}`);
     const cmdlineOpts = semgrepCmdLineOpts(env);
     const run: Executable = {
