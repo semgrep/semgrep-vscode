@@ -61,6 +61,17 @@
     "configuration": {
       "title": "Semgrep",
       "properties": {
+				"semgrep.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+					"description": "Traces the communication between VS Code and the language server."
+				},
         "semgrep.path":{
           "type":"string",
           "default":"semgrep"
@@ -162,6 +173,16 @@
           "type": "boolean",
           "default": true,
           "description": "Scan all workspace folders. Disable for per-file scanning only."
+        },
+        "semgrep.lsp.watchConfigs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Watch all semgrep config files for changes and rescan when they are saved. semgrep.lsp.watchWorkspace must be enabled for this to work."
+        },
+        "semgrep.lsp.autodetectConfigs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically detect configuration files in workspace folders according to the glob pattern **/{semgrep,.semgrep}.{yml,yaml}"
         }
     
       }
