@@ -1,9 +1,11 @@
 import { workspace, ConfigurationChangeEvent, ExtensionContext } from "vscode";
 
 import { VSCODE_CONFIG_KEY } from './constants';
-import { activateLsp, deactivateLsp, restartLsp, global_client } from "./lsp";
+import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import activateSearch from "./search";
 import { Environment } from "./env";
+import { registerCommands } from "./commands";
+import { LanguageClient } from "vscode-languageclient/node";
 
 let global_env: Environment | null = null;
 
@@ -23,31 +25,37 @@ async function createOrUpdateEnvironment(
 export async function activate(context: ExtensionContext) {
   const env: Environment = await createOrUpdateEnvironment(context);
 
-  activateLsp(env);
-  activateSearch(env);
+  const client = await activateLsp(env);
+  // This will be moved to LSP
+  //activateSearch(env);
+  if (client){
+    registerCommands(env, client);
+  
 
-  // Handle configuration changes
-  context.subscriptions.push(workspace.onDidChangeConfiguration(
-    async (event: ConfigurationChangeEvent) => {
-      if (event.affectsConfiguration(VSCODE_CONFIG_KEY)) {
-        await env.reloadConfig()
-        global_client?.sendNotification("workspace/didChangeConfiguration", { settings: env.config.cfg })
+
+    // Handle configuration changes
+    context.subscriptions.push(workspace.onDidChangeConfiguration(
+      async (event: ConfigurationChangeEvent) => {
+        if (event.affectsConfiguration(VSCODE_CONFIG_KEY)) {
+          await env.reloadConfig()
+          client.sendNotification("workspace/didChangeConfiguration", { settings: env.config.cfg })
+        }
       }
-    }
-  ));
+    ));
+  }
 
 }
 
-export async function deactivate() {
-  await deactivateLsp(global_env);
+export async function deactivate(client:LanguageClient) {
+  await deactivateLsp(global_env,client);
   global_env?.dispose();
   global_env = null;
 }
 
-export async function restart(context: ExtensionContext) {
+export async function restart(context: ExtensionContext, client:LanguageClient) {
   const env: Environment = await createOrUpdateEnvironment(context);
 
   env.logger.log("Restarting language client...");
-  await restartLsp(env);
+  await restartLsp(env, client);
   env.logger.log("Restarted language client...");
 }

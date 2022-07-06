@@ -41,21 +41,25 @@
     "views": {
       "semgrep-explorer": [
         {
-          "id": "semgrepTreeView",
-          "name": "Results"
+          "id": "semgrepLogin",
+          "name": "Active Rules"
         }
       ]
     },
     "viewsWelcome": [
       {
-        "view": "semgrepTreeView",
-        "contents": "[Search Pattern](command:semgrep.searchPattern)"
+        "view": "semgrepLogin",
+        "contents": "[Login to see project rules](command:semgrep.login)"
       }
     ],
     "commands": [
       {
         "command": "semgrep.searchPattern",
         "title": "Search Semgrep Pattern"
+      },
+      {
+        "command":"semgrep.login",
+        "title": "Login to Semgrep App"
       }
     ],
     "configuration": {
@@ -75,24 +79,6 @@
         "semgrep.path":{
           "type":"string",
           "default":"semgrep"
-        },
-        "semgrep.languages": {
-          "type": "array",
-          "default": [
-            "c",
-            "go",
-            "java",
-            "javascript",
-            "javascriptreact",
-            "json",
-            "ocaml",
-            "php",
-            "python",
-            "ruby",
-            "typescript",
-            "typescriptreact"
-          ],
-          "description": "Languages to scan with semgrep. Defaults to all supported languages."
         },
         "semgrep.logging": {
           "scope": "window",
