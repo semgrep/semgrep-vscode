@@ -38,47 +38,37 @@
         }
       ]
     },
-    "views": {
-      "semgrep-explorer": [
-        {
-          "id": "semgrepLogin",
-          "name": "Active Rules"
-        }
-      ]
-    },
-    "viewsWelcome": [
-      {
-        "view": "semgrepLogin",
-        "contents": "[Login to see project rules](command:semgrep.login)"
-      }
-    ],
     "commands": [
       {
-        "command": "semgrep.searchPattern",
-        "title": "Search Semgrep Pattern"
+        "command": "semgrep.login",
+        "title": "Semgrep: Login"
       },
       {
-        "command":"semgrep.login",
-        "title": "Login to Semgrep App"
+        "command": "semgrep.scan",
+        "title": "Semgrep: Scan file"
+      },
+      {
+        "command": "semgrep.scanWorkspace",
+        "title": "Semgrep: Scan workspace"
       }
     ],
     "configuration": {
       "title": "Semgrep",
       "properties": {
-				"semgrep.trace.server": {
-					"scope": "window",
-					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "off",
-					"description": "Traces the communication between VS Code and the language server."
-				},
-        "semgrep.path":{
-          "type":"string",
-          "default":"semgrep"
+        "semgrep.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server."
+        },
+        "semgrep.path": {
+          "type": "string",
+          "default": "semgrep"
         },
         "semgrep.logging": {
           "scope": "window",
@@ -127,10 +117,18 @@
         },
         "semgrep.scan.severity": {
           "type": "array",
-          "default": ["INFO", "WARNING", "ERROR"],
+          "default": [
+            "INFO",
+            "WARNING",
+            "ERROR"
+          ],
           "items": {
             "type": "string",
-            "enum": ["INFO", "WARNING", "ERROR"]
+            "enum": [
+              "INFO",
+              "WARNING",
+              "ERROR"
+            ]
           },
           "description": "Severity of rules to scan for.",
           "uniqueItems": true
@@ -155,22 +153,31 @@
           "default": true,
           "description": "Skip files ignored by git"
         },
+        "semgrep.lsp.watchOpenFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Scan all opened files automatically on open and save."
+        },
         "semgrep.lsp.watchWorkspace": {
           "type": "boolean",
           "default": true,
-          "description": "Scan all workspace folders. Disable for per-file scanning only."
+          "description": "Scan all workspace folders automatically on open and when folders are added or removed."
         },
         "semgrep.lsp.watchConfigs": {
           "type": "boolean",
           "default": true,
-          "description": "Watch all semgrep config files for changes and rescan when they are saved. semgrep.lsp.watchWorkspace must be enabled for this to work."
+          "description": "Watch all semgrep config files for changes and rescan when they are saved. semgrep.lsp.watchWorkspace must also be enabled."
         },
         "semgrep.lsp.autodetectConfigs": {
           "type": "boolean",
           "default": true,
           "description": "Automatically detect configuration files in workspace folders according to the glob pattern **/{semgrep,.semgrep}.{yml,yaml}"
+        },
+        "semgrep.lsp.ciEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "When logged in, the LSP will runs rules configured on Semgrep App"
         }
-    
       }
     }
   },
@@ -199,6 +206,7 @@
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.7",
+    "lint-staged": "^13.0.3",
     "node-fetch": "^2.6.0",
     "vscode-jsonrpc": "^6.0.0",
     "vscode-languageclient": "^8.0.1",
