@@ -88,7 +88,7 @@ async function lspOptions(
   }
 
   env.logger.log(`Found server binary at: ${server}`);
-  const cwd = path.dirname(fs.realpathSync(server));
+  let cwd = path.dirname(fs.realpathSync(server));
   if (vscode.workspace.workspaceFolders !== undefined) {
     cwd = vscode.workspace.workspaceFolders[0].uri.path;
   }

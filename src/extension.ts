@@ -23,10 +23,11 @@ async function createOrUpdateEnvironment(
   return global_env ? global_env.reloadConfig() : initEnvironment(context);
 }
 
-export async function activate(context: ExtensionContext): void {
+export async function activate(context: ExtensionContext): Promise<void> {
   const env: Environment = await createOrUpdateEnvironment(context);
 
   const client = await activateLsp(env);
+
   // This will be moved to LSP
   //activateSearch(env);
   if (client) {
@@ -48,7 +49,7 @@ export async function activate(context: ExtensionContext): void {
   }
 }
 
-export async function deactivate(client: LanguageClient): void {
+export async function deactivate(client: LanguageClient): Promise<void> {
   await deactivateLsp(global_env, client);
   global_env?.dispose();
   global_env = null;
@@ -57,7 +58,7 @@ export async function deactivate(client: LanguageClient): void {
 export async function restart(
   context: ExtensionContext,
   client: LanguageClient
-): void {
+): Promise<void> {
   const env: Environment = await createOrUpdateEnvironment(context);
 
   env.logger.log("Restarting language client...");
