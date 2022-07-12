@@ -146,6 +146,10 @@ async function stop(
   client: LanguageClient
 ): Promise<void> {
   env?.logger.log("Stopping language client...");
+  await client.sendRequest("shutdown").then(async () => {
+    env?.logger.log("Exiting");
+    await client.sendRequest("exit");
+  });
   await client.stop();
   env?.logger.log("Language client stopped...");
 }

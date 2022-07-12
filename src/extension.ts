@@ -2,14 +2,15 @@ import { workspace, ConfigurationChangeEvent, ExtensionContext } from "vscode";
 
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
-import activateSearch from "./search";
+// import activateSearch from "./search";
 import { Environment } from "./env";
 import { registerCommands } from "./commands";
 import { LanguageClient } from "vscode-languageclient/node";
-import { activateRuleExplorer } from "./rule_explorer";
+// import { activateRuleExplorer } from "./rule_explorer";
 
 let global_env: Environment | null = null;
-
+// needed for deactivate
+let global_client: LanguageClient | null = null;
 async function initEnvironment(
   context: ExtensionContext
 ): Promise<Environment> {
@@ -27,7 +28,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   const env: Environment = await createOrUpdateEnvironment(context);
 
   const client = await activateLsp(env);
-
+  global_client = client;
   // This will be moved to LSP
   //activateSearch(env);
   if (client) {
@@ -49,8 +50,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
   }
 }
 
-export async function deactivate(client: LanguageClient): Promise<void> {
-  await deactivateLsp(global_env, client);
+export async function deactivate(): Promise<void> {
+  if (global_client) {
+    await deactivateLsp(global_env, global_client);
+  }
   global_env?.dispose();
   global_env = null;
 }
