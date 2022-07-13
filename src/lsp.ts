@@ -30,7 +30,7 @@ async function findSemgrep(env: Environment): Promise<string | null> {
     const brew = which.sync("brew", { nothrow: true });
     const pip = which.sync("pip", { nothrow: true });
     const pip3 = which.sync("pip3", { nothrow: true });
-    const pip_install = "Install with pip";
+    const pip_install = "Install with pip (Preferred)";
     const brew_install = "Install with brew";
     const resp = await vscode.window.showInformationMessage(
       "Semgrep is not installed! Please install to use this extension",
@@ -52,6 +52,11 @@ async function findSemgrep(env: Environment): Promise<string | null> {
       vscode.window.onDidCloseTerminal((t) => {
         if (t == terminal) {
           vscode.window.showInformationMessage("Semgrep succesfully installed");
+          if (resp == brew_install) {
+            vscode.window.showInformationMessage(
+              "Please run *sudo launchctl config user path '$(brew --prefix)/bin:${PATH}'* and restart to enable Semgrep. See [https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities]"
+            );
+          }
           activate(env.context);
         }
       });
