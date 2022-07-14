@@ -110,7 +110,6 @@ async function lspOptions(
     debug: run,
   };
   env.logger.log(`Semgrep LSP server configuration := ${JSON.stringify(run)}`);
-
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
@@ -141,8 +140,7 @@ async function start(env: Environment): Promise<LanguageClient | null> {
   // register commands
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
-  c.start();
-
+  await c.start();
   return c;
 }
 

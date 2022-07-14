@@ -1,4 +1,9 @@
-import { workspace, ConfigurationChangeEvent, ExtensionContext } from "vscode";
+import {
+  workspace,
+  ConfigurationChangeEvent,
+  ExtensionContext,
+  window,
+} from "vscode";
 
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
@@ -24,7 +29,9 @@ async function createOrUpdateEnvironment(
   return global_env ? global_env.reloadConfig() : initEnvironment(context);
 }
 
-export async function activate(context: ExtensionContext): Promise<void> {
+export async function activate(
+  context: ExtensionContext
+): Promise<LanguageClient | null> {
   const env: Environment = await createOrUpdateEnvironment(context);
 
   const client = await activateLsp(env);
@@ -47,7 +54,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
         }
       )
     );
+  } else {
+    window.showErrorMessage("Failed to load Semgrep Extension");
   }
+  return client;
 }
 
 export async function deactivate(): Promise<void> {

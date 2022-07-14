@@ -196,11 +196,11 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -b",
+    "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
-    "watch": "tsc -b -w",
+    "watch": "tsc -w -p ./",
     "pretest": "npm run compile && npm run lint",
-    "test": "node ./out/test/runTest.js",
+    "test": "node ./out/src/test/runTest.js",
     "clean": "rm -rf ./out"
   },
   "devDependencies": {
@@ -215,7 +215,7 @@
     "eslint": "^7.6.0",
     "glob": "^7.1.6",
     "mocha": "^9.1.4",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.7",

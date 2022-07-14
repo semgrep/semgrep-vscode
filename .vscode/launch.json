@@ -1,4 +1,3 @@
-// A launch configuration that compiles the extension and then opens it inside a new window
 {
   "version": "0.2.0",
   "configurations": [
@@ -8,6 +7,22 @@
       "name": "Launch Client",
       "runtimeExecutable": "${execPath}",
       "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
+      "outFiles": ["${workspaceRoot}/out/**/*.js"],
+      "preLaunchTask": {
+        "type": "npm",
+        "script": "watch"
+      }
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/src/test/suite/index"
+      ],
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
       "preLaunchTask": {
         "type": "npm",

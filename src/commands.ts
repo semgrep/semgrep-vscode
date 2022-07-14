@@ -21,7 +21,7 @@ export function registerCommands(
     }
   });
 
-  vscode.commands.registerCommand("semgrep.scan", async (file?: string) => {
+  vscode.commands.registerCommand("semgrep.scan", async (file?: vscode.Uri) => {
     let uri = null;
     if (!file) {
       // Get active file if no path provided
@@ -30,14 +30,7 @@ export function registerCommands(
         uri = activeEditor.document.uri;
       }
     } else {
-      const files = await vscode.workspace.findFiles(file);
-      if (file.length < 1) {
-        vscode.window.showWarningMessage(
-          "File " + file + " not found in current workspace"
-        );
-      } else {
-        uri = files[0];
-      }
+      uri = file;
     }
     if (uri) {
       await client.sendNotification(scan, { uri: uri.toString() });
