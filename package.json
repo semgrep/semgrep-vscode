@@ -38,75 +38,169 @@
         }
       ]
     },
-    "views": {
-      "semgrep-explorer": [
-        {
-          "id": "semgrepTreeView",
-          "name": "Results"
-        }
-      ]
-    },
-    "viewsWelcome": [
-      {
-        "view": "semgrepTreeView",
-        "contents": "[Search Pattern](command:semgrep.searchPattern)"
-      }
-    ],
     "commands": [
       {
-        "command": "semgrep.searchPattern",
-        "title": "Search Semgrep Pattern"
+        "command": "semgrep.login",
+        "title": "Semgrep: Login"
+      },
+      {
+        "command": "semgrep.scan",
+        "title": "Semgrep: Scan file"
+      },
+      {
+        "command": "semgrep.scanWorkspace",
+        "title": "Semgrep: Scan workspace"
       }
     ],
     "configuration": {
       "title": "Semgrep",
       "properties": {
-        "semgrep.path":{
-          "scope":"window",
-          "type":"string",
-          "default":"semgrep"
-        },
-        "semgrep.languages": {
-          "scope": "window",
-          "type": "array",
-          "default": [
-            "c",
-            "go",
-            "java",
-            "javascript",
-            "javascriptreact",
-            "json",
-            "ocaml",
-            "php",
-            "python",
-            "ruby",
-            "typescript",
-            "typescriptreact"
-          ],
-          "description": "Languages to scan with semgrep. Defaults to all supported languages."
-        },
-        "semgrep.rules": {
+        "semgrep.trace.server": {
           "scope": "window",
           "type": "string",
-          "default": "https://semgrep.dev/p/r2c",
-          "description": "The semgrep --config value to scan with."
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server."
+        },
+        "semgrep.path": {
+          "type": "string",
+          "default": "semgrep"
         },
         "semgrep.logging": {
           "scope": "window",
           "type": "boolean",
           "default": false,
           "description": "Enable logging for the extension and the LSP server."
+        },
+        "semgrep.scan.configuration": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Each item can be a YAML configuration file, directory of YAML files ending in .yml | .yaml, URL of a configuration file, or Semgrep registry entry name. Use \"auto\" to automatically obtain rules tailored to this project; your project URL will be used to log in to the Semgrep registry."
+        },
+        "semgrep.scan.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "List of files or directories to exclude."
+        },
+        "semgrep.scan.include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "List of files or directories to include."
+        },
+        "semgrep.scan.jobs": {
+          "type": "integer",
+          "default": 1,
+          "description": "Number of parallel jobs to run."
+        },
+        "semgrep.scan.disableNoSem": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable no-semgrep comments."
+        },
+        "semgrep.scan.baselineCommit": {
+          "type": "string",
+          "default": null,
+          "description": "Baseline commit to scan from"
+        },
+        "semgrep.scan.severity": {
+          "type": "array",
+          "default": [
+            "INFO",
+            "WARNING",
+            "ERROR"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "INFO",
+              "WARNING",
+              "ERROR"
+            ]
+          },
+          "description": "Severity of rules to scan for.",
+          "uniqueItems": true
+        },
+        "semgrep.scan.maxMemory": {
+          "type": "integer",
+          "default": 0,
+          "description": "Maximum memory to use in megabytes."
+        },
+        "semgrep.scan.maxTargetBytes": {
+          "type": "integer",
+          "default": 0,
+          "description": "Maximum size of target in bytes to scan."
+        },
+        "semgrep.scan.timeoutThreshold": {
+          "type": "integer",
+          "default": 0,
+          "description": "Maximum time to scan in seconds."
+        },
+        "semgrep.scan.useGitIgnore": {
+          "type": "boolean",
+          "default": true,
+          "description": "Skip files ignored by git"
+        },
+        "semgrep.lsp.watchOpenFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Scan all opened files automatically on open and save."
+        },
+        "semgrep.lsp.watchWorkspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Scan all workspace folders automatically on open and when folders are added or removed."
+        },
+        "semgrep.lsp.watchConfigs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Watch all semgrep config files for changes and rescan when they are saved. semgrep.lsp.watchWorkspace must also be enabled."
+        },
+        "semgrep.lsp.autodetectConfigs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically detect configuration files in workspace folders according to the glob pattern **/{semgrep,.semgrep}.{yml,yaml}"
+        },
+        "semgrep.lsp.ciEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "When logged in, the LSP will runs rules configured on Semgrep App"
+        },
+        "semgrep.metrics": {
+          "type": "string",
+          "default": "on",
+          "items": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ]
+          },
+          "description": "Enable or disable metrics collection. Auto will only report metrics when rules are pulled from the registry"
         }
       }
     }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -b",
+    "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
-    "watch": "tsc -b -w",
+    "watch": "tsc -w -p ./",
     "pretest": "npm run compile && npm run lint",
-    "test": "node ./out/test/runTest.js",
+    "test": "node ./out/src/test/runTest.js",
     "clean": "rm -rf ./out"
   },
   "devDependencies": {
@@ -121,10 +215,11 @@
     "eslint": "^7.6.0",
     "glob": "^7.1.6",
     "mocha": "^9.1.4",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.7",
+    "lint-staged": "^13.0.3",
     "node-fetch": "^2.6.0",
     "vscode-jsonrpc": "^6.0.0",
     "vscode-languageclient": "^8.0.1",

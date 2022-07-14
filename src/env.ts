@@ -1,18 +1,34 @@
-import { ExtensionContext, OutputChannel, Uri } from "vscode";
+import {
+  ExtensionContext,
+  OutputChannel,
+  Uri,
+  WorkspaceConfiguration,
+} from "vscode";
 import { window, workspace } from "vscode";
 
 import { LSP_LOG_FILE, VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
 
 export class Config {
-  logging: boolean = false;
-  rules: string = "";
-  semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
-  path: string = "";
+  get cfg(): WorkspaceConfiguration {
+    return workspace.getConfiguration(VSCODE_CONFIG_KEY);
+  }
+  get<T>(path: string): T | undefined {
+    return this.cfg.get<T>(path);
+  }
+
+  get logging(): boolean {
+    return this.cfg.get<boolean>("logging") ?? false;
+  }
+
+  get path(): string {
+    return this.cfg.get<string>("path") ?? "semgrep";
+  }
 }
 
 export class Environment {
   _config: Config = new Config();
+  semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
 
   private constructor(
     readonly context: ExtensionContext,
@@ -21,6 +37,7 @@ export class Environment {
     readonly logger: Logger
   ) {
     this._config = config;
+    this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
   }
 
   get config(): Config {
@@ -39,12 +56,7 @@ export class Environment {
   }
 
   static async loadConfig(context: ExtensionContext): Promise<Config> {
-    let config = new Config();
-    let workspace_config = workspace.getConfiguration(VSCODE_CONFIG_KEY);
-    config.rules = workspace_config.get("rules", "");
-    config.logging = workspace_config.get("logging", false);
-    config.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
-    config.path = workspace_config.get("path","")
+    const config = new Config();
     if (config.logging) {
       await Environment.initLogDir(context);
     }
@@ -59,11 +71,11 @@ export class Environment {
   async reloadConfig(): Promise<Environment> {
     // Reload configuration
     this.config = await Environment.loadConfig(this.context);
-    this.logger.enableLogger(this.config.logging); 
+    this.logger.enableLogger(this.config.logging);
     return this;
   }
 
-  dispose() {
+  dispose(): void {
     this.channel.dispose();
   }
 }
