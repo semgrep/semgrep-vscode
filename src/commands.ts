@@ -5,8 +5,10 @@ import {
   login,
   loginFinish,
   LoginParams,
-  scan,
+  logout,
+  refreshRules,
   scanWorkspace,
+  ScanWorkspaceParams,
 } from "./lsp_ext";
 
 export function registerCommands(
@@ -21,27 +23,19 @@ export function registerCommands(
     }
   });
 
-  vscode.commands.registerCommand("semgrep.scan", async (file?: vscode.Uri) => {
-    let uri = null;
-    if (!file) {
-      // Get active file if no path provided
-      const activeEditor = vscode.window.activeTextEditor;
-      if (activeEditor) {
-        uri = activeEditor.document.uri;
-      }
-    } else {
-      uri = file;
-    }
-    if (uri) {
-      await client.sendNotification(scan, { uri: uri.toString() });
-    } else {
-      vscode.window.showWarningMessage(
-        "No file provided to scan, please open a file or provide a file name"
-      );
-    }
-  });
-
   vscode.commands.registerCommand("semgrep.scanWorkspace", async () => {
     await client.sendNotification(scanWorkspace);
+  });
+
+  vscode.commands.registerCommand("semgrep.scanWorkspaceFull", async () => {
+    await client.sendNotification(scanWorkspace, { full: true });
+  });
+
+  vscode.commands.registerCommand("semgrep.logout", async () => {
+    await client.sendNotification(logout);
+  });
+
+  vscode.commands.registerCommand("semgrep.refreshRules", async () => {
+    await client.sendNotification(refreshRules);
   });
 }

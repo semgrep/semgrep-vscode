@@ -6,9 +6,13 @@ export interface ScanParams {
   uri: string;
 }
 
-export const scan = new lc.NotificationType<ScanParams | null>("semgrep/scan");
+export interface ScanWorkspaceParams {
+  full?: boolean;
+}
 
-export const scanWorkspace = new lc.NotificationType0("semgrep/scanWorkspace");
+export const scanWorkspace = new lc.NotificationType<ScanWorkspaceParams>(
+  "semgrep/scanWorkspace"
+);
 
 export interface LoginParams {
   url: string;
@@ -22,12 +26,10 @@ export const loginFinish = new lc.NotificationType<LoginParams>(
   "semgrep/loginFinish"
 );
 
-export const refreshRules = new lc.NotificationType<"workspace" | "ci">(
-  "semgrep/refreshRules"
-);
+export const logout = new lc.NotificationType("semgrep/logout");
+
+export const refreshRules = new lc.NotificationType("semgrep/refreshRules");
 
 export const workspaceRules = new lc.RequestType0<any[], void>(
   "semgrep/workspaceRules"
 );
-
-export const ciRules = new lc.RequestType0<any[], void>("semgrep/ciRules");
