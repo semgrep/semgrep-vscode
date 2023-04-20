@@ -24,7 +24,7 @@ export function registerCommands(
   });
 
   vscode.commands.registerCommand("semgrep.scanWorkspace", async () => {
-    await client.sendNotification(scanWorkspace);
+    await client.sendNotification(scanWorkspace, { full: false });
   });
 
   vscode.commands.registerCommand("semgrep.scanWorkspaceFull", async () => {
