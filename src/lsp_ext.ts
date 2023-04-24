@@ -18,6 +18,11 @@ export interface LoginParams {
   url: string;
   sessionId: string;
 }
+
+export interface LoginStatusParams {
+  loggedIn: boolean;
+}
+
 export const login = new lc.RequestType0<LoginParams | null, void>(
   "semgrep/login"
 );
@@ -32,4 +37,8 @@ export const refreshRules = new lc.NotificationType("semgrep/refreshRules");
 
 export const workspaceRules = new lc.RequestType0<any[], void>(
   "semgrep/workspaceRules"
+);
+
+export const loginStatus = new lc.RequestType0<LoginStatusParams | null, void>(
+  "semgrep/loginStatus"
 );

@@ -1,9 +1,4 @@
-import {
-  workspace,
-  ConfigurationChangeEvent,
-  ExtensionContext,
-  window,
-} from "vscode";
+import * as vscode from "vscode";
 
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
@@ -11,6 +6,8 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { Environment } from "./env";
 import { registerCommands } from "./commands";
 import { LanguageClient } from "vscode-languageclient/node";
+import { createStatusBar } from "./status_bar";
+import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 // import { activateRuleExplorer } from "./rule_explorer";
 
 let global_env: Environment | null = null;
@@ -36,14 +33,15 @@ export async function activate(
 
   const client = await activateLsp(env);
   global_client = client;
-  // This will be moved to LSP
   //activateSearch(env);
+  const statusBar = createStatusBar();
   if (client) {
     //activateRuleExplorer(client,false);
     registerCommands(env, client);
+    statusBar.show();
     // Handle configuration changes
     context.subscriptions.push(
-      workspace.onDidChangeConfiguration(
+      vscode.workspace.onDidChangeConfiguration(
         async (event: ConfigurationChangeEvent) => {
           if (event.affectsConfiguration(VSCODE_CONFIG_KEY)) {
             await env.reloadConfig();
@@ -54,8 +52,11 @@ export async function activate(
         }
       )
     );
+    vscode.commands
+      .executeCommand("semgrep.loginStatus")
+      .then(() => vscode.commands.executeCommand("semgrep.loginNudge"));
   } else {
-    window.showErrorMessage("Failed to load Semgrep Extension");
+    vscode.window.showErrorMessage("Failed to load Semgrep Extension");
   }
   return client;
 }

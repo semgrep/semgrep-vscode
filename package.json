@@ -17,7 +17,36 @@
     "semgrep"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:csharp",
+    "onLanguage:go",
+    "onLanguage:java",
+    "onLanguage:javascript",
+    "onLanguage:json",
+    "onLanguage:javascriptreact",
+    "onLanguage:php",
+    "onLanguage:python",
+    "onLanguage:ruby",
+    "onLanguage:scala",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:rust",
+    "onLanguage:c",
+    "onLanguage:cpp",
+    "onLanguage:clojure",
+    "onLanguage:bash",
+    "onLanguage:dart",
+    "onLanguage:dockerfile",
+    "onLanguage:elixir",
+    "onLanguage:html",
+    "onLanguage:jsonnet",
+    "onLanguage:lisp",
+    "onLanguage:lua",
+    "onLanguage:ocaml",
+    "onLanguage:r",
+    "onLanguage:scheme",
+    "onLanguage:solidity",
+    "onLanguage:swift",
+    "onLanguage:yaml"
   ],
   "publisher": "Semgrep",
   "repository": "https://github.com/returntocorp/semgrep-vscode",
@@ -29,14 +58,14 @@
   "qna": "https://r2c.dev/slack",
   "main": "./out/src/extension.js",
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "semgrep-explorer",
-          "title": "Semgrep Explorer",
-          "icon": "semgrep-icon.png"
+    "icons": {
+      "semgrep-icon": {
+        "description": "Semgrep Logo",
+        "default": {
+          "fontPath": "./semgrep-icon.woff",
+          "fontCharacter": "A"
         }
-      ]
+      }
     },
     "commands": [
       {
@@ -45,11 +74,11 @@
       },
       {
         "command": "semgrep.scanWorkspace",
-        "title": "Semgrep: Scan workspace"
+        "title": "Semgrep: Scan changed files in workspace"
       },
       {
         "command": "semgrep.scanWorkspaceFull",
-        "title": "Semgrep: Scan workspace (full)"
+        "title": "Semgrep: Scan all files in workspace"
       },
       {
         "command": "semgrep.logout",

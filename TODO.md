@@ -1,7 +1,3 @@
-- [x] Update README
-- [ ] Update list of languages
+- [x] Update list of languages
 - [ ] Check semgrep versions to match version required by the extension
-- [x] Propose to automatically download and install semgrep
-- [ ] Use LSP server for semgrep code search feature (faster?)
-- [x] Enhance semgrep/semgrep-core to allow scanning "in-memory" source code instead of writing to temp files
 - [ ] Implement scanning onChange in addition to only onOpen and onSave

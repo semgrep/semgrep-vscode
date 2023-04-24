@@ -5,10 +5,11 @@ import {
   login,
   loginFinish,
   LoginParams,
+  loginStatus,
+  LoginStatusParams,
   logout,
   refreshRules,
   scanWorkspace,
-  ScanWorkspaceParams,
 } from "./lsp_ext";
 
 export function registerCommands(
@@ -33,9 +34,36 @@ export function registerCommands(
 
   vscode.commands.registerCommand("semgrep.logout", async () => {
     await client.sendNotification(logout);
+    env.loggedIn = false;
   });
 
   vscode.commands.registerCommand("semgrep.refreshRules", async () => {
     await client.sendNotification(refreshRules);
+  });
+
+  vscode.commands.registerCommand("semgrep.loginStatus", async () => {
+    const result: LoginStatusParams | null = await client.sendRequest(
+      loginStatus
+    );
+    if (result) {
+      env.logger.log("Status Result " + result.loggedIn);
+      env.loggedIn = result.loggedIn;
+    }
+  });
+
+  vscode.commands.registerCommand("semgrep.loginNudge", async () => {
+    env.logger.log("logged in: " + env.loggedIn);
+    if (!env.loggedIn && env.showNudges) {
+      const resp = await vscode.window.showInformationMessage(
+        "Login to enable additional proprietary Semgrep Registry rules and running custom policies from Semgrep App",
+        "Login",
+        "Do not show again"
+      );
+      if (resp == "Login") {
+        vscode.commands.executeCommand("semgrep.login");
+      } else if (resp == "Do not show again") {
+        env.showNudges = false;
+      }
+    }
   });
 }
