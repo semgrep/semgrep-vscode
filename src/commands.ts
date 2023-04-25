@@ -55,7 +55,7 @@ export function registerCommands(
     env.logger.log("logged in: " + env.loggedIn);
     if (!env.loggedIn && env.showNudges) {
       const resp = await vscode.window.showInformationMessage(
-        "Login to enable additional proprietary Semgrep Registry rules and running custom policies from Semgrep App",
+        "Login to enable additional proprietary Semgrep Registry rules and running custom policies from Semgrep Code",
         "Login",
         "Do not show again"
       );
