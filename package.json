@@ -41,7 +41,7 @@
     "commands": [
       {
         "command": "semgrep.login",
-        "title": "Semgrep: Login"
+        "title": "Semgrep: Sign in"
       },
       {
         "command": "semgrep.scanWorkspace",
