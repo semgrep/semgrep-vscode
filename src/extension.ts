@@ -39,6 +39,7 @@ export async function activate(
     //activateRuleExplorer(client,false);
     registerCommands(env, client);
     statusBar.show();
+    vscode.window.registerTreeDataProvider("semgrep-search", env.searchView);
     // Handle configuration changes
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration(

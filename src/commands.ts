@@ -10,6 +10,8 @@ import {
   logout,
   refreshRules,
   scanWorkspace,
+  search,
+  SearchParams,
 } from "./lsp_ext";
 
 export function registerCommands(
@@ -65,5 +67,16 @@ export function registerCommands(
         env.showNudges = false;
       }
     }
+  });
+
+  vscode.commands.registerCommand("semgrep.search", async () => {
+    const pattern = "$X == $Y";
+    const language = "python";
+    const searchParams: SearchParams = {
+      pattern,
+      language,
+    };
+    const result = await client.sendRequest(search, searchParams);
+    env.searchView.setSearchItems(result.locations);
   });
 }

@@ -29,6 +29,14 @@
   "qna": "https://r2c.dev/slack",
   "main": "./out/src/extension.js",
   "contributes": {
+    "views": {
+      "workbench/view/search": [
+        {
+          "id": "semgrep-search",
+          "name": "Semgrep Pattern Search"
+        }
+      ]
+    },
     "icons": {
       "semgrep-icon": {
         "description": "Semgrep Logo",
@@ -58,6 +66,10 @@
       {
         "command": "semgrep.refreshRules",
         "title": "Semgrep: Refresh rules"
+      },
+      {
+        "command": "semgrep.search",
+        "title": "Semgrep: Search"
       }
     ],
     "configuration": {

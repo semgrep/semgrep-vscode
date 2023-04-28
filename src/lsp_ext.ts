@@ -1,4 +1,5 @@
 import * as lc from "vscode-languageclient";
+import { SearchResult } from "./search";
 
 // https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts
 
@@ -23,6 +24,14 @@ export interface LoginStatusParams {
   loggedIn: boolean;
 }
 
+export interface SearchParams {
+  pattern: string;
+  language: string;
+}
+
+export interface SearchResults {
+  locations: SearchResult[];
+}
 export const login = new lc.RequestType0<LoginParams | null, void>(
   "semgrep/login"
 );
@@ -41,4 +50,8 @@ export const workspaceRules = new lc.RequestType0<any[], void>(
 
 export const loginStatus = new lc.RequestType0<LoginStatusParams | null, void>(
   "semgrep/loginStatus"
+);
+
+export const search = new lc.RequestType<SearchParams, SearchResults, void>(
+  "semgrep/search"
 );

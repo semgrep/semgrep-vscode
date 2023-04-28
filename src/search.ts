@@ -1,267 +1,111 @@
-import path = require("path");
 import * as vscode from "vscode";
-import { promisify } from "util";
-import { execFile } from "child_process";
-
-import { SEMGREP_BINARY } from "./constants";
 import { Environment } from "./env";
 
-const execFileAsync = promisify(execFile);
-
-const activateSearch = async (env: Environment) => {
-  const semgrepSearchProvider = new SemgrepSearchProvider();
-  const customView = vscode.window.createTreeView("semgrepTreeView", {
-    treeDataProvider: semgrepSearchProvider,
+// Thanks to vscode references-view for this
+function getPreviewChunks(
+  doc: vscode.TextDocument,
+  range: vscode.Range,
+  beforeLen = 8,
+  trim = false
+) {
+  const previewStart = range.start.with({
+    character: Math.max(0, range.start.character - beforeLen),
   });
-
-  const subs = env.context.subscriptions;
-  subs.push(
-    vscode.commands.registerCommand(
-      "semgrep.searchPattern",
-      async (context: vscode.ExtensionContext) =>
-        await semgrepSearchProvider.search(customView)
-    )
+  const wordRange = doc.getWordRangeAtPosition(previewStart);
+  let before = doc.getText(
+    new vscode.Range(wordRange ? wordRange.start : previewStart, range.start)
   );
+  const inside = doc.getText(range);
+  const previewEnd = range.end.translate(0, 331);
+  let after = doc.getText(new vscode.Range(range.end, previewEnd));
+  if (trim) {
+    before = before.replace(/^\s*/g, "");
+    after = after.replace(/\s*$/g, "");
+  }
+  return { before, inside, after };
+}
 
-  subs.push(
-    vscode.commands.registerCommand(
-      "semgrep.goToFile",
-      async (filePath: string, lineNumber: number) =>
-        await semgrepSearchProvider.goToFile(filePath, lineNumber)
-    )
-  );
+export class FileItem extends vscode.TreeItem {
+  constructor(readonly uri: vscode.Uri, public matches: MatchItem[]) {
+    super(uri, vscode.TreeItemCollapsibleState.Collapsed);
+    this.iconPath = vscode.ThemeIcon.File;
+    this.description = true;
+  }
+}
 
-  subs.push(
-    vscode.commands.registerCommand(
-      "semgrep.deleteEntry",
-      async (element: Finding | SearchResult) =>
-        await semgrepSearchProvider.deleteElement(element)
-    )
-  );
-};
+export class MatchItem extends vscode.TreeItem {
+  constructor(readonly range: vscode.Range, readonly file: FileItem) {
+    super("child", vscode.TreeItemCollapsibleState.None);
+    this.contextValue = "match-item";
+  }
+}
+
+export class SearchResult {
+  constructor(readonly uri: string, readonly ranges: vscode.Range[]) {}
+}
 
 export class SemgrepSearchProvider
-  implements vscode.TreeDataProvider<SearchResult | Finding>
+  implements vscode.TreeDataProvider<FileItem | MatchItem>
 {
-  private _onDidChangeTreeData: vscode.EventEmitter<SearchResult | null> =
-    new vscode.EventEmitter<SearchResult | null>();
-  readonly onDidChangeTreeData: vscode.Event<SearchResult | null> =
-    this._onDidChangeTreeData.event;
+  private readonly _onDidChange = new vscode.EventEmitter<
+    FileItem | MatchItem | undefined
+  >();
 
-  private results: SearchResult[] = [];
+  readonly onDidChangeTreeData = this._onDidChange.event;
 
-  getTreeItem(element: SearchResult): vscode.TreeItem {
+  private items: FileItem[] = [];
+
+  setSearchItems(results: SearchResult[]) {
+    this.items = results.map((r) => {
+      const uri = vscode.Uri.parse(r.uri);
+      const fi = new FileItem(uri, []);
+      const matches = r.ranges.map(
+        (m) => new MatchItem(new vscode.Range(m.start, m.end), fi)
+      );
+      fi.matches = matches;
+      return fi;
+    });
+    this._onDidChange.fire(undefined);
+  }
+
+  async getTreeItem(element: FileItem | MatchItem): Promise<vscode.TreeItem> {
+    if (element instanceof MatchItem) {
+      const doc = await vscode.workspace.openTextDocument(element.file.uri);
+      const range = element.range;
+      const { before, inside, after } = getPreviewChunks(doc, range);
+
+      const label: vscode.TreeItemLabel = {
+        label: before + inside + after,
+        highlights: [[before.length, before.length + inside.length]],
+      };
+      element.label = label;
+      element.command = {
+        command: "vscode.open",
+        title: "Open Reference",
+        arguments: [
+          element.file.uri,
+          <vscode.TextDocumentShowOptions>{
+            selection: range.with({ end: range.start }),
+          },
+        ],
+      };
+    }
     return element;
   }
-
-  getParent(
-    element: SearchResult | Finding
-  ): SearchResult | Finding | undefined {
-    /*
-      I thought about this for a long time.
-      I know this is not the most effective way of doing this
-      but it is the easiest. Computers are fast tell this becomes
-      a problem i'm just going to leave it like this
-    */
-    this.results.forEach((e) => {
-      e.findings.forEach((f) => {
-        if (f === element) {
-          return e;
-        }
-      });
-    });
-
+  getChildren(
+    element?: FileItem | MatchItem | undefined
+  ): vscode.ProviderResult<(FileItem | MatchItem)[]> {
+    if (!element) {
+      return this.items;
+    }
+    if (element instanceof FileItem) {
+      return element.matches;
+    }
     return undefined;
   }
-
-  deleteElement(element: SearchResult | Finding) {
-    if (element instanceof SearchResult) {
-      this.results = this.results.filter((e) => {
-        return e !== element;
-      });
-    } else {
-      this.results.forEach((e) => {
-        e.findings = e.findings.filter((f) => {
-          if (f !== element) {
-            return true;
-          }
-
-          // We are going to remove this element so we need to subtract one
-          e.description = String(e.findings.length - 1);
-        });
-      });
-    }
-
-    this._onDidChangeTreeData.fire(null);
-  }
-
-  getChildren(
-    element?: SearchResult
-  ): Thenable<SearchResult[]> | Thenable<Finding[]> {
-    if (element == undefined) {
-      return Promise.resolve(this.results);
-    }
-
-    return Promise.resolve(element.findings);
-  }
-
-  goToFile = async (filePath: string, lineNumber: number) => {
-    const openPath = vscode.Uri.parse("file://" + filePath);
-    const document = await vscode.workspace.openTextDocument(openPath);
-
-    const editor = await vscode.window.showTextDocument(document);
-
-    editor.revealRange(new vscode.Range(lineNumber, 0, lineNumber, 0)); //TODO: we should most likely add the end as well since it provided
-    editor.selection = new vscode.Selection(lineNumber, 0, lineNumber, 0);
-  };
-
-  search = async (customView: vscode.TreeView<SearchResult | Finding>) => {
-    const inputResult = await vscode.window.showInputBox({
-      value: "",
-      placeHolder: "Enter Search Pattern",
-    });
-
-    // User has canceled the request
-    if (inputResult == undefined) {
-      return;
-    }
-
-    let languageOptions = [
-      "c",
-      "go",
-      "java",
-      "javascript",
-      "javascriptreact",
-      "json",
-      "ocaml",
-      "php",
-      "python",
-      "ruby",
-      "typescript",
-      "typescriptreact",
-    ];
-
-    const lang = vscode.window.activeTextEditor?.document.languageId;
-
-    if (lang != null) {
-      // Conveniently, Semgrep's language IDs seem to match up fairly well with
-      // VS Code's. At some point we might need to define a mapping here.
-      const i = languageOptions.indexOf(lang);
-      if (i !== -1) {
-        languageOptions.splice(i, 1);
-        languageOptions.splice(0, 0, lang);
-      }
-    }
-
-    const quickPickResult = await vscode.window.showQuickPick(languageOptions, {
-      placeHolder: "select target language",
-    });
-
-    // User has canceled the request
-    if (quickPickResult == undefined) {
-      return;
-    }
-
-    const path = vscode.workspace.workspaceFolders;
-
-    if (path == undefined) {
-      return;
-    }
-
-    vscode.commands.executeCommand("semgrepTreeView.focus");
-    const output = await searchPatternWorkspace(
-      path[0].uri.fsPath,
-      inputResult,
-      quickPickResult
-    );
-
-    customView.message = `Results for pattern: "${inputResult}"`;
-
-    //TODO: should a pass this into the fire function instead of using the global scope?
-    this.results = output;
-    this._onDidChangeTreeData.fire(null);
-  };
-}
-
-export class SearchResult extends vscode.TreeItem {
-  constructor(
-    public readonly label: string,
-    public findings: Finding[],
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly resourceUri: vscode.Uri
-  ) {
-    super(label, collapsibleState);
-    this.iconPath = vscode.ThemeIcon.File;
+  getParent(
+    element: FileItem | MatchItem
+  ): vscode.ProviderResult<FileItem | MatchItem> {
+    return element instanceof MatchItem ? element.file : undefined;
   }
 }
-
-export class Finding extends vscode.TreeItem {
-  constructor(
-    public readonly label: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command
-  ) {
-    super(label, collapsibleState);
-    this.contextValue = "finding";
-  }
-}
-
-export default activateSearch;
-
-// Checks a pattern based on path.
-export const searchPatternWorkspace = async (
-  filePath: string,
-  pattern: string,
-  lang: string
-): Promise<SearchResult[]> => {
-  const { stdout, stderr } = await execFileAsync(
-    SEMGREP_BINARY,
-    ["--json", "-e", pattern, "-l", lang, filePath],
-    { timeout: 30 * 1000 }
-  );
-
-  let results = new Map<string, SearchResult>();
-
-  JSON.parse(stdout).results.forEach((result: any) => {
-    if (results.has(path.basename(result.path))) {
-      results.get(path.basename(result.path))?.findings.push(
-        new Finding(result.extra.lines, vscode.TreeItemCollapsibleState.None, {
-          command: "semgrep.goToFile",
-          arguments: [result.path, result.start.line - 1],
-          title: "Go to file",
-        })
-      );
-    } else {
-      results.set(
-        path.basename(result.path),
-        new SearchResult(
-          path.basename(result.path),
-          [
-            new Finding(
-              result.extra.lines,
-              vscode.TreeItemCollapsibleState.None,
-              {
-                command: "semgrep.goToFile",
-                arguments: [result.path, result.start.line - 1],
-                title: "Go to file",
-              }
-            ),
-          ],
-          vscode.TreeItemCollapsibleState.Expanded,
-          vscode.Uri.parse("file://" + result.path)
-        )
-      );
-    }
-  });
-
-  if (results.size == 0) {
-    await vscode.window.showInformationMessage(
-      "No Results returned for that pattern"
-    );
-  }
-
-  return Array.from(results).map(([key, value]) => {
-    value.description = String(value.findings.length);
-    return value;
-  });
-};
