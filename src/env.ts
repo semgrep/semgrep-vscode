@@ -48,6 +48,22 @@ export class Environment {
     this._config = config;
   }
 
+  get loggedIn(): boolean {
+    return this.context.globalState.get("loggedIn", false);
+  }
+
+  set loggedIn(val: boolean) {
+    this.context.globalState.update("loggedIn", val);
+  }
+
+  get showNudges(): boolean {
+    return this.context.globalState.get("showNudges", true);
+  }
+
+  set showNudges(val: boolean) {
+    this.context.globalState.update("showNudges", val);
+  }
+
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);

@@ -1,9 +1,3 @@
-- [ ] Update README
-- [ ] Refactor src/search.ts to follow same coding convention (it comes from a user's PR)
-- [ ] Add config option to enable/disable LSP server
-- [ ] Update list of languages
+- [x] Update list of languages
 - [ ] Check semgrep versions to match version required by the extension
-- [ ] Propose to automatically download and install semgrep
-- [ ] Use LSP server for semgrep code search feature (faster?)
-- [ ] Enhance semgrep/semgrep-core to allow scanning "in-memory" source code instead of writing to temp files
 - [ ] Implement scanning onChange in addition to only onOpen and onSave

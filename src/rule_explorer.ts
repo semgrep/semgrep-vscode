@@ -8,7 +8,7 @@ import {
   window,
 } from "vscode";
 import { LanguageClient } from "vscode-languageclient/node";
-import { ciRules, refreshRules, workspaceRules } from "./lsp_ext";
+import { refreshRules, workspaceRules } from "./lsp_ext";
 
 export function activateRuleExplorer(client: LanguageClient, ci: boolean) {
   const view_id = ci ? "ciExplorer" : "workspaceExplorer";
@@ -27,17 +27,17 @@ class RuleExplorer implements TreeDataProvider<Rule> {
     void | Rule | Rule[] | null | undefined
   > = new EventEmitter();
 
-  private command;
+  //private command;
   onDidChangeTreeData: Event<void | Rule | Rule[] | null | undefined> =
     this._onDidChangeTreeData.event;
   constructor(private client: LanguageClient, ci: boolean) {
-    const command = ci ? ciRules : workspaceRules;
+    /*const command = ci ? ciRules : workspaceRules;
     this.command = command;
     client.onNotification(refreshRules, (params) => {
       if ((params == "ci") == ci) {
         this._onDidChangeTreeData.fire();
       }
-    });
+    });*/
   }
 
   getTreeItem(element: Rule): TreeItem | Thenable<TreeItem> {
@@ -47,9 +47,9 @@ class RuleExplorer implements TreeDataProvider<Rule> {
     if (element) {
       return [];
     } else {
-      return this.client.sendRequest(this.command).then((rules) => {
+      /*return this.client.sendRequest(this.command).then((rules) => {
         return rules.map((r) => new Rule(r));
-      });
+      });*/
     }
   }
 }

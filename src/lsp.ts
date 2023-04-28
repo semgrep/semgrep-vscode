@@ -1,5 +1,16 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as cp from "child_process";
+
+const execShell = (cmd: string) =>
+  new Promise<string>((resolve, reject) => {
+    cp.exec(cmd, (err, out) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(out);
+    });
+  });
 
 import {
   LanguageClient,
@@ -19,7 +30,6 @@ import {
   DIAGNOSTIC_COLLECTION_NAME,
 } from "./constants";
 import { Environment } from "./env";
-import { activate } from "./extension";
 
 async function findSemgrep(env: Environment): Promise<string | null> {
   if (env.config.path !== "semgrep") {
@@ -27,45 +37,32 @@ async function findSemgrep(env: Environment): Promise<string | null> {
   }
   const server = which.sync(SEMGREP_BINARY, { nothrow: true });
   if (!server) {
-    const brew = which.sync("brew", { nothrow: true });
-    const pip = which.sync("pip", { nothrow: true });
-    const pip3 = which.sync("pip3", { nothrow: true });
-    const pip_install = "Install with pip (Preferred)";
-    const brew_install = "Install with brew";
-    const resp = await vscode.window.showInformationMessage(
-      "Semgrep is not installed! Please install to use this extension",
-      pip_install,
-      brew_install
-    );
-    let command = null;
-    switch (resp) {
-      case pip_install:
-        command = pip3 ? pip3 : pip;
-        break;
-      case brew_install:
-        command = brew;
-        break;
+    let pip = which.sync("pip", { nothrow: true });
+    if (!pip) {
+      pip = which.sync("pip3", { nothrow: true });
     }
-    if (command) {
-      const terminal = vscode.window.createTerminal(`Ext Terminal #1`);
-      terminal.sendText(command + " install semgrep && exit");
-      vscode.window.onDidCloseTerminal((t) => {
-        if (t == terminal) {
-          vscode.window.showInformationMessage("Semgrep succesfully installed");
-          if (resp == brew_install) {
-            vscode.window.showInformationMessage(
-              "Please run *sudo launchctl config user path '$(brew --prefix)/bin:${PATH}'* and restart to enable Semgrep. See [https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities]"
-            );
-          }
-          activate(env.context);
-        }
-      });
-    } else if (resp) {
+    if (!pip) {
       vscode.window.showErrorMessage(
-        "Error: chosen package manager not installed"
+        "Python 3.7+ required for the Semgrep Extension"
+      );
+      return null;
+    }
+    fs.mkdir(env.context.globalStorageUri.fsPath, () => undefined);
+    const path = env.context.globalStorageUri.fsPath;
+    const cmd =
+      'PYTHONUSERBASE="' +
+      path +
+      '" ' +
+      pip +
+      " install --user --upgrade --ignore-installed semgrep";
+    try {
+      await execShell(cmd);
+    } catch {
+      vscode.window.showErrorMessage(
+        "Semgrep binary could not be installed, please see https://semgrep.dev/docs/getting-started/ for instructions"
       );
     }
-    return null;
+    return path + "/bin/semgrep";
   }
   return server;
 }

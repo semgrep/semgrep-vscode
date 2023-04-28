@@ -5,7 +5,10 @@ import {
   login,
   loginFinish,
   LoginParams,
-  scan,
+  loginStatus,
+  LoginStatusParams,
+  logout,
+  refreshRules,
   scanWorkspace,
 } from "./lsp_ext";
 
@@ -21,27 +24,46 @@ export function registerCommands(
     }
   });
 
-  vscode.commands.registerCommand("semgrep.scan", async (file?: vscode.Uri) => {
-    let uri = null;
-    if (!file) {
-      // Get active file if no path provided
-      const activeEditor = vscode.window.activeTextEditor;
-      if (activeEditor) {
-        uri = activeEditor.document.uri;
-      }
-    } else {
-      uri = file;
-    }
-    if (uri) {
-      await client.sendNotification(scan, { uri: uri.toString() });
-    } else {
-      vscode.window.showWarningMessage(
-        "No file provided to scan, please open a file or provide a file name"
-      );
+  vscode.commands.registerCommand("semgrep.scanWorkspace", async () => {
+    await client.sendNotification(scanWorkspace, { full: false });
+  });
+
+  vscode.commands.registerCommand("semgrep.scanWorkspaceFull", async () => {
+    await client.sendNotification(scanWorkspace, { full: true });
+  });
+
+  vscode.commands.registerCommand("semgrep.logout", async () => {
+    await client.sendNotification(logout);
+    env.loggedIn = false;
+  });
+
+  vscode.commands.registerCommand("semgrep.refreshRules", async () => {
+    await client.sendNotification(refreshRules);
+  });
+
+  vscode.commands.registerCommand("semgrep.loginStatus", async () => {
+    const result: LoginStatusParams | null = await client.sendRequest(
+      loginStatus
+    );
+    if (result) {
+      env.logger.log("Status Result " + result.loggedIn);
+      env.loggedIn = result.loggedIn;
     }
   });
 
-  vscode.commands.registerCommand("semgrep.scanWorkspace", async () => {
-    await client.sendNotification(scanWorkspace);
+  vscode.commands.registerCommand("semgrep.loginNudge", async () => {
+    env.logger.log("logged in: " + env.loggedIn);
+    if (!env.loggedIn && env.showNudges) {
+      const resp = await vscode.window.showInformationMessage(
+        "Sign in to use your team's shared Semgrep rule configuration",
+        "Sign in",
+        "Do not show again"
+      );
+      if (resp == "Login") {
+        vscode.commands.executeCommand("semgrep.login");
+      } else if (resp == "Do not show again") {
+        env.showNudges = false;
+      }
+    }
   });
 }
