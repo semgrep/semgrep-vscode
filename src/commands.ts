@@ -59,7 +59,7 @@ export function registerCommands(
         "Sign in",
         "Do not show again"
       );
-      if (resp == "Login") {
+      if (resp == "Sign in") {
         vscode.commands.executeCommand("semgrep.login");
       } else if (resp == "Do not show again") {
         env.showNudges = false;
