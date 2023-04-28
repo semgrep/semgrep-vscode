@@ -53,7 +53,7 @@
       },
       {
         "command": "semgrep.logout",
-        "title": "Semgrep: Logout"
+        "title": "Semgrep: Sign out"
       },
       {
         "command": "semgrep.refreshRules",
