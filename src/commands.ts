@@ -56,7 +56,7 @@ export function registerCommands(
     if (!env.loggedIn && env.showNudges) {
       const resp = await vscode.window.showInformationMessage(
         "Sign in to use your team's shared Semgrep rule configuration",
-        "Login",
+        "Sign in",
         "Do not show again"
       );
       if (resp == "Login") {
