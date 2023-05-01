@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as cp from "child_process";
-
+import * as semver from "semver";
 const execShell = (cmd: string) =>
   new Promise<string>((resolve, reject) => {
     cp.exec(cmd, (err, out) => {
@@ -28,6 +28,7 @@ import {
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
+  MIN_VERSION,
 } from "./constants";
 import { Environment } from "./env";
 
@@ -35,7 +36,7 @@ async function findSemgrep(env: Environment): Promise<string | null> {
   if (env.config.path !== "semgrep") {
     return env.config.path;
   }
-  const server = which.sync(SEMGREP_BINARY, { nothrow: true });
+  let server = which.sync(SEMGREP_BINARY, { nothrow: true });
   if (!server) {
     let pip = which.sync("pip", { nothrow: true });
     if (!pip) {
@@ -61,8 +62,19 @@ async function findSemgrep(env: Environment): Promise<string | null> {
       vscode.window.showErrorMessage(
         "Semgrep binary could not be installed, please see https://semgrep.dev/docs/getting-started/ for instructions"
       );
+      return null;
     }
-    return path + "/bin/semgrep";
+    server = path + "/bin/semgrep";
+  }
+  if (server) {
+    const cmd = "semgrep --version";
+    const version = await execShell(cmd);
+    if (!semver.satisfies(version, MIN_VERSION)) {
+      vscode.window.showErrorMessage(
+        `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`
+      );
+      return null;
+    }
   }
   return server;
 }
