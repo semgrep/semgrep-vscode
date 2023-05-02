@@ -74,7 +74,7 @@ function semgrepCmdLineOpts(env: Environment): string[] {
   cmdlineOpts.push(...["lsp"]);
 
   // Logging
-  if (env.config.logging) {
+  if (env.config.trace) {
     cmdlineOpts.push(...["--debug"]);
   }
 
@@ -107,12 +107,26 @@ async function lspOptions(
     debug: run,
   };
   env.logger.log(`Semgrep LSP server configuration := ${JSON.stringify(run)}`);
+  const config = { ...env.config.cfg };
+  const metrics = {
+    machineId: vscode.env.machineId,
+    isNewAppInstall: vscode.env.isNewAppInstall,
+    sessionId: vscode.env.sessionId,
+    extensionVersion: env.context.extension.packageJSON.version,
+    extensionType: "vscode",
+    enabled: vscode.env.isTelemetryEnabled,
+  };
+  const initializationOptions = {
+    metrics: metrics,
+    ...config,
+  };
+  env.logger.log(`Semgrep Initializaiton Options := ${initializationOptions}`);
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
     documentSelector: [{ language: "*", scheme: "file" }],
     outputChannel: env.channel,
-    initializationOptions: env.config.cfg,
+    initializationOptions: initializationOptions,
   };
 
   return [serverOptions, clientOptions];
