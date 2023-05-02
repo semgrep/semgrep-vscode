@@ -40,10 +40,6 @@
     },
     "commands": [
       {
-        "command": "semgrep.login",
-        "title": "Semgrep: Sign in"
-      },
-      {
         "command": "semgrep.scanWorkspace",
         "title": "Semgrep: Scan changed files in workspace"
       },
@@ -52,12 +48,16 @@
         "title": "Semgrep: Scan all files in workspace"
       },
       {
+        "command": "semgrep.login",
+        "title": "Semgrep: Sign in"
+      },      
+      {
         "command": "semgrep.logout",
         "title": "Semgrep: Sign out"
       },
       {
         "command": "semgrep.refreshRules",
-        "title": "Semgrep: Refresh rules"
+        "title": "Semgrep: Update rules"
       }
     ],
     "configuration": {
