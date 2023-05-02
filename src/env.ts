@@ -17,8 +17,8 @@ export class Config {
     return this.cfg.get<T>(path);
   }
 
-  get logging(): boolean {
-    return this.cfg.get<boolean>("logging") ?? false;
+  get trace(): boolean {
+    return this.cfg.get<string>("trace.server") == "verbose";
   }
 
   get path(): string {
@@ -67,13 +67,13 @@ export class Environment {
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);
-    const logger = new Logger(config.logging, channel);
+    const logger = new Logger(config.trace, channel);
     return new Environment(context, config, channel, logger);
   }
 
   static async loadConfig(context: ExtensionContext): Promise<Config> {
     const config = new Config();
-    if (config.logging) {
+    if (config.trace) {
       await Environment.initLogDir(context);
     }
 
@@ -87,7 +87,7 @@ export class Environment {
   async reloadConfig(): Promise<Environment> {
     // Reload configuration
     this.config = await Environment.loadConfig(this.context);
-    this.logger.enableLogger(this.config.logging);
+    this.logger.enableLogger(this.config.trace);
     return this;
   }
 
