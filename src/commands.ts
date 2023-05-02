@@ -46,13 +46,11 @@ export function registerCommands(
       loginStatus
     );
     if (result) {
-      env.logger.log("Status Result " + result.loggedIn);
       env.loggedIn = result.loggedIn;
     }
   });
 
   vscode.commands.registerCommand("semgrep.loginNudge", async () => {
-    env.logger.log("logged in: " + env.loggedIn);
     if (!env.loggedIn && env.showNudges) {
       const resp = await vscode.window.showInformationMessage(
         "Sign in to use your team's shared Semgrep rule configuration",
