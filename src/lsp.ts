@@ -120,7 +120,7 @@ async function lspOptions(
     metrics: metrics,
     ...config,
   };
-  env.logger.log(`Semgrep Initializaiton Options := ${initializationOptions}`);
+  env.logger.log(`Semgrep Initialization Options := ${initializationOptions}`);
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
