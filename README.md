@@ -1,5 +1,3 @@
-⚠️ NOTE: This project is experimental and not actively maintained by r2c ⚠️
-
 # semgrep-vscode
 
 A Visual Studio Code extension for [Semgrep](https://github.com/returntocorp/semgrep).
