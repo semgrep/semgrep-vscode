@@ -31,9 +31,9 @@ Made an edit to your Semgrep configuration file? Semgrep will automatically resc
 
 Opened a file? Semgrep will scan it right away!
 
-### Semgrep App Rules
+### Semgrep Cloud Platform Rules
 
-Have rules configured for your code on [the Semgrep App](https://semgrep.dev/products/semgrep-app)? Login to scan for them!
+Have rules configured for your code on [Semgrep Cloud Platform](https://semgrep.dev/products/cloud-platform)? Sign in to use them!
 
 ### Metavariable Labelling
 
@@ -51,9 +51,9 @@ Want to go to the definition of a local or app rule? Hover over a match and clic
 
 All commands can be run through the VSCode command palette
 
-### `Semgrep: Login`
+### `Semgrep: Sign in`
 
-Login to the Semgrep App (this will open a new window in your browser) to enable scanning with rules from the App.
+Sign in to Semgrep Cloud Platform (this will open a new window in your browser) to enable scanning with rules from the App.
 
 ### `Semgrep: Scan`
 
