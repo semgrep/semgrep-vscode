@@ -2,9 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as cp from "child_process";
 import * as semver from "semver";
-const execShell = (cmd: string) =>
+const execShell = (cmd: string, env?: any) =>
   new Promise<string>((resolve, reject) => {
-    cp.exec(cmd, (err, out) => {
+    cp.exec(cmd, { env: env }, (err, out) => {
       if (err) {
         return reject(err);
       }
@@ -32,12 +32,13 @@ import {
 } from "./constants";
 import { Environment } from "./env";
 
-async function findSemgrep(env: Environment): Promise<string | null> {
+async function findSemgrep(env: Environment): Promise<Executable | null> {
+  let server_path = which.sync(SEMGREP_BINARY, { nothrow: true });
+  let env_vars = null;
   if (env.config.path !== "semgrep") {
-    return env.config.path;
+    server_path = env.config.path;
   }
-  let server = which.sync(SEMGREP_BINARY, { nothrow: true });
-  if (!server) {
+  if (!server_path) {
     let pip = which.sync("pip", { nothrow: true });
     if (!pip) {
       pip = which.sync("pip3", { nothrow: true });
@@ -49,13 +50,8 @@ async function findSemgrep(env: Environment): Promise<string | null> {
       return null;
     }
     fs.mkdir(env.context.globalStorageUri.fsPath, () => undefined);
-    const path = env.context.globalStorageUri.fsPath;
-    const cmd =
-      'PYTHONUSERBASE="' +
-      path +
-      '" ' +
-      pip +
-      " install --user --upgrade --ignore-installed semgrep";
+    const globalstorage_path = env.context.globalStorageUri.fsPath;
+    const cmd = `PYTHONUSERBASE="${globalstorage_path}" pip install --user --upgrade --ignore-installed semgrep`;
     try {
       await execShell(cmd);
     } catch {
@@ -64,19 +60,18 @@ async function findSemgrep(env: Environment): Promise<string | null> {
       );
       return null;
     }
-    server = path + "/bin/semgrep";
+    server_path = `${globalstorage_path}/bin/semgrep`;
+    env_vars = {
+      PYTHONUSERBASE: globalstorage_path,
+    };
   }
-  if (server) {
-    const cmd = "semgrep --version";
-    const version = await execShell(cmd);
-    if (!semver.satisfies(version, MIN_VERSION)) {
-      vscode.window.showErrorMessage(
-        `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`
-      );
-      return null;
-    }
-  }
-  return server;
+
+  return {
+    command: server_path,
+    options: {
+      env: env_vars,
+    },
+  };
 }
 
 function semgrepCmdLineOpts(env: Environment): string[] {
@@ -101,24 +96,30 @@ async function lspOptions(
     return [null, null];
   }
 
-  env.logger.log(`Found server binary at: ${server}`);
-  let cwd = path.dirname(fs.realpathSync(server));
+  env.logger.log(`Found server binary at: ${server.command}`);
+  let cwd = path.dirname(fs.realpathSync(server.command));
   if (vscode.workspace.workspaceFolders !== undefined) {
     cwd = vscode.workspace.workspaceFolders[0].uri.path;
   }
   env.logger.log(`  ... cwd := ${cwd}`);
   const cmdlineOpts = semgrepCmdLineOpts(env);
-  const run: Executable = {
-    command: server,
-    args: cmdlineOpts,
-    options: { cwd: cwd },
-  };
+  server.args = cmdlineOpts;
+  if (server.options) {
+    server.options.cwd = cwd;
+  }
+  const cmd = `"${server.command}" --version`;
+  const version = await execShell(cmd, server.options?.env);
+  if (!semver.satisfies(version, MIN_VERSION)) {
+    vscode.window.showErrorMessage(
+      `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`
+    );
+    return [null, null];
+  }
 
-  const serverOptions: ServerOptions = {
-    run,
-    debug: run,
-  };
-  env.logger.log(`Semgrep LSP server configuration := ${JSON.stringify(run)}`);
+  const serverOptions: ServerOptions = server;
+  env.logger.log(
+    `Semgrep LSP server configuration := ${JSON.stringify(server)}`
+  );
   const config = { ...env.config.cfg };
   const metrics = {
     machineId: vscode.env.machineId,
