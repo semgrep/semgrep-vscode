@@ -2,7 +2,7 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Shows findings from https://semgrep.dev",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.66.0"
   },
@@ -50,7 +50,7 @@
       {
         "command": "semgrep.login",
         "title": "Semgrep: Sign in"
-      },      
+      },
       {
         "command": "semgrep.logout",
         "title": "Semgrep: Sign out"
