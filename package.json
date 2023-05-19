@@ -58,6 +58,14 @@
       {
         "command": "semgrep.refreshRules",
         "title": "Semgrep: Update rules"
+      },
+      {
+        "command": "semgrep.showAst",
+        "title": "Semgrep: Show Generic AST"
+      },
+      {
+        "command": "semgrep.showAstNamed",
+        "title": "Semgrep: Show named Generic AST"
       }
     ],
     "configuration": {

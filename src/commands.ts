@@ -10,6 +10,7 @@ import {
   logout,
   refreshRules,
   scanWorkspace,
+  showAst,
 } from "./lsp_ext";
 
 export function registerCommands(
@@ -30,6 +31,22 @@ export function registerCommands(
 
   vscode.commands.registerCommand("semgrep.scanWorkspaceFull", async () => {
     await client.sendNotification(scanWorkspace, { full: true });
+  });
+
+  vscode.commands.registerCommand("semgrep.showAst", async () => {
+    // supposedly the right thing to do, according to
+    // https://github.com/Microsoft/vscode/issues/36426
+    await client.sendRequest(showAst, { 
+      named: false, 
+      uri: vscode.window.activeTextEditor.document.uri.fsPath 
+    });
+  });
+
+  vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
+    await client.sendRequest(showAst, { 
+      named: true, 
+      uri: vscode.window.activeTextEditor.document.uri.fsPath 
+    });
   });
 
   vscode.commands.registerCommand("semgrep.logout", async () => {

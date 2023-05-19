@@ -10,8 +10,17 @@ export interface ScanWorkspaceParams {
   full?: boolean;
 }
 
+export type ShowAstParams = {
+  named: boolean;
+  uri: string;
+};
+
 export const scanWorkspace = new lc.NotificationType<ScanWorkspaceParams>(
   "semgrep/scanWorkspace"
+);
+
+export const showAst = new lc.RequestType<ShowAstParams>(
+  "semgrep/showAst"
 );
 
 export interface LoginParams {
