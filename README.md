@@ -4,7 +4,7 @@
 
 ## Supported languages
 
-See the list of supported languages by [Semgrep OSS Engine](https://semgrep.dev/docs/supported-languages/#semgrep-oss-engine) in Semgrep documentation.
+See the list of [languages supported by Semgrep OSS Engine](https://semgrep.dev/docs/supported-languages/#semgrep-oss-engine) in Semgrep documentation.
 
 ## Prerequisites
 
