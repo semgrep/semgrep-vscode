@@ -16,7 +16,7 @@ To successfully install and run the Semgrep Visual Studio Code (VS Code) extensi
 
 1. Install Semgrep locally. See [Installing and running Semgrep locally](https://semgrep.dev/docs/getting-started/#installing-and-running-semgrep-locally) in Semgrep documentation. 
     
-    Note: If you choose to install Semgrep through Homebrew, make sure you added Homebrew to your PATH. See [My Mac .apps don’t find Homebrew utilities!](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities) in Homebrew documentation.
+    Note: If you install Semgrep through Homebrew, make sure you added Homebrew to your PATH. See [My Mac .apps don’t find Homebrew utilities!](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities) in Homebrew documentation.
     
 2. Optional: Log in to Semgrep Cloud Platform by running the following command, and then follow the instructions in your command-line interface:
 
