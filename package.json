@@ -1,7 +1,7 @@
 {
   "name": "semgrep",
   "displayName": "Semgrep",
-  "description": "Shows findings from https://semgrep.dev",
+  "description": "Semgrep detects vulnerabilities and helps you to enforce code standards. Make your code safe before you make that commit.",
   "version": "1.2.1",
   "engines": {
     "vscode": "^1.66.0"

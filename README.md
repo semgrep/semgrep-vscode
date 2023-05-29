@@ -1,19 +1,60 @@
-⚠️ NOTE: This project is experimental and not actively maintained by r2c ⚠️
+# Semgrep Visual Studio Code extension
 
-# semgrep-vscode
+[Semgrep](https://semgrep.dev/) is a fast, static analysis tool for finding bugs, detecting vulnerabilities, and enforcing code standards powered by an open-source engine. Semgrep Visual Studio Code extension scans lines when you change or open files, or scans all files in your workspace.
 
-A Visual Studio Code extension for [Semgrep](https://github.com/returntocorp/semgrep).
+## Supported languages
 
-- See Semgrep scan results inline each time you save a file
-- Choose which Semgrep rules you run by setting semgrep.rules in Visual Studio Code
+See the list of supported languages by [Semgrep OSS Engine](https://semgrep.dev/docs/supported-languages/#semgrep-oss-engine) in Semgrep documentation.
 
 ## Prerequisites
 
-Either pip or homebrew must be installed in order to use this extension.
+To use Semgrep Visual Studio Code extension, install either pip or Homebrew.
 
-If you choose to install via brew during setup, you need to take [one extra step](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities) to let Visual Studio Code find where brew installed semgrep
+## Installing Semgrep extension
 
-For other installation instructions, see the [Semgrep README](https://github.com/returntocorp/semgrep#installation).
+To successfully install and run the Semgrep Visual Studio Code (VS Code) extension:
+
+1. Install Semgrep locally. See [Installing and running Semgrep locally](https://semgrep.dev/docs/getting-started/#installing-and-running-semgrep-locally) in Semgrep documentation. 
+    
+    Note: If you choose to install Semgrep through Homebrew, make sure you added Homebrew to your PATH. See [My Mac .apps don’t find Homebrew utilities!](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities) in Homebrew documentation.
+    
+2. Optional: Log in to Semgrep Cloud Platform by running the following command, and then follow the instructions in your command-line interface:
+
+    ```bash
+    semgrep login
+    ```
+    
+    Note: Log in or sign in to improve the performance of Semgrep extension. After log in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code.
+    
+3. Install Semgrep extension in Visual Studio Code. For more information, see [Install an extension](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-an-extension) in Visual Studio Code documentation if necessary.
+4. In Visual Studio Code, test the extension by hitting <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (MacOS) and run the following command:
+    
+    ```
+    Semgrep: Scan all files in workspace
+    ```
+
+Find results of your scans in Visual Studio Code output. To display the output, press <kbd>⇧Shift+Ctrl+U</kbd> or <kbd>⌘+⇧Shift+U</kbd> (MacOS).
+
+## Configuring Semgrep extension scans
+
+Configure Semgrep VS Code extension in extension settings. To access the extension settings:
+
+1. Go to **Extensions view** by pressing <kbd>⇧Shift+Ctrl+X</kbd> or <kbd>⇧Shift+⌘+X</kbd> (MacOS) on your keyboard.
+2. Select Semgrep extension.
+3. Click the gear icon, and then select **Extension Settings**.
+
+The most important configuration options are:
+
+- **Semgrep › Metrics: Enabled**: Semgrep extension gathers metrics for Semgrep, Inc by default. See **[Semgrep Privacy Policy](https://semgrep.dev/docs/metrics/)** for details. To disable this option, clear the **Semgrep › Metrics: Enabled** checkbox.
+- **Semgrep › Scan: Only Git Dirty**: On by default. Semgrep checks when you open a new file, scans, and then displays findings for lines changed since the last commit.
+- **Semgrep › Scan: Configuration**: Specify rules or rulesets you want Semgrep to use to scan your code. Each item can be a YAML configuration file, a URL of a configuration file, or a directory of YAML files. Use "auto" to automatically obtain rules tailored to your project. Your project URL will be used to log in to the Semgrep Registry. See [Running rules](https://semgrep.dev/docs/running-rules/) in Semgrep documentation for more information.
+- **Semgrep › Scan: Include** - List files and directories scanned by Semgrep. This option globally overrides the workspace setting. As a result, Semgrep scans all included paths.
+- **Semgrep › Scan: Jobs** - Specify how many parallel jobs of Semgrep extension can run at the same time. The default number of parallel jobs is 1. 
+
+Advanced configuration options: 
+
+- **Semgrep › Scan: Timeout** - After the specified maximum time runs out Semgrep scan times out (stops). The default value is 30.
+- **Semgre > Trace: Server** - This option is useful for debugging. The messages option displays communication of the Semgrep Visual Studio Code extension with the LSP server.
 
 ## Features
 
@@ -80,7 +121,7 @@ You can set the following options by going to Preferences > Settings:
   - <i id="/properties/semgrep.logging">path: #/properties/semgrep.logging</i>
   - Default: _false_
 - <b id="#/properties/semgrep.scan.configuration">semgrep.scan.configuration</b>
-  - _Each item can be a YAML configuration file, directory of YAML files ending in .yml | .yaml, URL of a configuration file, or Semgrep registry entry name. Use "auto" to automatically obtain rules tailored to this project; your project URL will be used to log in to the Semgrep registry._
+  - _Specify rules or rulesets you want Semgrep to use to scan your code. Each item can be a YAML configuration file, URL of a configuration file, or directory of YAML files. Use "auto" to automatically obtain rules tailored for your project. Your project URL will be used to log in to the Semgrep Registry._
   - Type: `array`
   - <i id="/properties/semgrep.scan.configuration">path: #/properties/semgrep.scan.configuration</i>
   - Default: ``
