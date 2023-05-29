@@ -60,7 +60,7 @@ Advanced configuration options:
 
 Run Semgrep extension commands through the Visual Studio Code Command Palette. You can access the Command Palette by pressing <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (MacOS) on your keyboard. See [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) documentation. The following list includes all available Semgrep extension commands:
 
-- `Semgrep: Sign in`: Sign in or log in to the Semgrep Cloud Platform (this command opens a new window in your browser). When you sign in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code. If you are logged in in the command-line interface using `semgrep login` you are already signed in with the Visual Studio Code Semgrep extension also.
+- `Semgrep: Sign in`: Sign in or log in to the Semgrep Cloud Platform (this command opens a new window in your browser). When you sign in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code. If you are logged in with the command-line interface using `semgrep login` you are already signed in with the Visual Studio Code Semgrep extension also.
 - `Semgrep: Sign out`: Log out from Semgrep Cloud Platform.
 - `Semgrep: Scan changed files in a workspace`: Scan files that have been changed since the last commit in your current workspace.
 - `Semgrep: Scan all files in a workspace`: Scan all files in the current workspace.
