@@ -64,7 +64,7 @@ Run Semgrep extension commands through the Visual Studio Code Command Palette. Y
 - `Semgrep: Sign out`: Log out from Semgrep Cloud Platform.
 - `Semgrep: Scan changed files in a workspace`: Scan files that have been changed since the last commit in your current workspace.
 - `Semgrep: Scan all files in a workspace`: Scan all files in the current workspace.
-- `Semgrep: Update rues`: For logged-in users. If the rules in the [Rule board](https://semgrep.dev/orgs/-/board) have been changed, this command loads the new configuration of your rules for your next scan.
+- `Semgrep: Update rules`: For logged-in users. If the rules in the [Rule board](https://semgrep.dev/orgs/-/board) have been changed, this command loads the new configuration of your rules for your next scan.
 
 ## Features
 
