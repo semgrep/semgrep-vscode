@@ -53,7 +53,7 @@ The most important configuration options are:
 
 Advanced configuration options: 
 
-- **Semgrep › Scan: Timeout** - After the specified maximum time runs out Semgrep scan times out (stops). The default value is 30.
+- **Semgrep › Scan: Timeout** - After the specified maximum time runs out Semgrep scan times out (stops) in seconds. The default value is 30.
 - **Semgre > Trace: Server** - This option is useful for debugging. The messages option displays communication of the Semgrep Visual Studio Code extension with the LSP server. The default option is verbose.
 
 ## Available commands
