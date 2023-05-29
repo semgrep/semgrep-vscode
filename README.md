@@ -56,9 +56,15 @@ Advanced configuration options:
 - **Semgrep › Scan: Timeout** - After the specified maximum time runs out Semgrep scan times out (stops) in seconds. The default value is 30.
 - **Semgre > Trace: Server** - This option is useful for debugging. The messages option displays communication of the Semgrep Visual Studio Code extension with the LSP server. The default option is verbose.
 
-## Available commands
+## Commands
 
-TODO
+Run Semgrep extension commands through the Visual Studio Code Command Palette. You can access the Command Palette by pressing <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (MacOS) on your keyboard. See [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) documentation. The following list includes all available Semgrep extension commands:
+
+- `Semgrep: Sign in`: Sign in or log in to the Semgrep Cloud Platform (this command opens a new window in your browser). When you sign in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code. If you are logged in in the command-line interface using `semgrep login` you are already signed in with the Visual Studio Code Semgrep extension also.
+- `Semgrep: Sign out`: Log out from Semgrep Cloud Platform.
+- `Semgrep: Scan changed files in a workspace`: Scan files that have been changed since the last commit in your current workspace.
+- `Semgrep: Scan all files in a workspace`: Scan all files in the current workspace.
+- `Semgrep: Update rues`: For logged-in users. If the rules in the [Rule board](https://semgrep.dev/orgs/-/board) have been changed, this command loads the new configuration of your rules for your next scan.
 
 ## Features
 
@@ -93,22 +99,6 @@ Have an autofix rule? Hit a button and fix it instantly in the editor.
 ### Rule Quick Links
 
 Want to go to the definition of a local or app rule? Hover over a match and click the link!
-
-## Commands
-
-All commands can be run through the VSCode command palette
-
-### `Semgrep: Login`
-
-Login to the Semgrep App (this will open a new window in your browser) to enable scanning with rules from the App.
-
-### `Semgrep: Scan`
-
-Scan currently focused file according to configured rules.
-
-### `Semgrep: Scan Workspace`
-
-Scan all files in the currently open workspace.
 
 ## Configuration
 
