@@ -18,28 +18,30 @@ To successfully install and run the Semgrep Visual Studio Code (VS Code) extensi
     
     Note: If you install Semgrep through Homebrew, make sure you added Homebrew to your PATH. See [My Mac .apps don’t find Homebrew utilities!](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities) in Homebrew documentation.
     
-2. Optional: Log in to Semgrep Cloud Platform by running the following command, and then follow the instructions in your command-line interface:
+2. Optional: Access the Command Palette (press <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (on macOS)) and sign in to Semgrep Cloud Platform by running the following command:
 
-    ```bash
-    semgrep login
     ```
-    
+    Semgrep: Sign in
+    ```
+
+    After you run the command, click **Open** to open a new tab in your browser, and then click **Activate**.
+
     Note: Log in or sign in to improve the performance of Semgrep extension. After log in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code.
     
 3. Install Semgrep extension in Visual Studio Code. For more information, see [Install an extension](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-an-extension) in Visual Studio Code documentation if necessary.
-4. In Visual Studio Code, test the extension by hitting <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (MacOS) and run the following command:
+4. In Visual Studio Code, test the extension by hitting <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (macOS) and run the following command:
     
     ```
     Semgrep: Scan all files in workspace
     ```
 
-Find results of your scans in Visual Studio Code Problems tab. To display the output, press <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘+⇧Shift+M</kbd> (MacOS).
+Find results of your scans in Visual Studio Code Problems tab. To display the output, press <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘+⇧Shift+M</kbd> (macOS).
 
 ## Configuring Semgrep extension scans
 
 Configure Semgrep VS Code extension in extension settings. To access the extension settings:
 
-1. Go to **Extensions view** by pressing <kbd>⇧Shift+Ctrl+X</kbd> or <kbd>⇧Shift+⌘+X</kbd> (MacOS) on your keyboard.
+1. Go to **Extensions view** by pressing <kbd>⇧Shift+Ctrl+X</kbd> or <kbd>⇧Shift+⌘+X</kbd> (macOS) on your keyboard.
 2. Select Semgrep extension.
 3. Click the gear icon, and then select **Extension Settings**.
 
@@ -58,10 +60,10 @@ Advanced configuration options:
 
 ## Commands
 
-Run Semgrep extension commands through the Visual Studio Code Command Palette. You can access the Command Palette by pressing <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (MacOS) on your keyboard. See [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) documentation. The following list includes all available Semgrep extension commands:
+Run Semgrep extension commands through the Visual Studio Code Command Palette. You can access the Command Palette by pressing <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (macOS) on your keyboard. See [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) documentation. The following list includes all available Semgrep extension commands:
 
-- `Semgrep: Sign in`: Sign in or log in to the Semgrep Cloud Platform (this command opens a new window in your browser). When you sign in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code. If you are logged in with the command-line interface using `semgrep login` you are already signed in with the Visual Studio Code Semgrep extension also.
-- `Semgrep: Sign out`: Log out from Semgrep Cloud Platform.
+- `Semgrep: Sign in`: Sign in or log in to the Semgrep Cloud Platform (this command opens a new window in your browser). When you sign in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code. If you are logged in with the command-line interface using `semgrep login` you are already signed in with the Visual Studio Code Semgrep extension also. Alternatively, you can log in through your command-line interface bu running `semgrep login`.
+- `Semgrep: Sign out`: Log out from Semgrep Cloud Platform. Alternatively, you can sign out through your command-line interface by running `semgrep logout`.
 - `Semgrep: Scan changed files in a workspace`: Scan files that have been changed since the last commit in your current workspace.
 - `Semgrep: Scan all files in a workspace`: Scan all files in the current workspace.
 - `Semgrep: Update rules`: For logged-in users. If the rules in the [Rule board](https://semgrep.dev/orgs/-/board) have been changed, this command loads the new configuration of your rules for your next scan.
@@ -92,4 +94,4 @@ Want to go to the definition of a local or Semgrep Code rule? Hover over a match
 
 ## Support
 
-Please, if you need our support, join the [Semgrep community Slack workspace](https://r2c.dev/slack) and tell us about any problems you encountered.
+Please, if you need our support, join the [Semgrep community Slack workspace](http://go.semgrep.dev/slack) and tell us about any problems you encountered.
