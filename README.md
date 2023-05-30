@@ -66,6 +66,8 @@ Run Semgrep extension commands through the Visual Studio Code Command Palette. Y
 - `Semgrep: Scan all files in a workspace`: Scan all files in the current workspace.
 - `Semgrep: Update rules`: For logged-in users. If the rules in the [Rule board](https://semgrep.dev/orgs/-/board) have been changed, this command loads the new configuration of your rules for your next scan.
 
+Tip: You can also click the Semgrep icon in the Visual Studio Code to quickly access all available commands.
+
 ## Features
 
 ### Scanning
