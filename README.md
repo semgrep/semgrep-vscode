@@ -35,7 +35,7 @@ To successfully install and run the Semgrep Visual Studio Code (VS Code) extensi
     Semgrep: Scan all files in workspace
     ```
 
-Find results of your scans in Visual Studio Code Problems tab. To display the output, press <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘+⇧Shift+M</kbd> (macOS).
+Find results of your scans in Visual Studio Code Problems tab. To display the Problems tab, press <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘+⇧Shift+M</kbd> (macOS).
 
 ## Configuring Semgrep extension scans
 
