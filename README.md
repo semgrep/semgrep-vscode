@@ -80,9 +80,9 @@ Scan your code using Semgrep to get inline results and problem highlighting.
 
 When you open a file, Semgrep scans it right away.
 
-### Semgrep App Rules
+### Semgrep Code and Pro rules
 
-Sign in to receive better results, new true positive findings and fewer false positives. When you sign in, you can get all the benefits of [Semgrep Code](https://semgrep.dev/products/semgrep-code/).
+Sign in to receive better results, new true positive findings and fewer false positives. When you sign in, you can get all the benefits of [Semgrep Code](https://semgrep.dev/products/semgrep-code/) and [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/).
 
 ### Autofix
 
