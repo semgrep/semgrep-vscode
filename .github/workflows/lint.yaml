@@ -1,0 +1,43 @@
+name: lint
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+jobs:
+  # Running pre-commit in CI. See semgrep/.pre-commit-config.yaml for
+  # our pre-commit configuration.
+  # Dogfood: note that we run Semgrep inside pre-commit, so this is also dogfooding
+  # and testing how semgrep interact with pre-commit.
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      # pre-commit is a Python script, this speedup things from Xmin to Ymin?
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          # This caches the pip installed dependencies that pre-commit uses.
+          # Otherwise it will need to reinstall everytime.
+          # TODO? who will need to reinstall everytime? github action? How much does this
+          # cache directive speedup this workflow?
+          cache: pip
+          cache-dependency-path: .github/workflows/lint.yml
+      # note that in a CI context pre-commit runs the hooks with the '--all' flag, so
+      # semgrep for example is passed all the files in the repository, not just
+      # the one modifed in the PR (as it is the case when it's ran from git hooks locally).
+      # This is why sometimes pre-commit passes locally but fails in CI, for the same PR.
+      - uses: pre-commit/action@v3.0.0
+  github-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: reviewdog/action-actionlint@v1
+        with:
+          fail_on_error: true
+          actionlint_flags: -ignore 'workflow command "set-output" was deprecated. ".+"'

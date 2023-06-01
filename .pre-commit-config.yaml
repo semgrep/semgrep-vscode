@@ -12,12 +12,12 @@ repos:
       - id: prettier
 
   - repo: https://github.com/returntocorp/semgrep
-    rev: "v0.100.0"
+    rev: v1.5.1
     hooks:
-      - id: semgrep-docker-develop
-        name: Semgrep Develop Typescript
-        types: [javascript]
-        args: ["--config", "p/javascript", "--error"]
+      - id: semgrep
+        name: Semgrep Typescript
+        types: [javascript, ts, tsx]
+        args: ["--config", "p/typescript", "--error"]
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: "v8.19.0" # Use the sha / tag you want to point at
