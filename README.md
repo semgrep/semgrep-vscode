@@ -10,7 +10,7 @@ See the list of [languages supported by Semgrep OSS Engine](https://semgrep.dev/
 
 To use Semgrep Visual Studio Code extension, install either pip or Homebrew.
 
-## Installing Semgrep extension
+## Installing the Semgrep extension
 
 To successfully install and run the Semgrep Visual Studio Code (VS Code) extension:
 
