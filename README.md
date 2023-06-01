@@ -94,4 +94,4 @@ Want to go to the definition of a local or Semgrep Code rule? Hover over a match
 
 ## Support
 
-Please, if you need our support, join the [Semgrep community Slack workspace](http://go.semgrep.dev/slack) and tell us about any problems you encountered.
+If you need our support, join the [Semgrep community Slack workspace](http://go.semgrep.dev/slack) and tell us about any problems you encountered.
