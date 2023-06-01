@@ -1,7 +1,7 @@
 {
   "name": "semgrep",
   "displayName": "Semgrep",
-  "description": "Semgrep detects vulnerabilities and helps you to enforce code standards. Make your code safe before you make that commit.",
+  "description": "Security scans in a snap. Speedy SAST with a powerful rule registry for seamless detection and remediation of code vulnerabilities with each save.",
   "version": "1.2.1",
   "engines": {
     "vscode": "^1.66.0"
