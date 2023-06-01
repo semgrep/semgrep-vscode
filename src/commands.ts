@@ -73,6 +73,16 @@ export function registerCommands(
     async (searchParams: SearchParams | null, replace: string | null) => {
       if (searchParams != null) {
         const result = await client.sendRequest(search, searchParams);
+        vscode.commands.executeCommand(
+          "setContext",
+          "semgrep.searchHasResults",
+          true
+        );
+        vscode.commands.executeCommand(
+          "setContext",
+          "semgrep.searchIsReplace",
+          replace != null
+        );
         env.searchView.setSearchItems(result.locations, searchParams, replace);
         vscode.commands.executeCommand("semgrep-search-results.focus");
       } else {
@@ -92,10 +102,21 @@ export function registerCommands(
   });
 
   vscode.commands.registerCommand("semgrep.search.clear", () => {
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.searchHasResults",
+      false
+    );
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.searchIsReplace",
+      false
+    );
     env.searchView.clearSearch();
   });
 
   vscode.commands.registerCommand("semgrep.search.replace", () => {
     env.searchView.replaceAll();
+    vscode.commands.executeCommand("semgrep.search.refresh");
   });
 }

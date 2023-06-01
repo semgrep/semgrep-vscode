@@ -37,7 +37,7 @@ export class Environment {
     readonly searchView: SemgrepSearchProvider,
     readonly channel: OutputChannel,
     readonly logger: Logger,
-    public lastSearch: string = ""
+    public version: string = ""
   ) {
     this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);

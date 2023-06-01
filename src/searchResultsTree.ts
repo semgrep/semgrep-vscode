@@ -79,23 +79,12 @@ export class SemgrepSearchProvider
         return edit;
       });
     edits.forEach((e) => vscode.workspace.applyEdit(e));
-    this._onDidChange.fire(undefined);
   }
 
   clearSearch(): void {
     this.lastSearch = null;
     this.replace = null;
     this.items = [];
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.searchHasResults",
-      false
-    );
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.searchIsReplace",
-      false
-    );
 
     this._onDidChange.fire(undefined);
   }
@@ -107,16 +96,6 @@ export class SemgrepSearchProvider
   ): void {
     this.lastSearch = params;
     this.replace = replace;
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.searchHasResults",
-      true
-    );
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.searchIsReplace",
-      replace != null
-    );
 
     this.items = results.map((r) => {
       const uri = vscode.Uri.parse(r.uri);
