@@ -2,6 +2,7 @@ PR checklist:
 
 - [ ] Purpose of the code is [evident to future readers](https://semgrep.dev/docs/contributing/contributing-code/#explaining-code)
 - [ ] Tests included or PR comment includes a reproducible test plan
+- [ ] Ran tests locally (VSCode tests cannot run in CI)
 - [ ] Documentation is up-to-date
 - [ ] A changelog entry was [added to changelog.d](https://semgrep.dev/docs/contributing/contributing-code/#adding-a-changelog-entry) for any user-facing change
 - [ ] Change has no security implications (otherwise, ping security team)
