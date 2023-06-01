@@ -78,7 +78,7 @@ Scan your code using Semgrep and get inline results and problem highlighting!
 
 ### Automatic Scanning
 
-Opened a file? Semgrep scans it right away!
+When you open a file, Semgrep scans it right away.
 
 ### Semgrep App Rules
 
