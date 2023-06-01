@@ -82,7 +82,7 @@ When you open a file, Semgrep scans it right away.
 
 ### Semgrep App Rules
 
-Obtain rules configured for your code [Semgrep Code](https://semgrep.dev/products/semgrep-code/)? Login to scan for them!
+Sign in to receive better results, new true positive findings and fewer false positives. When you sign in, you can get all the benefits of [Semgrep Code](https://semgrep.dev/products/semgrep-code/).
 
 ### Autofix
 
