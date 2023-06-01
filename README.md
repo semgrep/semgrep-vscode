@@ -86,7 +86,7 @@ Sign in to receive better results, new true positive findings and fewer false po
 
 ### Autofix
 
-Have an autofix rule? Hit a button and fix it instantly in the Editor.
+With Semgrep autofix rules, you can instantly apply their fix in Visual Studio Code.
 
 ### Rule Quick Links
 
