@@ -27,7 +27,7 @@ jobs:
           # TODO? who will need to reinstall everytime? github action? How much does this
           # cache directive speedup this workflow?
           cache: pip
-          cache-dependency-path: .github/workflows/lint.yml
+          cache-dependency-path: .github/workflows/lint.yaml
       # note that in a CI context pre-commit runs the hooks with the '--all' flag, so
       # semgrep for example is passed all the files in the repository, not just
       # the one modifed in the PR (as it is the case when it's ran from git hooks locally).
