@@ -115,18 +115,18 @@ export class SemgrepSearchProvider
     const paramsInfo = new TextItem("Search Parameters:");
     searchInfo.push(paramsInfo);
 
-    const searchPattern = new TextItem(`Pattern:`);
+    const searchPattern = new TextItem("Pattern:");
     searchPattern.description = params.pattern;
     searchPattern.iconPath = new vscode.ThemeIcon("microscope");
     searchInfo.push(searchPattern);
 
-    const searchLanguage = new TextItem(`Language:`);
+    const searchLanguage = new TextItem("Language:");
     searchLanguage.description = params.language ? params.language : "All";
     searchLanguage.iconPath = new vscode.ThemeIcon("symbol-object");
     searchInfo.push(searchLanguage);
 
     if (replace) {
-      const searchReplace = new TextItem(`Replace with:`);
+      const searchReplace = new TextItem("Replace with:");
       searchReplace.description = replace;
       searchReplace.iconPath = new vscode.ThemeIcon("search-replace");
       searchInfo.push(searchReplace);

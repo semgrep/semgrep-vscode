@@ -14,26 +14,26 @@ To use the Semgrep Visual Studio Code extension, install either pip or Homebrew.
 
 To successfully install and run the Semgrep Visual Studio Code (VS Code) extension:
 
-1. Install Semgrep locally. See [Installing and running Semgrep locally](https://semgrep.dev/docs/getting-started/#installing-and-running-semgrep-locally) in Semgrep documentation. 
-    
-    Note: If you install Semgrep through Homebrew, make sure you added Homebrew to your PATH. See [My Mac .apps don’t find Homebrew utilities!](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities) in Homebrew documentation.
-    
+1. Install Semgrep locally. See [Installing and running Semgrep locally](https://semgrep.dev/docs/getting-started/#installing-and-running-semgrep-locally) in Semgrep documentation.
+
+   Note: If you install Semgrep through Homebrew, make sure you added Homebrew to your PATH. See [My Mac .apps don’t find Homebrew utilities!](https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities) in Homebrew documentation.
+
 2. Optional: Access the Command Palette by pressing <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (on macOS) and sign in to Semgrep Cloud Platform by running the following command:
 
-    ```
-    Semgrep: Sign in
-    ```
+   ```
+   Semgrep: Sign in
+   ```
 
-    After you run the command, click **Open** to open a new tab in your browser, and then click **Activate**.
+   After you run the command, click **Open** to open a new tab in your browser, and then click **Activate**.
 
-    Note: Sign in to improve the performance of Semgrep extension. After signing in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules from the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code.
-    
+   Note: Sign in to improve the performance of Semgrep extension. After signing in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules from the [Rule board](https://semgrep.dev/orgs/-/board) in Semgrep Code.
+
 3. Install the Semgrep extension in Visual Studio Code. For more information, see [Install an extension](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-an-extension) in Visual Studio Code documentation if necessary.
 4. In Visual Studio Code, test the extension by pressing <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘+⇧Shift+P</kbd> (macOS) and run the following command:
-    
-    ```
-    Semgrep: Scan all files in workspace
-    ```
+
+   ```
+   Semgrep: Scan all files in workspace
+   ```
 
 Find results of your scans in Visual Studio Code Problems tab. To display the Problems tab, press <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘+⇧Shift+M</kbd> (macOS).
 
@@ -51,9 +51,9 @@ The most important configuration options are:
 - **Semgrep › Scan: Only Git Dirty**: On by default. Semgrep checks when you open a new file, scans, and then displays findings for lines changed since the last commit.
 - **Semgrep › Scan: Configuration**: Specify rules or rulesets you want Semgrep to use to scan your code. Each item can be a YAML configuration file, a URL of a configuration file, or a directory of YAML files. Use "auto" to automatically obtain rules tailored to your project. Your project URL will be used to log in to the Semgrep Registry. See [Running rules](https://semgrep.dev/docs/running-rules/) in Semgrep documentation for more information. When you change the rule configuration, run **Semgrep: Update rules** command in Visual Studio Code Command Palette to update the rules configuration for your next scan.
 - **Semgrep › Scan: Include** - List files and directories scanned by Semgrep. This option globally overrides the workspace setting. As a result, Semgrep scans all included paths.
-- **Semgrep › Scan: Jobs** - Specify how many parallel jobs of Semgrep extension can run at the same time. The default number of parallel jobs is 1. 
+- **Semgrep › Scan: Jobs** - Specify how many parallel jobs of Semgrep extension can run at the same time. The default number of parallel jobs is 1.
 
-Advanced configuration options: 
+Advanced configuration options:
 
 - **Semgrep › Scan: Timeout** - After the specified maximum time runs out Semgrep scan times out (stops). Numbers are indicated in seconds. The default value is 30.
 - **Semgrep > Trace: Server** - This option is useful for debugging. The messages option displays communication of the Semgrep Visual Studio Code extension with the LSP server. The default option is verbose.
