@@ -74,7 +74,7 @@ Tip: You can also click the Semgrep icon in the Visual Studio Code to quickly ac
 
 ### Scanning
 
-Scan your code using Semgrep and get inline results and problem highlighting!
+Scan your code using Semgrep to get inline results and problem highlighting.
 
 ### Automatic Scanning
 
