@@ -2,13 +2,11 @@ import * as vscode from "vscode";
 
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
-// import activateSearch from "./search";
 import { Environment } from "./env";
 import { registerCommands } from "./commands";
 import { LanguageClient } from "vscode-languageclient/node";
 import { createStatusBar } from "./statusBar";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
-// import { activateRuleExplorer } from "./rule_explorer";
 
 let global_env: Environment | null = null;
 // needed for deactivate
@@ -35,7 +33,6 @@ export async function activate(
   global_client = client;
   const statusBar = createStatusBar();
   if (client) {
-    //activateRuleExplorer(client,false);
     registerCommands(env, client);
     statusBar.show();
     vscode.window.registerTreeDataProvider(

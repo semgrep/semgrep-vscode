@@ -7,9 +7,8 @@ export const LSP_LOG_FILE = "semgrep_lsp.log";
 export const VSCODE_CONFIG_KEY = "semgrep";
 export const VSCODE_EXT_NAME = CLIENT_NAME;
 export const MIN_VERSION = ">=1.21.0"; // Minimum semgrep version required for this extension
-export const LATEST_VERSION = ">=1.25.0";
+export const LATEST_VERSION = ">=1.25.0"; // Minimum semgrep version required for all extension features
 export const SUPPORTED_LANGS = [
-  "apex",
   "bash",
   "sh",
   "c",
