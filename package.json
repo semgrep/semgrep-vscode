@@ -1,7 +1,7 @@
 {
   "name": "semgrep",
   "displayName": "Semgrep",
-  "description": "Shows findings from https://semgrep.dev",
+  "description": "Security scans in a snap. Speedy SAST with a powerful rule registry for seamless detection and remediation of code vulnerabilities with each save.",
   "version": "1.2.1",
   "engines": {
     "vscode": "^1.66.0"
