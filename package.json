@@ -58,6 +58,24 @@
       {
         "command": "semgrep.refreshRules",
         "title": "Semgrep: Update rules"
+      },
+      {
+        "command": "semgrep.search",
+        "title": "Semgrep: Search by pattern",
+        "icon": "$(search-view-icon)",
+        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+      },
+      {
+        "command": "semgrep.search.refresh",
+        "title": "Semgrep Search: Refresh",
+        "icon": "$(search-refresh)",
+        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+      },
+      {
+        "command": "semgrep.search.clear",
+        "title": "Semgrep Search: Clear",
+        "icon": "$(search-remove)",
+        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
       }
     ],
     "configuration": {
@@ -77,6 +95,11 @@
         "semgrep.path": {
           "type": "string",
           "default": "semgrep"
+        },
+        "semgrep.ignoreCliVersion": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ignore CLI Version, and enable all extension features (Warning: this is mainly for extension development, and can break things if enabled!)"
         },
         "semgrep.scan.configuration": {
           "type": "array",
@@ -138,6 +161,44 @@
           "description": "Enable or disable metrics collection."
         }
       }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "semgrep-sidebar",
+          "title": "Semgrep Search",
+          "icon": "semgrep-icon-basic.png"
+        }
+      ]
+    },
+    "views": {
+      "semgrep-sidebar": [
+        {
+          "id": "semgrep-search-results",
+          "name": "Search Results",
+          "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "semgrep-search-results",
+        "contents": "[$(search-view-icon) Search By Pattern](command:semgrep.search)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "semgrep.search.clear",
+          "when": "view == semgrep-search-results && semgrep.searchHasResults",
+          "group": "navigation"
+        },
+        {
+          "command": "semgrep.search.refresh",
+          "when": "view == semgrep-search-results && semgrep.searchHasResults",
+          "group": "navigation"
+        }
+      ]
     }
   },
   "scripts": {
