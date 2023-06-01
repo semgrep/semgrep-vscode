@@ -39,7 +39,7 @@ Find results of your scans in Visual Studio Code Problems tab. To display the Pr
 
 ## Configuring Semgrep extension scans
 
-Configure Semgrep VS Code extension in extension settings. To access the extension settings:
+Configure Semgrep VS Code extension in the extension settings. To access the extension settings:
 
 1. Go to **Extensions view** by pressing <kbd>⇧Shift+Ctrl+X</kbd> or <kbd>⇧Shift+⌘+X</kbd> (macOS) on your keyboard.
 2. Select Semgrep extension.
