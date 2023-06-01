@@ -8,7 +8,7 @@ import { window, workspace } from "vscode";
 
 import { LSP_LOG_FILE, VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
-import { SemgrepSearchProvider } from "./search";
+import { SemgrepSearchProvider } from "./searchResultsTree";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -36,7 +36,8 @@ export class Environment {
     config: Config,
     readonly searchView: SemgrepSearchProvider,
     readonly channel: OutputChannel,
-    readonly logger: Logger
+    readonly logger: Logger,
+    public lastSearch: string = ""
   ) {
     this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);

@@ -12,7 +12,8 @@ import {
   scanWorkspace,
   search,
   SearchParams,
-} from "./lsp_ext";
+} from "./lspExtensions";
+import { searchQuickPick } from "./searchQuickPick";
 
 export function registerCommands(
   env: Environment,
@@ -69,14 +70,34 @@ export function registerCommands(
     }
   });
 
-  vscode.commands.registerCommand("semgrep.search", async () => {
-    const pattern = "$X == $Y";
-    const language = "python";
-    const searchParams: SearchParams = {
-      pattern,
-      language,
-    };
-    const result = await client.sendRequest(search, searchParams);
-    env.searchView.setSearchItems(result.locations);
+  vscode.commands.registerCommand(
+    "semgrep.search",
+    async (searchParams: SearchParams | null, replace: string | null) => {
+      if (searchParams != null) {
+        const result = await client.sendRequest(search, searchParams);
+        env.searchView.setSearchItems(result.locations, searchParams, replace);
+        vscode.commands.executeCommand("semgrep-search-results.focus");
+      } else {
+        searchQuickPick(env);
+      }
+    }
+  );
+
+  vscode.commands.registerCommand("semgrep.search.refresh", async () => {
+    if (env.searchView.lastSearch) {
+      vscode.commands.executeCommand(
+        "semgrep.search",
+        env.searchView.lastSearch,
+        env.searchView.replace
+      );
+    }
+  });
+
+  vscode.commands.registerCommand("semgrep.search.clear", () => {
+    env.searchView.clearSearch();
+  });
+
+  vscode.commands.registerCommand("semgrep.search.replace", () => {
+    env.searchView.replaceAll();
   });
 }

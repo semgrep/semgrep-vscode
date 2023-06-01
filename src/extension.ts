@@ -6,7 +6,7 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { Environment } from "./env";
 import { registerCommands } from "./commands";
 import { LanguageClient } from "vscode-languageclient/node";
-import { createStatusBar } from "./status_bar";
+import { createStatusBar } from "./statusBar";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 // import { activateRuleExplorer } from "./rule_explorer";
 
@@ -33,13 +33,15 @@ export async function activate(
 
   const client = await activateLsp(env);
   global_client = client;
-  //activateSearch(env);
   const statusBar = createStatusBar();
   if (client) {
     //activateRuleExplorer(client,false);
     registerCommands(env, client);
     statusBar.show();
-    vscode.window.registerTreeDataProvider("semgrep-search", env.searchView);
+    vscode.window.registerTreeDataProvider(
+      "semgrep-search-results",
+      env.searchView
+    );
     // Handle configuration changes
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration(

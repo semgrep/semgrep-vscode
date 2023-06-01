@@ -29,14 +29,6 @@
   "qna": "https://r2c.dev/slack",
   "main": "./out/src/extension.js",
   "contributes": {
-    "views": {
-      "workbench/view/search": [
-        {
-          "id": "semgrep-search",
-          "name": "Semgrep Pattern Search"
-        }
-      ]
-    },
     "icons": {
       "semgrep-icon": {
         "description": "Semgrep Logo",
@@ -69,7 +61,18 @@
       },
       {
         "command": "semgrep.search",
-        "title": "Semgrep: Search"
+        "title": "Semgrep: Search by pattern",
+        "icon": "$(search-view-icon)"
+      },
+      {
+        "command": "semgrep.search.refresh",
+        "title": "Semgrep Search: Refresh",
+        "icon": "$(search-refresh)"
+      },
+      {
+        "command": "semgrep.search.clear",
+        "title": "Semgrep Search: Clear",
+        "icon": "$(search-remove)"
       }
     ],
     "configuration": {
@@ -154,6 +157,43 @@
           "description": "Enable or disable metrics collection. Auto will only report metrics when rules are pulled from the registry"
         }
       }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "semgrep-sidebar",
+          "title": "Semgrep Search",
+          "icon": "semgrep-icon.png"
+        }
+      ]
+    },
+    "views": {
+      "semgrep-sidebar": [
+        {
+          "id": "semgrep-search-results",
+          "name": "Search Results"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "semgrep-search-results",
+        "contents": "[$(search-view-icon) Search By Pattern](command:semgrep.search)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "semgrep.search.clear",
+          "when": "view == semgrep-search-results && semgrep.searchHasResults",
+          "group": "navigation"
+        },
+        {
+          "command": "semgrep.search.refresh",
+          "when": "view == semgrep-search-results && semgrep.searchHasResults",
+          "group": "navigation"
+        }
+      ]
     }
   },
   "scripts": {

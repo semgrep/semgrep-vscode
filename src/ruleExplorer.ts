@@ -1,4 +1,4 @@
-import {
+/*import {
   Event,
   EventEmitter,
   languages,
@@ -8,7 +8,7 @@ import {
   window,
 } from "vscode";
 import { LanguageClient } from "vscode-languageclient/node";
-import { refreshRules, workspaceRules } from "./lsp_ext";
+import { refreshRules, workspaceRules } from "./lspExtensions";
 
 export function activateRuleExplorer(client: LanguageClient, ci: boolean) {
   const view_id = ci ? "ciExplorer" : "workspaceExplorer";
@@ -37,7 +37,7 @@ class RuleExplorer implements TreeDataProvider<Rule> {
       if ((params == "ci") == ci) {
         this._onDidChangeTreeData.fire();
       }
-    });*/
+    });
   }
 
   getTreeItem(element: Rule): TreeItem | Thenable<TreeItem> {
@@ -47,9 +47,10 @@ class RuleExplorer implements TreeDataProvider<Rule> {
     if (element) {
       return [];
     } else {
-      /*return this.client.sendRequest(this.command).then((rules) => {
+       return this.client.sendRequest(this.command).then((rules) => {
         return rules.map((r) => new Rule(r));
-      });*/
+      });
     }
   }
 }
+*/

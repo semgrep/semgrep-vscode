@@ -1,5 +1,5 @@
 import * as lc from "vscode-languageclient";
-import { SearchResult } from "./search";
+import { SearchResult } from "./searchResultsTree";
 
 // https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts
 
@@ -26,7 +26,7 @@ export interface LoginStatusParams {
 
 export interface SearchParams {
   pattern: string;
-  language: string;
+  language: string | null;
 }
 
 export interface SearchResults {
