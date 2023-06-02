@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-      - develop
+      - master
 
 jobs:
   # Running pre-commit in CI. See semgrep/.pre-commit-config.yaml for
@@ -40,4 +40,3 @@ jobs:
       - uses: reviewdog/action-actionlint@v1
         with:
           fail_on_error: true
-          actionlint_flags: -ignore 'workflow command "set-output" was deprecated. ".+"'
