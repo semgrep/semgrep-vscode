@@ -2,7 +2,7 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Security scans in a snap. Speedy SAST with a powerful rule registry for seamless detection and remediation of code vulnerabilities with each save.",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "engines": {
     "vscode": "^1.66.0"
   },
