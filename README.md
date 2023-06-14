@@ -8,7 +8,7 @@ See the list of [languages supported by Semgrep OSS Engine](https://semgrep.dev/
 
 ## Prerequisites
 
-- Install Semgrep OSS Engine. See [Installing and running Semgrep locally](https://semgrep.dev/docs/getting-started/#installing-and-running-semgrep-locally) in Semgrep documentation. The minimal required version of Semgrep OSS Engine is 1.21.0.
+Install Semgrep OSS Engine. See [Installing and running Semgrep locally](https://semgrep.dev/docs/getting-started/#installing-and-running-semgrep-locally) in Semgrep documentation. The minimal required version of Semgrep OSS Engine is 1.21.0.
 
 ## Installing the Semgrep extension
 
