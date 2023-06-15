@@ -52,9 +52,19 @@ export async function activate(
         }
       )
     );
-    vscode.commands
-      .executeCommand("semgrep.loginStatus")
-      .then(() => vscode.commands.executeCommand("semgrep.loginNudge"));
+    await vscode.commands.executeCommand("semgrep.loginStatus");
+    vscode.commands.executeCommand("semgrep.loginNudge");
+    if (env.newInstall) {
+      env.newInstall = false;
+      const selection = await vscode.window.showInformationMessage(
+        "Semgrep Extension succesfully installed. Would you like to try performing a full workspace scan (may take longer on bigger workspaces)?",
+        "Scan Full Workspace",
+        "Dismiss"
+      );
+      if (selection == "Scan Full Workspace") {
+        vscode.commands.executeCommand("semgrep.scanWorkspaceFull");
+      }
+    }
   } else {
     vscode.window.showErrorMessage("Failed to load Semgrep Extension");
   }

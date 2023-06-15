@@ -133,7 +133,7 @@ async function lspOptions(
   const config = { ...env.config.cfg };
   const metrics = {
     machineId: vscode.env.machineId,
-    isNewAppInstall: vscode.env.isNewAppInstall,
+    isNewAppInstall: env.newInstall,
     sessionId: vscode.env.sessionId,
     extensionVersion: env.context.extension.packageJSON.version,
     extensionType: "vscode",
