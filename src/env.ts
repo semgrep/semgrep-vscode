@@ -67,6 +67,13 @@ export class Environment {
     this.context.globalState.update("showNudges", val);
   }
 
+  get newInstall() {
+    return this.context.globalState.get("newInstall", true);
+  }
+  set newInstall(val: boolean) {
+    this.context.globalState.update("newInstall", val);
+  }
+
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);

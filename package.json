@@ -27,7 +27,7 @@
     "theme": "light"
   },
   "qna": "https://r2c.dev/slack",
-  "main": "./out/src/extension.js",
+  "main": "./out/main.js",
   "contributes": {
     "icons": {
       "semgrep-icon": {
