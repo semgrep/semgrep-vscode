@@ -4,7 +4,7 @@
 
 Note: Semgrep VS Code plugin talks to Semgrep CLI to run scans, update rules and so on. So you need to install Semgrep CLI before you can use the VS Code plugin.
 
-<video src="images/main-vs-code-video.mp4" controls="controls" style="max-width: 730px;">
+<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4" controls="controls" style="max-width: 730px;">
 </video>
 
 ## Quick start
@@ -36,17 +36,17 @@ Semgrep: Sign in".
 
 
 4. Look for vulnerability details
-<video src="images/seeing-vuln-details.mp4" controls="controls" style="max-width: 730px;">
+<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/seeing-vuln-details.mp4" controls="controls" style="max-width: 730px;">
 </video>
 
 5. Try Auto-fix
-<video src="images/auto-fix-video.mp4" controls="controls" style="max-width: 730px;">
+<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/auto-fix-video.mp4" controls="controls" style="max-width: 730px;">
 </video>
 
 6. Add and update rules
 You can fine tune and customize rules to scan against. To do that go to [Semgrep registry](https://semgrep.dev/r) (make sure you are logged in, if not login to the registry), then add a rule. You can manage rules via our Rule board. 
 After customizing rules, you can update rules in VS code and run the scan again with new rules. 
-<video src="images/updating-rules-video.mp4" controls="controls" style="max-width: 730px;">
+<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/updating-rules-video.mp4" controls="controls" style="max-width: 730px;">
 </video>
 
 ### Language support
