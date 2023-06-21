@@ -2,23 +2,13 @@
 
 [Semgrep](https://semgrep.dev/) is a fast, static analysis tool for finding bugs, detecting vulnerabilities, and enforcing code standards powered by an open-source engine. Semgrep Visual Studio Code extension scans lines when you change or open files, or scans all files in your workspace.
 
-<iframe class=“yt_embed” width=“100%” height=“432px” src=“https://www.youtube.com/embed/qszvXbUMqQE” frameborder=“0” allowfullscreen></iframe>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/qszvXbUMqQE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4" controls="controls">
+<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3
+" controls="controls" width="700px">
 </video>
 
 
-<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3" controls="controls">
-</video>
-
-https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3
-
-
-https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4
-
-https://youtu.be/qszvXbUMqQE
 
 ## Prerequisites
 
@@ -47,17 +37,19 @@ $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
    Semgrep: Scan all files in workspace
    ```
 1. Find vulnerability details information, hold the pointer over the code that has the yellow underline. You can also find details in the Problems tab by pressing <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘Command+⇧Shift+M</kbd> (macOS).
-   <video src="/images/seeing-vuln-details.mp4" controls="controls">
+
+   <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/49033d56-f4f4-4b70-8318-1b0ea8e991b5" controls="controls">
    </video>
 
 ## Use full potential of Semgrep
 
 Try Autofix.
-   <video src="/images/auto-fix-video.mp4" controls="controls">
+   <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/3b6a730d-57e9-48a4-8065-9fa52388d77a" controls="controls">
    </video>
 
 Add and update new rules to expand Semgrep extension capabilities.
-   <video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/updating-rules-video.mp4" controls="controls">
+   <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b
+" controls="controls">
    </video>
 
 4. Look for vulnerability details
