@@ -38,25 +38,11 @@ $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
 ## Use full potential of Semgrep
 
 Try Autofix.
-   <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/3b6a730d-57e9-48a4-8065-9fa52388d77a" controls="controls">
-   </video>
+<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/3b6a730d-57e9-48a4-8065-9fa52388d77a" controls="controls">
+</video>
 
 Add and update new rules to expand Semgrep extension capabilities.
-   <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b
-" controls="controls">
-   </video>
-
-4. Look for vulnerability details
-
-
-
-5. Try Auto-fix
-https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/auto-fix-video.mp4
-
-6. Add and update rules
-You can fine tune and customize rules to scan against. To do that go to [Semgrep registry](https://semgrep.dev/r) (make sure you are logged in, if not login to the registry), then add a rule. You can manage rules via our Rule board. 
-After customizing rules, you can update rules in VS code and run the scan again with new rules. 
-<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/updating-rules-video.mp4" controls="controls" style="max-width: 730px;">
+<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b" controls="controls">
 </video>
 
 You can fine-tune and customize rules to improve your scan results:
