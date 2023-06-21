@@ -11,6 +11,8 @@
 
 https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4
 
+https://youtu.be/qszvXbUMqQE
+
 ## Prerequisites
 
 Semgrep VS Code extension communicates with Semgrep command-line interface (CLI) to run scans. Install Semgrep CLI before you can use the VS Code extension. To install Semgrep CLI:
