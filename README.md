@@ -5,7 +5,7 @@
 
 
 <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3
-" controls="controls" width="700px">
+" controls="controls">
 </video>
 
 
