@@ -1,23 +1,24 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-export default class SemgrepDocumentProvider implements vscode.TextDocumentContentProvider {
+export default class SemgrepDocumentProvider
+  implements vscode.TextDocumentContentProvider
+{
+  static scheme = "showAst";
 
-	static scheme = 'showAst';
+  private text = "";
 
-	private text = ""; 
-
-  setText (str: string): void {
+  setText(str: string): void {
     this.text = str;
   }
 
-	// Provider method that takes an uri of the `references`-scheme and
-	// resolves its content by (1) running the reference search command
-	// and (2) formatting the results
-	provideTextDocumentContent(uri: vscode.Uri): string {
-    return this.text 
-	}
+  // Provider method that takes an uri of the `references`-scheme and
+  // resolves its content by (1) running the reference search command
+  // and (2) formatting the results
+  provideTextDocumentContent(uri: vscode.Uri): string {
+    return this.text;
+  }
 }
 
 export function encodeUri(uri: vscode.Uri): vscode.Uri {
-	return vscode.Uri.parse(uri).with({ scheme: SemgrepDocumentProvider.scheme });
+  return vscode.Uri.parse(uri).with({ scheme: SemgrepDocumentProvider.scheme });
 }

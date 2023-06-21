@@ -20,9 +20,7 @@ export const scanWorkspace = new lc.NotificationType<ScanWorkspaceParams>(
   "semgrep/scanWorkspace"
 );
 
-export const showAst = new lc.RequestType<ShowAstParams>(
-  "semgrep/showAst"
-);
+export const showAst = new lc.RequestType<ShowAstParams>("semgrep/showAst");
 
 export interface LoginParams {
   url: string;

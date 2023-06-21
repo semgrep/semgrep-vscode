@@ -40,30 +40,38 @@ export function registerCommands(
   vscode.commands.registerCommand("semgrep.showAst", async () => {
     // supposedly the right thing to do, according to
     // https://github.com/Microsoft/vscode/issues/36426
-    await client.sendRequest(showAst, { 
-      named: false, 
-      uri: vscode.window.activeTextEditor.document.uri.fsPath 
+    await client.sendRequest(showAst, {
+      named: false,
+      uri: vscode.window.activeTextEditor.document.uri.fsPath,
     });
   });
 
   vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
-    const ast_text = await client.sendRequest(showAst, { 
-      named: true, 
-      uri: vscode.window.activeTextEditor.document.uri.fsPath 
+    const ast_text = await client.sendRequest(showAst, {
+      named: true,
+      uri: vscode.window.activeTextEditor.document.uri.fsPath,
     });
     env.documentView.setText(ast_text);
     const uri = encodeUri(vscode.editor.document.uri);
-    return vscode.workspace.openTextDocument(uri).then(doc => vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1));
+    return vscode.workspace
+      .openTextDocument(uri)
+      .then((doc) =>
+        vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1)
+      );
   });
 
   vscode.commands.registerCommand("semgrep.showAst", async () => {
-    const ast_text = await client.sendRequest(showAst, { 
-      named: false, 
-      uri: vscode.window.activeTextEditor.document.uri.fsPath 
+    const ast_text = await client.sendRequest(showAst, {
+      named: false,
+      uri: vscode.window.activeTextEditor.document.uri.fsPath,
     });
     env.documentView.setText(ast_text);
     const uri = encodeUri(vscode.editor.document.uri);
-    return vscode.workspace.openTextDocument(uri).then(doc => vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1));
+    return vscode.workspace
+      .openTextDocument(uri)
+      .then((doc) =>
+        vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1)
+      );
   });
 
   vscode.commands.registerCommand("semgrep.logout", async () => {

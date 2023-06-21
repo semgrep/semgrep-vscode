@@ -82,7 +82,14 @@ export class Environment {
     const logger = new Logger(config.trace, channel);
     const searchView = new SemgrepSearchProvider();
     const documentView = new SemgrepDocumentProvider();
-    return new Environment(context, config, searchView, documentView, channel, logger);
+    return new Environment(
+      context,
+      config,
+      searchView,
+      documentView,
+      channel,
+      logger
+    );
   }
 
   static async loadConfig(context: ExtensionContext): Promise<Config> {

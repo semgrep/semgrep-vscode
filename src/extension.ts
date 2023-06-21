@@ -6,7 +6,7 @@ import { Environment } from "./env";
 import { registerCommands } from "./commands";
 import { LanguageClient } from "vscode-languageclient/node";
 import { createStatusBar } from "./statusBar";
-import SemgrepDocumentProvider from "./showAstDocument"
+import SemgrepDocumentProvider from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 
 let global_env: Environment | null = null;
@@ -42,7 +42,10 @@ export async function activate(
     );
 
     // register content provider for the AST showing document
-    vscode.workspace.registerTextDocumentContentProvider(SemgrepDocumentProvider.scheme, env.documentView);
+    vscode.workspace.registerTextDocumentContentProvider(
+      SemgrepDocumentProvider.scheme,
+      env.documentView
+    );
 
     // Handle configuration changes
     context.subscriptions.push(
