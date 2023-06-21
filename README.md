@@ -2,13 +2,8 @@
 
 [Semgrep](https://semgrep.dev/) is a fast, static analysis tool for finding bugs, detecting vulnerabilities, and enforcing code standards powered by an open-source engine. Semgrep Visual Studio Code extension scans lines when you change or open files, or scans all files in your workspace.
 
-
-
-<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3
-" controls="controls">
+<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3" controls="controls">
 </video>
-
-
 
 ## Prerequisites
 
@@ -37,7 +32,6 @@ $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
    Semgrep: Scan all files in workspace
    ```
 1. Find vulnerability details information, hold the pointer over the code that has the yellow underline. You can also find details in the Problems tab by pressing <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘Command+⇧Shift+M</kbd> (macOS).
-
    <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/49033d56-f4f4-4b70-8318-1b0ea8e991b5" controls="controls">
    </video>
 
@@ -54,7 +48,7 @@ Add and update new rules to expand Semgrep extension capabilities.
 
 4. Look for vulnerability details
 
-https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/seeing-vuln-details.mp4
+
 
 5. Try Auto-fix
 https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/auto-fix-video.mp4
