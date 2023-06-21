@@ -1,18 +1,15 @@
 # Semgrep Visual Studio Code extension
 
-[Semgrep](https://semgrep.dev/) is a fast, open-source, static analysis engine for finding bugs, detecting vulnerabilities in third-party dependencies, and enforcing code standards. Semgrep analyzes code locally on your computer or in your build environment: code is never uploaded.
+[Semgrep](https://semgrep.dev/) is a fast, static analysis tool for finding bugs, detecting vulnerabilities, and enforcing code standards powered by an open-source engine. Semgrep Visual Studio Code extension scans lines when you change or open files, or scans all files in your workspace. 
 
-Note: Semgrep VS Code plugin talks to Semgrep CLI to run scans, update rules and so on. So you need to install Semgrep CLI before you can use the VS Code plugin.
-
-<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4" controls="controls" style="max-width: 730px;">
+<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4" controls="controls">
 </video>
 
-## Quick start
-0. Install this Semgrep VS Code plugin
+## Prerequisites
 
-1. Install Semgrep CLI
+Semgrep VS Code extension communicates with Semgrep command-line interface (CLI) to run scans. Install Semgrep CLI before you can use the VS Code extension. To install Semgrep CLI:
 
-```
+```sh
 # For macOS
 $ brew install semgrep
 
@@ -23,44 +20,40 @@ $ python3 -m pip install semgrep
 $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
 ```
 
-2. Sign into the CLI
+## Quick start
 
-```
-$ semgrep login
-```
-You can also sign up through VS Code: <kbd>Ctrl+⇧Shift+P</kbd> (windows) or <kbd>⌘Command+⇧Shift+P</kbd> (macOS)  > 
-Semgrep: Sign in".
-
-3. <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) > `Semgrep: Scan all files in workspace`
-
-
-
-4. Look for vulnerability details
-<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/seeing-vuln-details.mp4" controls="controls" style="max-width: 730px;">
-</video>
+1. Install Semgrep extension in Visual Studio Code. For more information, see [Install an extension](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-an-extension) in Visual Studio Code documentation.
+1. Sing in: Press <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) and sign in to Semgrep Cloud Platform by running the following command:
+   ```
+   Semgrep: Sign in
+   ```
+1. Test the extension by pressing <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) and run the following command:
+   ```
+   Semgrep: Scan all files in workspace
+   ```
+1. 
+   <video src="/images/seeing-vuln-details.mp4" controls="controls">
+   </video>
 
 5. Try Auto-fix
-<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/auto-fix-video.mp4" controls="controls" style="max-width: 730px;">
+<video src="/images/auto-fix-video.mp4" controls="controls">
 </video>
 
 6. Add and update rules
 You can fine tune and customize rules to scan against. To do that go to [Semgrep registry](https://semgrep.dev/r) (make sure you are logged in, if not login to the registry), then add a rule. You can manage rules via our Rule board. 
 After customizing rules, you can update rules in VS code and run the scan again with new rules. 
-<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/updating-rules-video.mp4" controls="controls" style="max-width: 730px;">
+<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/updating-rules-video.mp4" controls="controls">
 </video>
 
 ### Language support
 
 Semgrep supports 30+ languages.
 
-| Category     | Languages                                                                                                                                                                     |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GA           | C# · Go · Java · JavaScript · JSX · Kotlin · JSON · PHP · Python · Ruby · Scala · Terraform · TypeScript · TSX                                                                         |
-| Beta         | Rust                                                                                                                                                                 |
+| Category     | Languages |
+| ------------ | --------- |
+| GA           | C# · Go · Java · JavaScript · JSX · Kotlin · JSON · PHP · Python · Ruby · Scala · Terraform · TypeScript |
+| Beta         | Rust |
 | Experimental | Bash · C · C++ · Clojure · Dart · Dockerfile · Elixir · HTML · Julia · Jsonnet · Lisp · Lua · OCaml · R · Scheme · Solidity · Swift · YAML · XML · Generic (ERB, Jinja, etc.) |
-
-
-
 
 ## Configuring Semgrep extension scans
 
