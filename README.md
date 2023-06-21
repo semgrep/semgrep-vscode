@@ -47,7 +47,7 @@ Add and update new rules to expand Semgrep extension capabilities.
 
 You can fine-tune and customize rules to improve your scan results:
 1. Go to [Semgrep Registry](https://semgrep.dev/explore). Ensure that you are signed in.
-1. Explore the Semgrep Registry, select a rule, and then click Add to Rule Board.
+1. Explore the Semgrep Registry, select a rule, and then click **Add to Rule Board**.
 1. Manage rules in the [Policies](https://semgrep.dev/orgs/-/board) page. 
 1. Each time you change rule configuration press <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) in VS Code, and then run `Semgrep: Update rules`.
 
