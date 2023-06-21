@@ -37,15 +37,6 @@ export function registerCommands(
     await client.sendNotification(scanWorkspace, { full: true });
   });
 
-  vscode.commands.registerCommand("semgrep.showAst", async () => {
-    // supposedly the right thing to do, according to
-    // https://github.com/Microsoft/vscode/issues/36426
-    await client.sendRequest(showAst, {
-      named: false,
-      uri: vscode.window.activeTextEditor.document.uri.fsPath,
-    });
-  });
-
   vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
     const ast_text = await client.sendRequest(showAst, {
       named: true,
