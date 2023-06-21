@@ -1,3 +1,13 @@
-### Security
+PR checklist:
 
-- [ ] Change has security implications (if so, ping the security team)
+- [ ] Purpose of the code is [evident to future readers](https://semgrep.dev/docs/contributing/contributing-code/#explaining-code)
+- [ ] Tests included or PR comment includes a reproducible test plan
+- [ ] Ran tests locally (VSCode tests cannot run in CI)
+- [ ] Documentation is up-to-date
+- [ ] A changelog entry was for any user-facing change
+- [ ] Change has no security implications (otherwise, ping security team)
+
+If you're unsure about any of this, please see:
+
+- [Contribution guidelines](https://semgrep.dev/docs/contributing/contributing-code)!
+- [One of the more specific guides located here](https://semgrep.dev/docs/contributing/contributing/)

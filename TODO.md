@@ -1,3 +1,0 @@
-- [x] Update list of languages
-- [ ] Check semgrep versions to match version required by the extension
-- [ ] Implement scanning onChange in addition to only onOpen and onSave

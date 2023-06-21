@@ -10,7 +10,7 @@
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
       "preLaunchTask": {
         "type": "npm",
-        "script": "watch"
+        "script": "esbuild"
       }
     },
     {
@@ -26,7 +26,7 @@
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
       "preLaunchTask": {
         "type": "npm",
-        "script": "watch"
+        "script": "test-compile"
       }
     }
   ]

@@ -11,7 +11,10 @@ import {
   refreshRules,
   scanWorkspace,
   showAst,
-} from "./lsp_ext";
+  search,
+  SearchParams,
+} from "./lspExtensions";
+import { searchQuickPick } from "./searchQuickPick";
 
 export function registerCommands(
   env: Environment,
@@ -80,5 +83,57 @@ export function registerCommands(
         env.showNudges = false;
       }
     }
+  });
+
+  vscode.commands.registerCommand(
+    "semgrep.search",
+    async (searchParams: SearchParams | null, replace: string | null) => {
+      if (searchParams != null) {
+        const result = await client.sendRequest(search, searchParams);
+        vscode.commands.executeCommand(
+          "setContext",
+          "semgrep.searchHasResults",
+          true
+        );
+        vscode.commands.executeCommand(
+          "setContext",
+          "semgrep.searchIsReplace",
+          replace != null
+        );
+        env.searchView.setSearchItems(result.locations, searchParams, replace);
+        vscode.commands.executeCommand("semgrep-search-results.focus");
+      } else {
+        searchQuickPick(env);
+      }
+    }
+  );
+
+  vscode.commands.registerCommand("semgrep.search.refresh", async () => {
+    if (env.searchView.lastSearch) {
+      vscode.commands.executeCommand(
+        "semgrep.search",
+        env.searchView.lastSearch,
+        env.searchView.replace
+      );
+    }
+  });
+
+  vscode.commands.registerCommand("semgrep.search.clear", () => {
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.searchHasResults",
+      false
+    );
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.searchIsReplace",
+      false
+    );
+    env.searchView.clearSearch();
+  });
+
+  vscode.commands.registerCommand("semgrep.search.replace", () => {
+    env.searchView.replaceAll();
+    vscode.commands.executeCommand("semgrep.search.refresh");
   });
 }
