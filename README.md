@@ -31,19 +31,25 @@ $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
    ```
    Semgrep: Scan all files in workspace
    ```
-1. 
+1. Find vulnerability details information, hold the pointer over the code that has the yellow underline. You can also find details in the Problems tab by pressing <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘Command+⇧Shift+M</kbd> (macOS).
    <video src="/images/seeing-vuln-details.mp4" controls="controls">
    </video>
 
-5. Try Auto-fix
-<video src="/images/auto-fix-video.mp4" controls="controls">
-</video>
+## Use full potential of Semgrep
 
-6. Add and update rules
-You can fine tune and customize rules to scan against. To do that go to [Semgrep registry](https://semgrep.dev/r) (make sure you are logged in, if not login to the registry), then add a rule. You can manage rules via our Rule board. 
-After customizing rules, you can update rules in VS code and run the scan again with new rules. 
-<video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/updating-rules-video.mp4" controls="controls">
-</video>
+Try Autofix.
+   <video src="/images/auto-fix-video.mp4" controls="controls">
+   </video>
+
+Add and update new rules to expand Semgrep extension capabilities.
+   <video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/updating-rules-video.mp4" controls="controls">
+   </video>
+
+You can fine-tune and customize rules to improve your scan results:
+1. Go to [Semgrep Registry](https://semgrep.dev/explore). Ensure that you are signed in.
+1. Explore the Semgrep Registry, select a rule, and then click Add to Rule Board.
+1. Manage rules in the [Policies](https://semgrep.dev/orgs/-/board) page. 
+1. Each time you change rule configuration press <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) in VS Code, and then run `Semgrep: Update rules`.
 
 ### Language support
 
