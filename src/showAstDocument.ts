@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export default class SemgrepDocumentProvider
+export class SemgrepDocumentProvider
   implements vscode.TextDocumentContentProvider
 {
   static scheme = "showAst";
