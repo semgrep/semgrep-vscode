@@ -15,6 +15,7 @@ import {
   SearchParams,
 } from "./lspExtensions";
 import { searchQuickPick } from "./searchQuickPick";
+import { encodeUri } from "./showAstDocument";
 
 export function registerCommands(
   env: Environment,
@@ -46,10 +47,23 @@ export function registerCommands(
   });
 
   vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
-    await client.sendRequest(showAst, { 
+    const ast_text = await client.sendRequest(showAst, { 
       named: true, 
       uri: vscode.window.activeTextEditor.document.uri.fsPath 
     });
+    env.documentView.setText(ast_text);
+    const uri = encodeUri(vscode.editor.document.uri);
+    return vscode.workspace.openTextDocument(uri).then(doc => vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1));
+  });
+
+  vscode.commands.registerCommand("semgrep.showAst", async () => {
+    const ast_text = await client.sendRequest(showAst, { 
+      named: false, 
+      uri: vscode.window.activeTextEditor.document.uri.fsPath 
+    });
+    env.documentView.setText(ast_text);
+    const uri = encodeUri(vscode.editor.document.uri);
+    return vscode.workspace.openTextDocument(uri).then(doc => vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1));
   });
 
   vscode.commands.registerCommand("semgrep.logout", async () => {
