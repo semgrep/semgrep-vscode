@@ -9,6 +9,13 @@
 <video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4" controls="controls">
 </video>
 
+
+<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3" controls="controls">
+</video>
+
+https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3
+
+
 https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4
 
 https://youtu.be/qszvXbUMqQE
