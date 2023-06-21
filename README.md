@@ -2,6 +2,10 @@
 
 [Semgrep](https://semgrep.dev/) is a fast, static analysis tool for finding bugs, detecting vulnerabilities, and enforcing code standards powered by an open-source engine. Semgrep Visual Studio Code extension scans lines when you change or open files, or scans all files in your workspace.
 
+<iframe class=“yt_embed” width=“100%” height=“432px” src=“https://www.youtube.com/embed/qszvXbUMqQE” frameborder=“0” allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qszvXbUMqQE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 <video src="https://github.com/returntocorp/semgrep-vscode/blob/readme-changes/images/main-vs-code-video.mp4" controls="controls">
 </video>
 
