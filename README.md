@@ -38,10 +38,16 @@ $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
 ## Use full potential of Semgrep
 
 Try Autofix.
+
+https://github.com/returntocorp/semgrep-vscode/assets/626337/3b6a730d-57e9-48a4-8065-9fa52388d77a
+
 <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/3b6a730d-57e9-48a4-8065-9fa52388d77a" controls="controls">
 </video>
 
 Add and update new rules to expand Semgrep extension capabilities.
+
+https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b
+
 <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b" controls="controls">
 </video>
 
