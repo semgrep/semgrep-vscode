@@ -15,7 +15,7 @@ hashes.SHA1() # nosem (this line is fine)
 
 ### ═══════════════════ ✨ Hope you enjoy using Semgrep! ✨ ═══════════════════ ###
 
-# To access all commands, just click Semgrep [ooo] in the bottom right. 
+# To access all commands, just click Semgrep [ooo] in the bottom right.
 
 # By default, the extension uses the p/default ruleset,
 # which is a combination of recommended security and best practices rules for many languages.
