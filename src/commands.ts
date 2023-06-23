@@ -14,7 +14,6 @@ import {
   SearchParams,
 } from "./lspExtensions";
 import { searchQuickPick } from "./searchQuickPick";
-
 export function registerCommands(
   env: Environment,
   client: LanguageClient
@@ -118,5 +117,23 @@ export function registerCommands(
   vscode.commands.registerCommand("semgrep.search.replace", () => {
     env.searchView.replaceAll();
     vscode.commands.executeCommand("semgrep.search.refresh");
+  });
+
+  vscode.commands.registerCommand("semgrep.showDemoFile", async () => {
+    const path = env.context.asAbsolutePath(
+      "walkthrough/semgrep-extension.demo.py"
+    );
+    const content = await vscode.workspace.fs.readFile(vscode.Uri.parse(path));
+    let dir = vscode.Uri.joinPath(
+      env.context.globalStorageUri,
+      "demo-workspace"
+    );
+    dir = vscode.Uri.parse(dir.fsPath); // So dumb
+    await vscode.workspace.fs.createDirectory(dir);
+    const file = vscode.Uri.joinPath(dir, "demo.py");
+    await vscode.workspace.fs.writeFile(file, content);
+    const demoDoc = await vscode.workspace.openTextDocument(file);
+    vscode.workspace.updateWorkspaceFolders(0, 0, { uri: dir });
+    await vscode.window.showTextDocument(demoDoc);
   });
 }
