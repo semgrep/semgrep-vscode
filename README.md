@@ -46,19 +46,20 @@ Add and update new rules to expand Semgrep extension capabilities.
 https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b
 
 You can fine-tune and customize rules to improve your scan results:
+
 1. Go to [Semgrep Registry](https://semgrep.dev/explore). Ensure that you are signed in.
 1. Explore the Semgrep Registry, select a rule, and then click **Add to Rule Board**.
-1. Manage rules in the [Policies](https://semgrep.dev/orgs/-/board) page. 
+1. Manage rules in the [Policies](https://semgrep.dev/orgs/-/board) page.
 1. Each time you change rule configuration press <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) in VS Code, and then run `Semgrep: Update rules`.
 
 ### Language support
 
 Semgrep supports 30+ languages.
 
-| Category     | Languages |
-| ------------ | --------- |
-| GA           | C# · Go · Java · JavaScript · JSX · Kotlin · JSON · PHP · Python · Ruby · Scala · Terraform · TypeScript |
-| Beta         | Rust |
+| Category     | Languages                                                                                                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GA           | C# · Go · Java · JavaScript · JSX · Kotlin · JSON · PHP · Python · Ruby · Scala · Terraform · TypeScript                                                                      |
+| Beta         | Rust                                                                                                                                                                          |
 | Experimental | Bash · C · C++ · Clojure · Dart · Dockerfile · Elixir · HTML · Julia · Jsonnet · Lisp · Lua · OCaml · R · Scheme · Solidity · Swift · YAML · XML · Generic (ERB, Jinja, etc.) |
 
 ## Configuring Semgrep extension scans
