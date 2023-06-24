@@ -61,4 +61,6 @@ export const search = new lc.RequestType<SearchParams, SearchResults, void>(
   "semgrep/search"
 );
 
-export const showAst = new lc.RequestType<ShowAstParams, string, void>("semgrep/showAst");
+export const showAst = new lc.RequestType<ShowAstParams, string, void>(
+  "semgrep/showAst"
+);
