@@ -76,6 +76,7 @@ export async function activate(
   } else {
     vscode.window.showErrorMessage("Failed to load Semgrep Extension");
   }
+  vscode.window.activeTextEditor;
   return client;
 }
 
