@@ -17,6 +17,16 @@ import {
 import { searchQuickPick } from "./searchQuickPick";
 import { encodeUri } from "./showAstDocument";
 
+// We need to do this, or openTextDocument will open the same text document, if previously
+// opened. This means that running showAst twice will always show the same thing.
+async function replaceAndOpenUriContent (uri: vscode.Uri, content: string) : Promise<void> {
+  const doc = await vscode.workspace.openTextDocument(uri);
+  const edit = new vscode.WorkspaceEdit();
+  edit.replace(uri, new vscode.Range(0, 0, doc.lineCount, 0), content);
+  vscode.workspace.applyEdit(edit);
+  vscode.window.showTextDocument(doc, vscode.window.activeTextEditor?.viewColumn! + 1);
+}
+
 export function registerCommands(
   env: Environment,
   client: LanguageClient
@@ -40,29 +50,19 @@ export function registerCommands(
   vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
     const ast_text = await client.sendRequest(showAst, {
       named: true,
-      uri: vscode.window.activeTextEditor.document.uri.fsPath,
+      uri: vscode.window.activeTextEditor?.document.uri.fsPath,
     });
-    env.documentView.setText(ast_text);
-    const uri = encodeUri(vscode.editor.document.uri);
-    return vscode.workspace
-      .openTextDocument(uri)
-      .then((doc) =>
-        vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1)
-      );
+    const uri = encodeUri(vscode.window.activeTextEditor?.document.uri || vscode.Uri.parse(""));
+    replaceAndOpenUriContent(uri, ast_text);
   });
 
   vscode.commands.registerCommand("semgrep.showAst", async () => {
     const ast_text = await client.sendRequest(showAst, {
       named: false,
-      uri: vscode.window.activeTextEditor.document.uri.fsPath,
+      uri: vscode.window.activeTextEditor?.document.uri.fsPath,
     });
-    env.documentView.setText(ast_text);
-    const uri = encodeUri(vscode.editor.document.uri);
-    return vscode.workspace
-      .openTextDocument(uri)
-      .then((doc) =>
-        vscode.window.showTextDocument(doc, vscode.editor.viewColumn! + 1)
-      );
+    const uri = encodeUri(vscode.window.activeTextEditor?.document.uri || vscode.Uri.parse(""));
+    replaceAndOpenUriContent(uri, ast_text);
   });
 
   vscode.commands.registerCommand("semgrep.logout", async () => {
