@@ -20,7 +20,6 @@ export const scanWorkspace = new lc.NotificationType<ScanWorkspaceParams>(
   "semgrep/scanWorkspace"
 );
 
-
 export interface LoginParams {
   url: string;
   sessionId: string;
