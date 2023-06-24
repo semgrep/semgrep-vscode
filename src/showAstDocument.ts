@@ -10,11 +10,11 @@ export class SemgrepDocumentProvider
   // Provider method that takes an uri of the `references`-scheme and
   // resolves its content by (1) running the reference search command
   // and (2) formatting the results
-  provideTextDocumentContent(uri: vscode.Uri): string {
+  provideTextDocumentContent(_: vscode.Uri): string {
     return this.text;
   }
 }
 
 export function encodeUri(uri: vscode.Uri): vscode.Uri {
-  return vscode.Uri.parse(uri).with({ scheme: SemgrepDocumentProvider.scheme });
+  return uri.with({ scheme: SemgrepDocumentProvider.scheme });
 }

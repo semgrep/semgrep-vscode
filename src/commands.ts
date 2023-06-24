@@ -29,7 +29,7 @@ async function replaceAndOpenUriContent(
   vscode.workspace.applyEdit(edit);
   vscode.window.showTextDocument(
     doc,
-    vscode.window.activeTextEditor?.viewColumn! + 1
+    vscode.window.activeTextEditor!.viewColumn! + 1
   );
 }
 
