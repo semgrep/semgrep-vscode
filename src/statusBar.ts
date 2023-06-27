@@ -7,7 +7,7 @@ export function createStatusBar(): vscode.StatusBarItem {
   const statusBarCommand: vscode.Command = {
     title: "",
     command: "workbench.action.quickOpen",
-    arguments: [">Semgrep"],
+    arguments: [">Semgrep:"],
   };
   statusBar.command = statusBarCommand;
   statusBar.text = "$(semgrep-icon)";

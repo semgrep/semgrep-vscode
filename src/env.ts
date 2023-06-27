@@ -9,6 +9,7 @@ import { window, workspace } from "vscode";
 import { LSP_LOG_FILE, VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
 import { SemgrepSearchProvider } from "./searchResultsTree";
+import { LanguageClient } from "vscode-languageclient/node";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -28,8 +29,9 @@ export class Config {
 }
 
 export class Environment {
-  _config: Config = new Config();
+  private _config: Config = new Config();
   semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
+  private _client: LanguageClient | null = null;
 
   private constructor(
     readonly context: ExtensionContext,
@@ -74,6 +76,15 @@ export class Environment {
     this.context.globalState.update("newInstall", val);
   }
 
+  set client(client: LanguageClient | null) {
+    this._client = client;
+  }
+  get client() {
+    if (!this._client) {
+      window.showWarningMessage("Semgrep Language Server not active");
+    }
+    return this._client;
+  }
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);

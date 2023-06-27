@@ -76,6 +76,10 @@
         "title": "Semgrep Search: Clear",
         "icon": "$(search-remove)",
         "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+      },
+      {
+        "command": "semgrep.restartLanguageServer",
+        "title": "Semgrep: Restart Language Server"
       }
     ],
     "configuration": {

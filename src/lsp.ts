@@ -150,18 +150,22 @@ async function lspOptions(
     documentSelector: [{ language: "*", scheme: "file" }],
     outputChannel: env.channel,
     initializationOptions: initializationOptions,
+    markdown: {
+      isTrusted: true,
+      supportHtml: false,
+    },
   };
 
   return [serverOptions, clientOptions];
 }
 
-async function start(env: Environment): Promise<LanguageClient | null> {
+async function start(env: Environment): Promise<void> {
   // Compute LSP server and client options
   const [serverOptions, clientOptions] = await lspOptions(env);
 
   // If we cannot find Semgrep, there's no point
   // in proceeding with the activation.
-  if (!serverOptions) return null;
+  if (!serverOptions) return;
 
   // Create the language client.
   const c = new LanguageClient(
@@ -175,42 +179,34 @@ async function start(env: Environment): Promise<LanguageClient | null> {
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
   await c.start();
-  return c;
+  env.client = c;
 }
 
-async function stop(
-  env: Environment | null,
-  client: LanguageClient
-): Promise<void> {
+async function stop(env: Environment | null): Promise<void> {
   env?.logger.log("Stopping language client...");
-  await client.sendRequest("shutdown").then(async () => {
+  const client = env?.client;
+  if (!client) {
+    return;
+  }
+  client.sendRequest("shutdown").then(async () => {
     env?.logger.log("Exiting");
     await client.sendRequest("exit");
   });
-  await client.stop();
+  client.stop();
   env?.logger.log("Language client stopped...");
 }
 
-export async function activateLsp(
-  env: Environment
-): Promise<LanguageClient | null> {
+export async function activateLsp(env: Environment): Promise<void> {
   return start(env);
 }
 
-export async function deactivateLsp(
-  env: Environment | null,
-  client: LanguageClient
-): Promise<void> {
-  await stop(env, client);
+export async function deactivateLsp(env: Environment | null): Promise<void> {
+  return stop(env);
 }
 
-export async function restartLsp(
-  env: Environment | null,
-  client: LanguageClient
-): Promise<LanguageClient | null> {
-  await stop(env, client);
+export async function restartLsp(env: Environment | null): Promise<void> {
+  await stop(env);
   if (env) {
     return start(env);
   }
-  return null;
 }

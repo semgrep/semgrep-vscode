@@ -8,10 +8,7 @@
       "runtimeExecutable": "${execPath}",
       "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
-      "preLaunchTask": {
-        "type": "npm",
-        "script": "esbuild"
-      }
+      "preLaunchTask": "watch-build"
     },
     {
       "name": "Extension Tests",
