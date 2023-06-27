@@ -54,7 +54,6 @@ export class Environment {
   }
 
   get loggedIn(): boolean {
-    this.logger.log("HAFAWAD");
     return this.context.globalState.get("loggedIn", false);
   }
 
