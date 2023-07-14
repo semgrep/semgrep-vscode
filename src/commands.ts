@@ -15,6 +15,7 @@ import {
   SearchParams,
 } from "./lspExtensions";
 import { searchQuickPick } from "./searchQuickPick";
+import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
 
 // We need to do this, or openTextDocument will open the same text document, if previously
@@ -33,28 +34,25 @@ async function replaceAndOpenUriContent(
   );
 }
 
-export function registerCommands(
-  env: Environment,
-  client: LanguageClient
-): void {
+export function registerCommands(env: Environment): void {
   vscode.commands.registerCommand("semgrep.login", async () => {
-    const result: LoginParams | null = await client.sendRequest(login);
+    const result = await env.client?.sendRequest(login);
     if (result) {
       vscode.env.openExternal(vscode.Uri.parse(result.url));
-      client?.sendNotification(loginFinish, result);
+      env.client?.sendNotification(loginFinish, result);
     }
   });
 
   vscode.commands.registerCommand("semgrep.scanWorkspace", async () => {
-    await client.sendNotification(scanWorkspace, { full: false });
+    await env.client?.sendNotification(scanWorkspace, { full: false });
   });
 
   vscode.commands.registerCommand("semgrep.scanWorkspaceFull", async () => {
-    await client.sendNotification(scanWorkspace, { full: true });
+    await env.client?.sendNotification(scanWorkspace, { full: true });
   });
 
   vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
-    const ast_text = await client.sendRequest(showAst, {
+    const ast_text = await env.client!.sendRequest(showAst, {
       named: true,
       uri: vscode.window.activeTextEditor?.document.uri.fsPath,
     });
@@ -65,7 +63,7 @@ export function registerCommands(
   });
 
   vscode.commands.registerCommand("semgrep.showAst", async () => {
-    const ast_text = await client.sendRequest(showAst, {
+    const ast_text = await env.client!.sendRequest(showAst, {
       named: false,
       uri: vscode.window.activeTextEditor?.document.uri.fsPath,
     });
@@ -76,18 +74,16 @@ export function registerCommands(
   });
 
   vscode.commands.registerCommand("semgrep.logout", async () => {
-    await client.sendNotification(logout);
+    await env.client?.sendNotification(logout);
     env.loggedIn = false;
   });
 
   vscode.commands.registerCommand("semgrep.refreshRules", async () => {
-    await client.sendNotification(refreshRules);
+    await env.client?.sendNotification(refreshRules);
   });
 
   vscode.commands.registerCommand("semgrep.loginStatus", async () => {
-    const result: LoginStatusParams | null = await client.sendRequest(
-      loginStatus
-    );
+    const result = await env.client?.sendRequest(loginStatus);
     if (result) {
       env.loggedIn = result.loggedIn;
     }
@@ -112,7 +108,7 @@ export function registerCommands(
     "semgrep.search",
     async (searchParams: SearchParams | null, replace: string | null) => {
       if (searchParams != null) {
-        const result = await client.sendRequest(search, searchParams);
+        const result = await env.client?.sendRequest(search, searchParams);
         vscode.commands.executeCommand(
           "setContext",
           "semgrep.searchHasResults",
@@ -123,6 +119,9 @@ export function registerCommands(
           "semgrep.searchIsReplace",
           replace != null
         );
+        if (!result) {
+          return;
+        }
         env.searchView.setSearchItems(result.locations, searchParams, replace);
         vscode.commands.executeCommand("semgrep-search-results.focus");
       } else {
@@ -158,6 +157,11 @@ export function registerCommands(
   vscode.commands.registerCommand("semgrep.search.replace", () => {
     env.searchView.replaceAll();
     vscode.commands.executeCommand("semgrep.search.refresh");
+  });
+
+  vscode.commands.registerCommand("semgrep.restartLanguageServer", () => {
+    vscode.window.showInformationMessage("Restarting Semgrep Language Server");
+    restartLsp(env);
   });
 
   vscode.commands.registerCommand("semgrep.showDemoFile", async () => {

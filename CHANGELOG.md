@@ -5,6 +5,16 @@ All notable changes to the "semgrep-vscode" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- Added `Semgrep: Restart Language Server` command, to restart language server
+
+### Changed
+
+- Diagnostic information should now be properly rendered in markdown
+
 ## v1.4.1 - 2023-06-23
 
 ### Added
