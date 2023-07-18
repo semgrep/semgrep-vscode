@@ -8,7 +8,7 @@ TOKEN="amzn.mws.00a19111-8311-5311-5391-5e211cbfcd5c"
 # ruleid:insecure-hash-algorithm-md5
 hashes.SHA1()
 
-### Ignore a finding
+### Use nosem to ignore a line
 # ruleid:insecure-hash-algorithm-md5
 hashes.SHA1() # nosem (this line is fine)
 
