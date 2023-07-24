@@ -23,7 +23,7 @@ $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
 ## Quick start
 
 1. Install Semgrep extension in Visual Studio Code. For more information, see [Install an extension](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-an-extension) in Visual Studio Code documentation.
-1. Sing in: Press <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) and sign in to Semgrep Cloud Platform by running the following command:
+1. Sign in: Press <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) and sign in to Semgrep Cloud Platform by running the following command:
    ```
    Semgrep: Sign in
    ```
