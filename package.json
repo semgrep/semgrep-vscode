@@ -159,6 +159,11 @@
           "default": true,
           "description": "Only scan lines changed since the last commit"
         },
+        "semgrep.doHover": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable hovering for AST node viewing (requires restart)"
+        },
         "semgrep.metrics.enabled": {
           "type": "boolean",
           "default": true,
