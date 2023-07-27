@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { LanguageClient } from "vscode-languageclient/node";
 import { Environment } from "./env";
 import {
   login,
