@@ -3,6 +3,7 @@
 </p>
 
 Sign in to Semgrep Cloud Platform to:
+
 - get access to more than 500 Pro rules,
 - disable rules that are not a good fit,
 - and sync rules across your entire team.
