@@ -4,9 +4,7 @@ import { Environment } from "./env";
 import {
   login,
   loginFinish,
-  LoginParams,
   loginStatus,
-  LoginStatusParams,
   logout,
   refreshRules,
   scanWorkspace,

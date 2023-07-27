@@ -17,11 +17,11 @@ export class Logger {
     this.channel = channel;
   }
 
-  enableLogger(enabled: boolean) {
+  enableLogger(enabled: boolean): void {
     this.enabled = enabled;
   }
 
-  log(message: string) {
+  log(message: string): void {
     if (this.enabled) {
       this.channel.appendLine(message);
     }
