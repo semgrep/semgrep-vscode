@@ -5,6 +5,7 @@
 This extension is made to help you. We’d love your feedback to improve it further.
 
 Don't hesitate to
+
 - raise a ticket in [our GitHub repo](https://github.com/returntocorp/semgrep-vscode/issues),
 - or reach out on [Slack](https://go.semgrep.dev/slack).
 

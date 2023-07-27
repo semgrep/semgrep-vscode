@@ -9,11 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+## v1.5.0 - 2023-07-27
+
+### Added
+
 - Added `Semgrep: Restart Language Server` command, to restart language server
+- Users can now enable AST Hover, which allows showing AST nodes when hovering parts of code
 
 ### Changed
 
 - Diagnostic information should now be properly rendered in markdown
+- Semgrep Language Server will now respect environment variables
+- Fixed some typos and stuff
 
 ## v1.4.1 - 2023-06-23
 
