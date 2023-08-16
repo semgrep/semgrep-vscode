@@ -71,7 +71,7 @@ export class Environment {
     this.context.globalState.update("showNudges", val);
   }
 
-  get newInstall() {
+  get newInstall(): boolean {
     return this.context.globalState.get("newInstall", true);
   }
   set newInstall(val: boolean) {
@@ -81,7 +81,7 @@ export class Environment {
   set client(client: LanguageClient | null) {
     this._client = client;
   }
-  get client() {
+  get client(): LanguageClient | null {
     if (!this._client) {
       window.showWarningMessage("Semgrep Language Server not active");
     }

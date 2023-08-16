@@ -63,6 +63,7 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
     }
     server_path = `${globalstorage_path}/bin/semgrep`;
     env_vars = {
+      ...process.env,
       PYTHONUSERBASE: globalstorage_path,
     };
   }

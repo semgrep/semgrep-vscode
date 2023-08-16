@@ -2,7 +2,7 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Security scans in a snap. Speedy SAST with a powerful rule registry for seamless detection and remediation of code vulnerabilities with each save.",
-  "version": "1.4.1",
+  "version": "1.5.1",
   "engines": {
     "vscode": "^1.66.0"
   },
@@ -166,6 +166,11 @@
           "type": "boolean",
           "default": true,
           "description": "Only scan lines changed since the last commit"
+        },
+        "semgrep.doHover": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable hovering for AST node viewing (requires restart)"
         },
         "semgrep.metrics.enabled": {
           "type": "boolean",
