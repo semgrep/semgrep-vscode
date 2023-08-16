@@ -65,7 +65,8 @@
       },
       {
         "command": "semgrep.showAstNamed",
-        "title": "Semgrep: Show named Generic AST"
+        "title": "Semgrep: Show named Generic AST",
+        "when": "semgrep.cli.minor >= 36 || config.semgrep.ignoreCliVersion"
       },
       {
         "command": "semgrep.search",
