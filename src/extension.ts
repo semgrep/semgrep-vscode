@@ -5,6 +5,7 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { Environment } from "./env";
 import { registerCommands } from "./commands";
 import { createStatusBar } from "./statusBar";
+import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 
 let global_env: Environment | null = null;
@@ -38,6 +39,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
   vscode.window.registerTreeDataProvider(
     "semgrep-search-results",
     env.searchView
+  );
+  // register content provider for the AST showing document
+  vscode.workspace.registerTextDocumentContentProvider(
+    SemgrepDocumentProvider.scheme,
+    env.documentView
   );
   // Handle configuration changes
   context.subscriptions.push(

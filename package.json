@@ -60,6 +60,15 @@
         "title": "Semgrep: Update rules"
       },
       {
+        "command": "semgrep.showAst",
+        "title": "Semgrep: Show Generic AST"
+      },
+      {
+        "command": "semgrep.showAstNamed",
+        "title": "Semgrep: Show named Generic AST",
+        "when": "semgrep.cli.minor >= 36 || config.semgrep.ignoreCliVersion"
+      },
+      {
         "command": "semgrep.search",
         "title": "Semgrep: Search by pattern",
         "icon": "$(search-view-icon)",
@@ -205,6 +214,18 @@
         {
           "command": "semgrep.search.refresh",
           "when": "view == semgrep-search-results && semgrep.searchHasResults",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "semgrep.showAst",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "semgrep.showAstNamed",
+          "when": "editorTextFocus",
           "group": "navigation"
         }
       ]
