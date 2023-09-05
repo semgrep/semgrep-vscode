@@ -131,7 +131,7 @@ async function lspOptions(
   env.logger.log(
     `Semgrep LSP server configuration := ${JSON.stringify(server)}`
   );
-  const config = { ...env.config.cfg };
+  const config = Object.create(env.config.cfg);
   const metrics = {
     machineId: vscode.env.machineId,
     isNewAppInstall: env.newInstall,
