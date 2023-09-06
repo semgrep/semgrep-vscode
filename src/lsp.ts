@@ -129,9 +129,11 @@ async function lspOptions(
 
   const serverOptions: ServerOptions = server;
   env.logger.log(
-    `Semgrep LSP server configuration := ${JSON.stringify(server)}`
+    `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`
   );
-  const config = { ...env.config.cfg };
+
+  // Please ignore this bad code, its just to make this more of a malleable type
+  const config = JSON.stringify(env.config.cfg);
   const metrics = {
     machineId: vscode.env.machineId,
     isNewAppInstall: env.newInstall,
@@ -140,11 +142,17 @@ async function lspOptions(
     extensionType: "vscode",
     enabled: vscode.env.isTelemetryEnabled,
   };
-  const initializationOptions = {
-    metrics: metrics,
-    ...config,
-  };
-  env.logger.log(`Semgrep Initialization Options := ${initializationOptions}`);
+  const initializationOptions = JSON.parse(config);
+  initializationOptions.metrics = metrics;
+  // end bad code
+
+  env.logger.log(
+    `Semgrep Initialization Options := ${JSON.stringify(
+      initializationOptions,
+      null,
+      2
+    )}`
+  );
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
