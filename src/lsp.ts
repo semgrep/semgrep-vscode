@@ -132,8 +132,6 @@ async function lspOptions(
     `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`
   );
 
-  // Please ignore this bad code, its just to make this more of a malleable type
-  const config = JSON.stringify(env.config.cfg);
   const metrics = {
     machineId: vscode.env.machineId,
     isNewAppInstall: env.newInstall,
@@ -142,9 +140,10 @@ async function lspOptions(
     extensionType: "vscode",
     enabled: vscode.env.isTelemetryEnabled,
   };
-  const initializationOptions = JSON.parse(config);
+  const initializationOptions = {
+    ...env.config.cfg,
+  };
   initializationOptions.metrics = metrics;
-  // end bad code
 
   env.logger.log(
     `Semgrep Initialization Options := ${JSON.stringify(
