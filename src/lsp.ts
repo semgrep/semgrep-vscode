@@ -109,22 +109,24 @@ async function lspOptions(
   if (server.options) {
     server.options.cwd = cwd;
   }
-  const cmd = `"${server.command}" --version`;
-  const version = await execShell(cmd, server.options?.env);
-  const minor = semver.minor(version);
-  const major = semver.major(version);
-  vscode.commands.executeCommand("setContext", "semgrep.cli.minor", minor);
-  vscode.commands.executeCommand("setContext", "semgrep.cli.major", major);
-  if (!semver.satisfies(version, MIN_VERSION)) {
-    vscode.window.showErrorMessage(
-      `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`
-    );
-    return [null, null];
-  }
-  if (!semver.satisfies(version, LATEST_VERSION)) {
-    vscode.window.showWarningMessage(
-      `Some features of the Semgrep Extension require a Semgrep CLI version ${LATEST_VERSION}, but the current installed version is ${version}, some features may be disabled, please upgrade.`
-    );
+  if (!env.config.cfg.get("ignoreCliVersion")) {
+    const cmd = `"${server.command}" --version`;
+    const version = await execShell(cmd, server.options?.env);
+    const minor = semver.minor(version);
+    const major = semver.major(version);
+    vscode.commands.executeCommand("setContext", "semgrep.cli.minor", minor);
+    vscode.commands.executeCommand("setContext", "semgrep.cli.major", major);
+    if (!semver.satisfies(version, MIN_VERSION)) {
+      vscode.window.showErrorMessage(
+        `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`
+      );
+      return [null, null];
+    }
+    if (!semver.satisfies(version, LATEST_VERSION)) {
+      vscode.window.showWarningMessage(
+        `Some features of the Semgrep Extension require a Semgrep CLI version ${LATEST_VERSION}, but the current installed version is ${version}, some features may be disabled, please upgrade.`
+      );
+    }
   }
 
   const serverOptions: ServerOptions = server;
