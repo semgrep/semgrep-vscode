@@ -168,6 +168,11 @@
           "default": true,
           "description": "Only scan lines changed since the last commit"
         },
+        "semgrep.scan.pro_intrafile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable intrafile scanning using the Semgrep Pro Engine (requires Pro Engine to be already installed)"
+        },
         "semgrep.doHover": {
           "type": "boolean",
           "default": false,
