@@ -16,5 +16,10 @@ export class SemgrepDocumentProvider
 }
 
 export function encodeUri(uri: vscode.Uri): vscode.Uri {
-  return uri.with({ scheme: SemgrepDocumentProvider.scheme });
+  // Needs to be a .ml here, regrettably, or you won't get OCaml syntax
+  // highlighting for the tree.
+  return uri.with({
+    path: uri.path + ".semgrep_ast.ml",
+    scheme: SemgrepDocumentProvider.scheme,
+  });
 }
