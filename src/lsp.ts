@@ -82,6 +82,13 @@ function semgrepCmdLineOpts(env: Environment): string[] {
   // Subcommand
   cmdlineOpts.push(...["lsp"]);
 
+  if (env.config.cfg.get("scan.pro_intrafile")) {
+    // This might cause an error if the user has not installed Semgrep Pro Engine
+    // yet on their machine.
+    // Perhaps we should install it automatically for them?
+    cmdlineOpts.push(...["--pro"]);
+  }
+
   // Logging
   if (env.config.trace) {
     cmdlineOpts.push(...["--debug"]);
