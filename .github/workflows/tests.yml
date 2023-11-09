@@ -24,7 +24,8 @@ jobs:
         with:
           node-version: 16
       - run: npm ci
-      - run: xvfb-run npm run vscode:test
+      - run: npm run pretest
+      - run: xvfb-run npm run test
   vsce-prepublish:
     runs-on: ubuntu-latest
     steps:
