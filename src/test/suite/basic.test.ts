@@ -14,13 +14,14 @@ suite("Extension Test Suite", () => {
   test("Sample test", async () => {
     const semgrep = vscode.extensions.getExtension("Semgrep.semgrep");
     assert.notStrictEqual(semgrep, undefined);
-    assert.strictEqual(semgrep?.isActive, true);
-
+    assert.strictEqual(semgrep?.isActive, false, "Extension is already active");
+    await semgrep.activate();
     cp.exec("semgrep --version", (err, stdout, stderr) => {
       assert.strictEqual(err, null);
       assert.strictEqual(stderr, "");
       assert.strictEqual(stdout, "0.0.0\n");
     });
-    await vscode.commands.executeCommand("semgrep.refreshRules");
+    const result = await vscode.commands.executeCommand("semgrep.refreshRules");
+    assert.strictEqual(result, "Refreshed rules");
   });
 });

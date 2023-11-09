@@ -26,7 +26,9 @@ async function replaceAndOpenUriContent(
   const edit = new vscode.WorkspaceEdit();
   edit.replace(uri, new vscode.Range(0, 0, doc.lineCount, 0), content);
   vscode.workspace.applyEdit(edit);
-  vscode.window.showTextDocument(doc, active_editor.viewColumn! + 1 || 0);
+  if (active_editor.viewColumn) {
+    vscode.window.showTextDocument(doc, active_editor.viewColumn + 1 || 0);
+  }
 }
 
 export function registerCommands(env: Environment): void {
@@ -50,24 +52,28 @@ export function registerCommands(env: Environment): void {
     if (vscode.window.activeTextEditor == null) {
       return;
     }
-    const ast_text = await env.client!.sendRequest(showAst, {
-      named: true,
-      uri: vscode.window.activeTextEditor?.document.uri.fsPath,
-    });
-    const uri = encodeUri(vscode.window.activeTextEditor.document.uri);
-    replaceAndOpenUriContent(uri, ast_text, vscode.window.activeTextEditor);
+    if (env.client) {
+      const ast_text = await env.client.sendRequest(showAst, {
+        named: true,
+        uri: vscode.window.activeTextEditor?.document.uri.fsPath,
+      });
+      const uri = encodeUri(vscode.window.activeTextEditor.document.uri);
+      replaceAndOpenUriContent(uri, ast_text, vscode.window.activeTextEditor);
+    }
   });
 
   vscode.commands.registerCommand("semgrep.showAst", async () => {
     if (vscode.window.activeTextEditor == null) {
       return;
     }
-    const ast_text = await env.client!.sendRequest(showAst, {
-      named: false,
-      uri: vscode.window.activeTextEditor?.document.uri.fsPath,
-    });
-    const uri = encodeUri(vscode.window.activeTextEditor.document.uri);
-    replaceAndOpenUriContent(uri, ast_text, vscode.window.activeTextEditor);
+    if (env.client) {
+      const ast_text = await env.client.sendRequest(showAst, {
+        named: false,
+        uri: vscode.window.activeTextEditor?.document.uri.fsPath,
+      });
+      const uri = encodeUri(vscode.window.activeTextEditor.document.uri);
+      replaceAndOpenUriContent(uri, ast_text, vscode.window.activeTextEditor);
+    }
   });
 
   vscode.commands.registerCommand("semgrep.logout", async () => {
@@ -77,6 +83,7 @@ export function registerCommands(env: Environment): void {
 
   vscode.commands.registerCommand("semgrep.refreshRules", async () => {
     await env.client?.sendNotification(refreshRules);
+    return "Refreshed rules";
   });
 
   vscode.commands.registerCommand("semgrep.loginStatus", async () => {
