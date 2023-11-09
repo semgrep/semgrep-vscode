@@ -26,7 +26,6 @@ jobs:
         with:
           node-version: 16
       - run: npm ci
-      - run: npm run pretest
       - name: Run VSCode Tests
         run: xvfb-run npm run test
   vsce-prepublish:
