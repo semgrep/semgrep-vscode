@@ -13,8 +13,6 @@ suite("Extension Test Suite", () => {
 
   test("Sample test", async () => {
     const semgrep = vscode.extensions.getExtension("Semgrep.semgrep");
-    const extensions = vscode.extensions.all;
-    assert.deepStrictEqual(extensions, []);
     assert.notStrictEqual(semgrep, undefined);
     assert.strictEqual(semgrep?.isActive, true);
 

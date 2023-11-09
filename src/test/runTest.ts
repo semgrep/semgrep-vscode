@@ -35,6 +35,7 @@ async function main() {
       extensionDevelopmentPath,
       extensionTestsPath,
       extensionTestsEnv,
+      launchArgs: ["walkthrough", "--disable-extensions"],
     });
   } catch (err) {
     console.error("Failed to run tests");
