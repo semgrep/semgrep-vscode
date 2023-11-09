@@ -13,10 +13,10 @@ suite("Extension Test Suite", () => {
   });
 
   test("Sample test", async () => {
-    await vscode.workspace.openTextDocument({
-      language: "python",
-      content: "print('Hello, world!')",
-    });
+    const semgrep = vscode.extensions.getExtension("Semgrep.semgrep");
+    assert.notStrictEqual(semgrep, undefined);
+    assert.strictEqual(semgrep?.isActive, true);
+
     cp.exec("semgrep --version", (err, stdout, stderr) => {
       assert.strictEqual(err, null);
       assert.strictEqual(stderr, "");
