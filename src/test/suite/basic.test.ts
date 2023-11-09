@@ -5,7 +5,6 @@ import { after } from "mocha";
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from "vscode";
-// import * as myExtension from '../extension';
 
 suite("Extension Test Suite", () => {
   after(() => {
@@ -14,6 +13,8 @@ suite("Extension Test Suite", () => {
 
   test("Sample test", async () => {
     const semgrep = vscode.extensions.getExtension("Semgrep.semgrep");
+    const extensions = vscode.extensions.all;
+    assert.deepStrictEqual(extensions, []);
     assert.notStrictEqual(semgrep, undefined);
     assert.strictEqual(semgrep?.isActive, true);
 

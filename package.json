@@ -17,7 +17,7 @@
     "semgrep"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "publisher": "Semgrep",
   "repository": "https://github.com/returntocorp/semgrep-vscode",
