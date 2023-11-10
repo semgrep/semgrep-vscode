@@ -25,6 +25,8 @@ suite("Extension Test Suite", () => {
     const semgrep = vscode.extensions.getExtension("Semgrep.semgrep");
 
     assert.notStrictEqual(semgrep, undefined);
+    assert.strictEqual(semgrep?.isActive, false, "Extension is already active");
+    await semgrep.activate();
     const result = await vscode.commands.executeCommand("semgrep.refreshRules");
     assert.strictEqual(result, "Refreshed rules");
   }).timeout(10000);
