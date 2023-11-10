@@ -7,6 +7,9 @@ export function run(): Promise<void> {
   const mocha = new Mocha({
     ui: "tdd",
     color: true,
+    reporterOptions: {
+      maxDiffSize: 0,
+    },
   });
 
   const testsRoot = path.resolve(__dirname, "..");
