@@ -279,7 +279,7 @@
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test-compile": "tsc -p ./",
+    "test-compile": "tsc -p ./ && npm run esbuild",
     "lint": "eslint src --ext ts",
     "pretest": "npm run test-compile && npm run lint",
     "test": "node ./out/src/test/runTest.js",
