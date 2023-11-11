@@ -7,8 +7,9 @@ import { registerCommands } from "./commands";
 import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
+import { LanguageClient } from "vscode-languageclient/node";
 
-let global_env: Environment | null = null;
+export let global_env: Environment | null = null;
 
 async function initEnvironment(
   context: ExtensionContext
@@ -23,9 +24,10 @@ async function createOrUpdateEnvironment(
   return global_env ? global_env.reloadConfig() : initEnvironment(context);
 }
 
-export async function activate(context: ExtensionContext): Promise<void> {
+export async function activate(
+  context: ExtensionContext
+): Promise<LanguageClient | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
-
   await activateLsp(env);
   if (!env.client) {
     vscode.window.showErrorMessage(
@@ -69,6 +71,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
       vscode.commands.executeCommand("semgrep.scanWorkspaceFull");
     }
   }
+  return env.client;
 }
 
 export async function deactivate(): Promise<void> {

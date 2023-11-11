@@ -1,32 +1,63 @@
 import * as assert from "assert";
 import { after } from "mocha";
 import * as path from "path";
-const testFolderLocation = "/../../../../src/test/fixtures/";
-
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
 import * as vscode from "vscode";
-suite("Extension Test Suite", () => {
+import * as cp from "child_process";
+import {
+  LanguageClient,
+  ProtocolNotificationType,
+  ProtocolRequestType,
+  PublishDiagnosticsNotification,
+  PublishDiagnosticsParams,
+} from "vscode-languageclient/node";
+
+const testFolderLocation = path.join(__dirname, "/../fixtures/");
+function clientNotification(
+  client: LanguageClient,
+  type: ProtocolNotificationType<any, any>
+) {
+  return new Promise((resolve) => {
+    client.onNotification(type, (params) => {
+      resolve(params);
+    });
+  });
+}
+
+function clientRequest(
+  client: LanguageClient,
+  type: ProtocolRequestType<any, any, any, any, any>
+) {
+  return new Promise((resolve) => {
+    client.onRequest(type, (params) => {
+      resolve(params);
+    });
+  });
+}
+clientRequest;
+
+function getClient() {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const extension = vscode.extensions.getExtension("Semgrep.semgrep")!;
+  return extension.exports;
+}
+
+suite("Extension Features", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   after(() => {
     vscode.window.showInformationMessage("All tests done!");
   });
-
-  test("Sample test", async () => {
-    const testPy = vscode.Uri.file(
-      path.join(__dirname + testFolderLocation + "test.py")
-    );
-
-    await vscode.workspace.openTextDocument(testPy);
-    const semgrep = vscode.extensions.getExtension("Semgrep.semgrep");
-
-    assert.notStrictEqual(semgrep, undefined);
-    const promise = new Promise((r, e) => {
-      return;
+  test("Basic Diagnostic Test", async () => {
+    const testPy = vscode.Uri.file(path.join(testFolderLocation + "test.py"));
+    const doc = await vscode.workspace.openTextDocument(testPy);
+    const editor = await vscode.window.showTextDocument(doc);
+    await editor.edit((editBuilder) => {
+      editBuilder.insert(new vscode.Position(1, 0), "hashes.SHA1()");
     });
-    await promise;
-    const result = await vscode.commands.executeCommand(
-      "semgrep.scanWorkspace"
-    );
-    assert.strictEqual(result, "Refreshed rules");
-  }).timeout(100000);
+    const client = getClient();
+    const params: PublishDiagnosticsParams = (await clientNotification(
+      client,
+      PublishDiagnosticsNotification.type
+    )) as PublishDiagnosticsParams;
+    assert.strictEqual(params.diagnostics.length, 1);
+  });
 });

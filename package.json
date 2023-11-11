@@ -17,7 +17,7 @@
     "semgrep"
   ],
   "activationEvents": [
-    "onLanguage"
+    "*"
   ],
   "publisher": "Semgrep",
   "repository": "https://github.com/returntocorp/semgrep-vscode",
@@ -165,7 +165,7 @@
         },
         "semgrep.scan.onlyGitDirty": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Only scan lines changed since the last commit"
         },
         "semgrep.scan.pro_intrafile": {
@@ -281,7 +281,7 @@
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./ && npm run esbuild",
     "lint": "eslint src --ext ts",
-    "pretest": "npm run test-compile && npm run lint",
+    "pretest": "npm run test-compile && npm run lint && cp -rf src/test/fixtures out/src/test",
     "test": "node ./out/src/test/runTest.js",
     "clean": "rm -rf ./out"
   },
