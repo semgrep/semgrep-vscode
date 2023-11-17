@@ -31,6 +31,7 @@ async function main() {
   );
   // Setup temp dir for all repos
   const tmpDir = tmp.dirSync({ unsafeCleanup: true });
+  let hasFailed = false;
   try {
     // The folder containing the Extension Manifest package.json
     // Passed to `--extensionDevelopmentPath`
@@ -76,13 +77,17 @@ async function main() {
         });
       } catch (err) {
         console.error(`Failed to run tests for ${repoName}`);
+        hasFailed = true;
       }
     }
   } catch (err) {
     console.error("Failed to run tests");
-    process.exit(1);
+    hasFailed = true;
   } finally {
     tmpDir.removeCallback();
+  }
+  if (hasFailed) {
+    process.exit(1);
   }
 }
 
