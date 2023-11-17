@@ -1,9 +1,19 @@
 import * as path from "path";
 import find = require("find-process");
-
+import * as tmp from "tmp";
+import * as cp from "child_process";
 import { runTests } from "@vscode/test-electron";
 
+const REPOS = [
+  ["semgrep", "https://github.com/semgrep/semgrep.git"],
+
+  ["juice-shop", "https://github.com/juice-shop/juice-shop.git"],
+  ["semgrep-vscode", "https://github.com/semgrep/semgrep-vscode.git"],
+  ["semgrep-intellij", "https://github.com/semgrep/semgrep-intellij.git"],
+];
 async function main() {
+  // Setup temp dir for all repos
+  const tmpDir = tmp.dirSync({ unsafeCleanup: true });
   try {
     // The folder containing the Extension Manifest package.json
     // Passed to `--extensionDevelopmentPath`
@@ -30,16 +40,31 @@ async function main() {
       }
     }
 
-    // Download VS Code, unzip it and run the integration test
-    await runTests({
-      extensionDevelopmentPath,
-      extensionTestsPath,
-      extensionTestsEnv,
-      launchArgs: [path.join(__dirname, "/fixtures"), "--disable-extensions"],
-    });
+    for (const repo of REPOS) {
+      const repoName = repo[0];
+      const repoUrl = repo[1];
+      console.log(`Running tests for ${repoName}`);
+      const repoPath = path.join(tmpDir.name, repoName); // nosem
+      console.log(`Running in ${repoPath}`);
+      // Clone repo
+      cp.execSync(`git clone ${repoUrl} ${repoPath}`); // nosem
+      // Download VS Code, unzip it and run the integration test
+      try {
+        await runTests({
+          extensionDevelopmentPath,
+          extensionTestsPath,
+          extensionTestsEnv,
+          launchArgs: [repoPath, "--disable-extensions"],
+        });
+      } catch (err) {
+        console.error(`Failed to run tests for ${repoName}`);
+      }
+    }
   } catch (err) {
     console.error("Failed to run tests");
     process.exit(1);
+  } finally {
+    tmpDir.removeCallback();
   }
 }
 
