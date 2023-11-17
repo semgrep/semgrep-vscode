@@ -2,16 +2,33 @@ import * as path from "path";
 import find = require("find-process");
 import * as tmp from "tmp";
 import * as cp from "child_process";
-import { runTests } from "@vscode/test-electron";
+import {
+  downloadAndUnzipVSCode,
+  resolveCliArgsFromVSCodeExecutablePath,
+  runTests,
+} from "@vscode/test-electron";
 
 const REPOS = [
-  ["semgrep", "https://github.com/semgrep/semgrep.git"],
-
   ["juice-shop", "https://github.com/juice-shop/juice-shop.git"],
   ["semgrep-vscode", "https://github.com/semgrep/semgrep-vscode.git"],
   ["semgrep-intellij", "https://github.com/semgrep/semgrep-intellij.git"],
+  ["semgrep", "https://github.com/semgrep/semgrep.git"],
 ];
 async function main() {
+  // Download VSCode
+  const vscodeExecutablePath = await downloadAndUnzipVSCode("stable");
+  const [cli, ...args] =
+    resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
+  // Install some extensions so it's more like a real user
+  // Install ruff
+  cp.spawnSync(
+    cli,
+    args.concat(["--install-extension", "charliermarsh.ruff"]),
+    {
+      encoding: "utf-8",
+      stdio: "inherit",
+    }
+  );
   // Setup temp dir for all repos
   const tmpDir = tmp.dirSync({ unsafeCleanup: true });
   try {
@@ -51,6 +68,7 @@ async function main() {
       // Download VS Code, unzip it and run the integration test
       try {
         await runTests({
+          vscodeExecutablePath,
           extensionDevelopmentPath,
           extensionTestsPath,
           extensionTestsEnv,

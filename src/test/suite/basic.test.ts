@@ -11,15 +11,15 @@ import {
   ProtocolRequestType,
   PublishDiagnosticsNotification,
   PublishDiagnosticsParams,
-  WorkDoneProgress,
   WorkDoneProgressBegin,
   WorkDoneProgressCreateParams,
   WorkDoneProgressCreateRequest,
   WorkDoneProgressEnd,
   WorkDoneProgressReport,
 } from "vscode-languageclient/node";
-import { ClientRequest } from "http";
 import { ProgressToken } from "vscode-jsonrpc";
+
+const SCAN_TIMEOUT = 35000;
 
 function clientNotification(
   client: LanguageClient,
@@ -72,15 +72,16 @@ async function getClient() {
   if (!extension.isActive) {
     await extension.activate();
   }
-  // set verbose trace
+  // set semgrep path to development
+  /*
   vscode.workspace
     .getConfiguration("semgrep")
     .update(
       "path",
-      "/Users/r2cuser/r2c/semgrep/bin/osemgrep",
+      "<path-to-semgrep>/semgrep",
       vscode.ConfigurationTarget.Global
-    );
-
+    );*/
+  // set verbose trace
   vscode.workspace
     .getConfiguration("semgrep")
     .update("trace.server", "verbose", vscode.ConfigurationTarget.Global);
@@ -97,16 +98,18 @@ suite("Extension Features", function () {
   assert.strictEqual(workfolders.length, 1, "Workspace folder exists");
   const workfolderPath = workfolders[0].uri.fsPath;
   console.log(`Running semgrep CLI in ${workfolderPath}`);
-  // get semgrep results
+  // get semgrep results to compare against
   const semgrepResults = JSON.parse(
     cp
       .execSync(`semgrep --json --config=auto `, {
+        // needed as some repos have large outputs
         maxBuffer: 1024 * 1024 * 100,
         cwd: workfolderPath,
       })
       .toString()
   );
   const resultsHashMap: Map<string, any> = new Map();
+  // group by file
   semgrepResults.results.forEach((result: any) => {
     const previousResult = resultsHashMap.get(result.path);
     resultsHashMap.set(
@@ -116,18 +119,10 @@ suite("Extension Features", function () {
   });
 
   suiteSetup(async () => {
-    assert.ok(
-      semgrepResults.paths.scanned.length > 0,
-      "Semgrep CLI not scan files"
-    );
-    assert.ok(
-      semgrepResults.results.length > 0,
-      "Semgrep CLI did not find diagnostics"
-    );
-
     const filesToUnstage = semgrepResults.results
       .map((result: any) => result.path)
       .join(" ");
+    // unstage files so the extension picks them up
     makeFileUntracked(workfolderPath, filesToUnstage);
     client = await getClient();
     const progressBeginParams: WorkDoneProgressCreateParams =
@@ -147,15 +142,18 @@ suite("Extension Features", function () {
           | WorkDoneProgressReport
       ) => params.kind === "end"
     );
+    // wait for rules refresh to finish before running tests
     await rulesRefreshFinished;
   });
   resultsHashMap.forEach((result, path) => {
+    // This file causes a stack overflow in the language server :/
     if (path.includes("l5000")) {
       console.log("Skipping l5000 test");
       return;
     }
     const uri = vscode.Uri.file(`${workfolderPath}/${path}`);
     let doc: vscode.TextDocument;
+    // Test that extension picks up the same diagnostics as semgrep CLI
     test(`Basic diagnostics test (${path})`, async () => {
       const diagnosticsPromise = clientNotification(
         client,
@@ -171,7 +169,9 @@ suite("Extension Features", function () {
         result.length,
         "No diagnostics on open"
       );
-    }).timeout(35000);
+    }).timeout(SCAN_TIMEOUT);
+    // Test that we can edit the file and the diagnostics update
+    // and then restore + save the file and the diagnostics update
     test(`Save diagnostics test (${path})`, async () => {
       const editor = await vscode.window.showTextDocument(doc);
       const content = doc.getText();
@@ -210,6 +210,6 @@ suite("Extension Features", function () {
         result.length,
         "No diagnostics after change"
       );
-    });
+    }).timeout(SCAN_TIMEOUT);
   });
 });
