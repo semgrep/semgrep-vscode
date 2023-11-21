@@ -106,8 +106,14 @@
           "description": "Traces the communication between VS Code and the language server."
         },
         "semgrep.path": {
+          "description": "Path to the semgrep executable. Note: this is overriden by the semgrep.useJS setting.",
           "type": "string",
           "default": "semgrep"
+        },
+        "semgrep.useJS": {
+          "description": "Use the pure Javascript version of the extension. Warning, this is experimental and may break or have performance issues",
+          "type": "boolean",
+          "default": false
         },
         "semgrep.ignoreCliVersion": {
           "type": "boolean",
@@ -271,14 +277,15 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-base": "npm run setup-lspjs && esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
     "pretest": "npm run test-compile && npm run lint",
     "test": "node ./out/src/test/runTest.js",
-    "clean": "rm -rf ./out"
+    "clean": "rm -rf ./out",
+    "setup-lspjs": "aws s3 cp --recursive \"s3://semgrep-app-static-assets/static/turbo/v1.50.0/language_server\" lspjs"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",

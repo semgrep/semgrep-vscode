@@ -11,6 +11,17 @@
       "preLaunchTask": "watch-build"
     },
     {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Server",
+      "port": 6009,
+      "restart": true,
+      "outFiles": [
+        "${workspaceRoot}/lspjs/out/**/*.js",
+        "${workspaceRoot}/lspjs/dist/*.js"
+      ]
+    },
+    {
       "name": "Extension Tests",
       "type": "extensionHost",
       "request": "launch",
