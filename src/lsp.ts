@@ -138,7 +138,7 @@ async function serverOptionsCli(
 }
 
 function serverOptionsJs() {
-  const serverModule = path.join(__dirname, "../lspjs/semgrep-lsp.js");
+  const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
   const serverOptionsJs = {
     run: { module: serverModule, transport: TransportKind.ipc },
     debug: {
@@ -189,7 +189,6 @@ async function lspOptions(
   };
 
   let serverOptions;
-  // TODO if setting says use js
   if (process.platform === "win32" || env.config.get("useJS")) {
     serverOptions = serverOptionsJs();
   } else {

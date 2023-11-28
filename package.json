@@ -285,7 +285,7 @@
     "pretest": "npm run test-compile && npm run lint",
     "test": "node ./out/src/test/runTest.js",
     "clean": "rm -rf ./out",
-    "setup-lspjs": "aws s3 cp --recursive \"s3://semgrep-app-static-assets/static/turbo/v1.50.0/language_server\" lspjs"
+    "setup-lspjs": "aws s3 cp --recursive \"s3://semgrep-app-static-assets/static/turbo/$(cat ./semgrep-version)/language_server\" lspjs"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
