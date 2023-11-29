@@ -227,7 +227,6 @@ async function start(env: Environment): Promise<void> {
     serverOptions,
     clientOptions
   );
-
   // register commands
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");

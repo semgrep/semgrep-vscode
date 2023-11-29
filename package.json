@@ -17,7 +17,7 @@
     "semgrep"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "publisher": "Semgrep",
   "repository": "https://github.com/returntocorp/semgrep-vscode",
@@ -146,7 +146,7 @@
         },
         "semgrep.scan.jobs": {
           "type": "integer",
-          "default": 1,
+          "default": 2,
           "description": "Number of parallel jobs to run."
         },
         "semgrep.scan.maxMemory": {
@@ -171,7 +171,7 @@
         },
         "semgrep.scan.onlyGitDirty": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Only scan lines changed since the last commit"
         },
         "semgrep.scan.pro_intrafile": {
@@ -285,9 +285,9 @@
     "esbuild-base": "npm run setup-lspjs && esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test-compile": "tsc -p ./",
+    "test-compile": "tsc -p ./ && npm run esbuild",
     "lint": "eslint src --ext ts",
-    "pretest": "npm run test-compile && npm run lint",
+    "pretest": "npm run test-compile && npm run lint && cp -rf src/test/fixtures out/src/test",
     "test": "node ./out/src/test/runTest.js",
     "clean": "rm -rf ./out",
     "setup-lspjs": "./download-lspjs.sh Main.bc.js language-server-wasm.js semgrep-lsp-bindings.js semgrep-lsp.js"
@@ -305,8 +305,10 @@
     "@vscode/test-electron": "^2.1.3",
     "esbuild": "^0.17.19",
     "eslint": "^7.6.0",
+    "find-process": "^1.4.7",
     "glob": "^7.1.6",
     "mocha": "^9.1.4",
+    "tmp": "^0.2.1",
     "typescript": "^4.7.4"
   },
   "dependencies": {
@@ -315,7 +317,6 @@
     "node-fetch": "^2.6.0",
     "semver": "^7.5.0",
     "temp-dir": "^3.0.0",
-    "tmp": "^0.2.1",
     "vscode-jsonrpc": "^6.0.0",
     "vscode-languageclient": "^8.0.1",
     "which": "^2.0.2"
