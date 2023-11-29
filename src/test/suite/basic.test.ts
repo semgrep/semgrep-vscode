@@ -16,7 +16,7 @@ import {
 } from "vscode-languageclient/node";
 import { ProgressToken } from "vscode-jsonrpc";
 
-const SCAN_TIMEOUT = 5000;
+const SCAN_TIMEOUT = 10000;
 const SKIPPED_FILES = [
   // This file causes a stack overflow in the language server :/
   "l5000.java",
