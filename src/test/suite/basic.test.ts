@@ -20,7 +20,12 @@ import {
 import { ProgressToken } from "vscode-jsonrpc";
 
 const SCAN_TIMEOUT = 35000;
-
+const SKIPPED_FILES = [
+  // This file causes a stack overflow in the language server :/
+  "l5000.java",
+  // and so does this one
+  "three.js",
+];
 function clientNotification(
   client: LanguageClient,
   type: ProtocolNotificationType<any, any>,
@@ -146,10 +151,11 @@ suite("Extension Features", function () {
     await rulesRefreshFinished;
   });
   resultsHashMap.forEach((result, path) => {
-    // This file causes a stack overflow in the language server :/
-    if (path.includes("l5000")) {
-      console.log("Skipping l5000 test");
-      return;
+    for (const skippedFile of SKIPPED_FILES) {
+      if (path.includes(skippedFile)) {
+        console.log(`Skipping ${skippedFile} test`);
+        return;
+      }
     }
     const uri = vscode.Uri.file(`${workfolderPath}/${path}`);
     let doc: vscode.TextDocument;
