@@ -17,6 +17,7 @@ import {
   LanguageClientOptions,
   ServerOptions,
   Executable,
+  TransportKind,
 } from "vscode-languageclient/node";
 
 import * as which from "which";
@@ -97,12 +98,12 @@ function semgrepCmdLineOpts(env: Environment): string[] {
   return cmdlineOpts;
 }
 
-async function lspOptions(
+async function serverOptionsCli(
   env: Environment
-): Promise<[ServerOptions, LanguageClientOptions] | [null, null]> {
+): Promise<ServerOptions | null> {
   const server = await findSemgrep(env);
   if (!server) {
-    return [null, null];
+    return null;
   }
 
   env.logger.log(`Found server binary at: ${server.command}`);
@@ -127,7 +128,7 @@ async function lspOptions(
       vscode.window.showErrorMessage(
         `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`
       );
-      return [null, null];
+      return null;
     }
     if (!semver.satisfies(version, LATEST_VERSION)) {
       vscode.window.showWarningMessage(
@@ -140,7 +141,28 @@ async function lspOptions(
   env.logger.log(
     `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`
   );
+  return serverOptions;
+}
 
+function serverOptionsJs() {
+  const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
+  const serverOptionsJs = {
+    run: { module: serverModule, transport: TransportKind.ipc },
+    debug: {
+      module: serverModule,
+      transport: TransportKind.ipc,
+      options: { execArgv: ["--nolazy", "--inspect=6009"] },
+    },
+  };
+  vscode.window.showWarningMessage(
+    "Semgrep Extension is using the experimental JS LSP server, this is due to the current platform being Windows, or the setting 'semgrep.useJS' being set to true. There may be bugs or performance issues!"
+  );
+  return serverOptionsJs;
+}
+
+async function lspOptions(
+  env: Environment
+): Promise<[ServerOptions, LanguageClientOptions] | [null, null]> {
   const metrics = {
     machineId: vscode.env.machineId,
     isNewAppInstall: env.newInstall,
@@ -172,6 +194,20 @@ async function lspOptions(
       supportHtml: false,
     },
   };
+
+  let serverOptions;
+  if (process.platform === "win32" || env.config.get("useJS")) {
+    serverOptions = serverOptionsJs();
+  } else {
+    // Don't call this before as it can crash the extension on windows
+    serverOptions = await serverOptionsCli(env);
+    if (!serverOptions) {
+      vscode.window.showErrorMessage(
+        "Semgrep Extension failed to activate, please check output"
+      );
+      return [null, null];
+    }
+  }
 
   return [serverOptions, clientOptions];
 }

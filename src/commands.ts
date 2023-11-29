@@ -159,6 +159,9 @@ export function registerCommands(env: Environment): void {
   vscode.commands.registerCommand("semgrep.restartLanguageServer", () => {
     vscode.window.showInformationMessage("Restarting Semgrep Language Server");
     restartLsp(env);
+    vscode.window.showInformationMessage(
+      "Semgrep Language Server has finished restarting"
+    );
   });
 
   vscode.commands.registerCommand("semgrep.showDemoFile", async () => {
