@@ -9,10 +9,10 @@ import {
 } from "@vscode/test-electron";
 
 const REPOS = [
+  ["semgrep", "https://github.com/semgrep/semgrep.git"],
   ["juice-shop", "https://github.com/juice-shop/juice-shop.git"],
   ["semgrep-vscode", "https://github.com/semgrep/semgrep-vscode.git"],
   ["semgrep-intellij", "https://github.com/semgrep/semgrep-intellij.git"],
-  ["semgrep", "https://github.com/semgrep/semgrep.git"],
 ];
 async function main() {
   // Download VSCode
