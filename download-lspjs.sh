@@ -1,3 +1,5 @@
+#!/bin/bash
+set -eu
 mkdir -p lspjs/dist
 for var in "$@"
 do
