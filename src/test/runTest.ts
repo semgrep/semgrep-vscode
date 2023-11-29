@@ -55,12 +55,6 @@ async function main() {
       }
       if (display !== undefined) {
         extensionTestsEnv = { DISPLAY: display };
-        // DBUS not running causes annoying warnings
-        cp.spawnSync("dbus-launch", [], {
-          env: {
-            DISPLAY: display,
-          },
-        });
       }
     }
 
