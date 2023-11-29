@@ -1,7 +1,4 @@
 import * as assert from "assert";
-import { after } from "mocha";
-import * as path from "path";
-const testFolderLocation = "/../fixtures/";
 import * as vscode from "vscode";
 import * as cp from "child_process";
 import {
@@ -19,7 +16,7 @@ import {
 } from "vscode-languageclient/node";
 import { ProgressToken } from "vscode-jsonrpc";
 
-const SCAN_TIMEOUT = 35000;
+const SCAN_TIMEOUT = 5000;
 const SKIPPED_FILES = [
   // This file causes a stack overflow in the language server :/
   "l5000.java",
@@ -85,11 +82,12 @@ async function getClient() {
       "path",
       "<path-to-semgrep>/semgrep",
       vscode.ConfigurationTarget.Global
-    );*/
+    );
   // set verbose trace
   vscode.workspace
     .getConfiguration("semgrep")
     .update("trace.server", "verbose", vscode.ConfigurationTarget.Global);
+    */
   return extension.exports;
 }
 
@@ -167,7 +165,6 @@ suite("Extension Features", function () {
         (params: PublishDiagnosticsParams) => params.uri === uri.toString()
       );
       doc = await vscode.workspace.openTextDocument(uri);
-      await vscode.window.showTextDocument(doc);
       const diagnostics =
         (await diagnosticsPromise) as PublishDiagnosticsParams;
       assert.strictEqual(

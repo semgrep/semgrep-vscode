@@ -73,7 +73,7 @@ async function main() {
           extensionDevelopmentPath,
           extensionTestsPath,
           extensionTestsEnv,
-          launchArgs: [repoPath, "--disable-extensions"],
+          launchArgs: [repoPath],
         });
       } catch (err) {
         console.error(`Failed to run tests for ${repoName}`);
