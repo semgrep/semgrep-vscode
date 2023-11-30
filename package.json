@@ -319,6 +319,7 @@
     "temp-dir": "^3.0.0",
     "vscode-jsonrpc": "^6.0.0",
     "vscode-languageclient": "^8.0.1",
+    "vscode-languageserver": "^9.0.1",
     "which": "^2.0.2"
   }
 }
