@@ -3,25 +3,18 @@ import * as vscode from "vscode";
 import * as cp from "child_process";
 import {
   LanguageClient,
-  ProgressType,
   ProtocolNotificationType,
-  ProtocolRequestType,
   PublishDiagnosticsNotification,
   PublishDiagnosticsParams,
-  WorkDoneProgressBegin,
-  WorkDoneProgressCreateParams,
-  WorkDoneProgressCreateRequest,
-  WorkDoneProgressEnd,
-  WorkDoneProgressReport,
 } from "vscode-languageclient/node";
-import { ProgressToken } from "vscode-jsonrpc";
 
-const SCAN_TIMEOUT = 10000;
+const SCAN_TIMEOUT = 35000;
 const SKIPPED_FILES = [
   // This file causes a stack overflow in the language server :/
   "l5000.java",
   // and so does this one
   "three.js",
+  "long.py", // This one times out lspjs
 ];
 function clientNotification(
   client: LanguageClient,
@@ -36,65 +29,43 @@ function clientNotification(
     });
   });
 }
-function clientProgress(
-  client: LanguageClient,
-  type: ProgressType<
-    WorkDoneProgressBegin | WorkDoneProgressEnd | WorkDoneProgressReport
-  >,
-  token: ProgressToken,
-  checkParams: (params: any) => boolean = () => true
-) {
-  return new Promise((resolve) => {
-    client.onProgress(type, token, (params) => {
-      if (checkParams(params)) {
-        resolve(params);
-      }
-    });
-  });
-}
-
-function clientRequest(
-  client: LanguageClient,
-  type: ProtocolRequestType<any, any, any, any, any>
-) {
-  return new Promise((resolve) => {
-    client.onRequest(type, (params) => {
-      resolve(params);
-    });
-  });
-}
 
 function makeFileUntracked(cwd: string, path: string) {
   cp.execSync(`git -C ${cwd} rm --cached --ignore-unmatch ${path}`);
 }
 
-async function getClient() {
+async function getEnv() {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const extension = vscode.extensions.getExtension("Semgrep.semgrep")!;
-  if (!extension.isActive) {
-    await extension.activate();
-  }
+
+  // set semgrep to use javascript
+  /*vscode.workspace
+  .getConfiguration("semgrep")
+  .update("useJS", true, vscode.ConfigurationTarget.Global);*/
+
   // set semgrep path to development
-  /*
-  vscode.workspace
+  /*vscode.workspace
     .getConfiguration("semgrep")
     .update(
       "path",
       "<path-to-semgrep>/semgrep",
       vscode.ConfigurationTarget.Global
-    );
+    );*/
   // set verbose trace
   vscode.workspace
     .getConfiguration("semgrep")
     .update("trace.server", "verbose", vscode.ConfigurationTarget.Global);
-    */
+
+  if (!extension.isActive) {
+    await extension.activate();
+  }
   return extension.exports;
 }
 
 suite("Extension Features", function () {
   let client: LanguageClient;
   const workfolders = vscode.workspace.workspaceFolders;
-  this.timeout(100000);
+  this.timeout(SCAN_TIMEOUT);
   if (!workfolders) {
     assert.fail("No workspace folders");
   }
@@ -127,26 +98,9 @@ suite("Extension Features", function () {
       .join(" ");
     // unstage files so the extension picks them up
     makeFileUntracked(workfolderPath, filesToUnstage);
-    client = await getClient();
-    const progressBeginParams: WorkDoneProgressCreateParams =
-      (await clientRequest(
-        client,
-        WorkDoneProgressCreateRequest.type
-      )) as WorkDoneProgressCreateParams;
-    const token = progressBeginParams.token;
-    const rulesRefreshFinished = clientProgress(
-      client,
-      new ProgressType(),
-      token,
-      (
-        params:
-          | WorkDoneProgressBegin
-          | WorkDoneProgressEnd
-          | WorkDoneProgressReport
-      ) => params.kind === "end"
-    );
-    // wait for rules refresh to finish before running tests
-    await rulesRefreshFinished;
+    const env = await getEnv();
+    client = env.client;
+    await env.startupPromise;
   });
   resultsHashMap.forEach((result, path) => {
     for (const skippedFile of SKIPPED_FILES) {

@@ -26,7 +26,7 @@ async function createOrUpdateEnvironment(
 
 export async function activate(
   context: ExtensionContext
-): Promise<LanguageClient | undefined> {
+): Promise<Environment | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
   await activateLsp(env);
   if (!env.client) {
@@ -72,7 +72,7 @@ export async function activate(
       }
     }
   });
-  return env.client;
+  return env;
 }
 
 export async function deactivate(): Promise<void> {

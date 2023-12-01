@@ -147,11 +147,17 @@ async function serverOptionsCli(
 function serverOptionsJs() {
   const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
   const serverOptionsJs = {
-    run: { module: serverModule, transport: TransportKind.ipc },
+    run: {
+      module: serverModule,
+      transport: TransportKind.ipc,
+      options: { execArgv: ["--stack-size=1000000"] },
+    },
     debug: {
       module: serverModule,
       transport: TransportKind.ipc,
-      options: { execArgv: ["--nolazy", "--inspect=6009"] },
+      options: {
+        execArgv: ["--nolazy", "--inspect=6009", "--stack-size=1000000"],
+      },
     },
   };
   vscode.window.showWarningMessage(
@@ -230,8 +236,18 @@ async function start(env: Environment): Promise<void> {
   // register commands
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
+
   await c.start();
+  const startupPromise = new Promise<void>((resolve) => {
+    c.onNotification("$/progress", (params) => {
+      if (params?.value?.kind == "end") {
+        env.logger.log("Rules loaded");
+        resolve();
+      }
+    });
+  });
   env.client = c;
+  env.startupPromise = startupPromise;
 }
 
 async function stop(env: Environment | null): Promise<void> {
