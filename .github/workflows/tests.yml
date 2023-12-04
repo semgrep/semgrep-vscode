@@ -28,11 +28,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: npm ci
-      - run: xvfb-run -a npm test
+      - name: install dependencies
+        run: npm ci
+      - name: run tests (xvfb)
+        run: xvfb-run -a npm test
         if: runner.os == 'Linux'
-      - run: npm test
+      - name: run tests (non xvfb)
+        shell: bash # needed for windows
         if: runner.os != 'Linux'
+        run: npm test
 
   vsce-prepublish:
     runs-on: ubuntu-latest
