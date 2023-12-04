@@ -34,12 +34,22 @@ jobs:
       #- name: configure npm
       #  if: runner.os == 'Windows'
       #  run: npm config set script-shell "C:\\Program Files\\Git\\Bin\\bash.exe"
-      - name: run tests (xvfb)
-        run: xvfb-run -a npm test
-        if: runner.os == 'Linux'
-      - name: run tests (non xvfb)
-        if: runner.os != 'Linux'
-        run: npm test
+      - name: pretest
+        run: npm run pretest
+      - name: run native tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run -a npm test-native
+      - name: run native tests (MacOS)
+        if: matrix.os == 'macos-latest'
+        run: npm test-native
+      - name: uninstall semgrep
+        run: python -m pip uninstall semgrep
+      - name: run js tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run -a npm test-js
+      - name: run js tests (MacOS)
+        if: matrix.os == 'macos-latest'
+        run: npm test-js
 
   vsce-prepublish:
     runs-on: ubuntu-latest

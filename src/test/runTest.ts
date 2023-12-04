@@ -58,6 +58,12 @@ async function main() {
       }
     }
 
+    if (process.env["USE_JS"] !== undefined) {
+      extensionTestsEnv = {
+        ...extensionTestsEnv,
+        USE_JS: process.env["USE_JS"],
+      };
+    }
     for (const repo of REPOS) {
       const repoName = repo[0];
       const repoUrl = repo[1];

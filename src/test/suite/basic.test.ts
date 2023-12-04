@@ -39,10 +39,13 @@ async function getEnv() {
   const extension = vscode.extensions.getExtension("Semgrep.semgrep")!;
 
   // set semgrep to use javascript
-  /*vscode.workspace
-  .getConfiguration("semgrep")
-  .update("useJS", true, vscode.ConfigurationTarget.Global);*/
-
+  if (process.env["USE_JS"]) {
+    vscode.workspace
+      .getConfiguration("semgrep")
+      .update("useJS", true, vscode.ConfigurationTarget.Global);
+  } else {
+    console.log(`Using JS: false`);
+  }
   // set semgrep path to development
   /*vscode.workspace
     .getConfiguration("semgrep")
@@ -52,9 +55,9 @@ async function getEnv() {
       vscode.ConfigurationTarget.Global
     );*/
   // set verbose trace
-  vscode.workspace
+  /*vscode.workspace
     .getConfiguration("semgrep")
-    .update("trace.server", "verbose", vscode.ConfigurationTarget.Global);
+    .update("trace.server", "verbose", vscode.ConfigurationTarget.Global);*/
 
   if (!extension.isActive) {
     await extension.activate();
