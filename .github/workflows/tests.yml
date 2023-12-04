@@ -42,8 +42,6 @@ jobs:
       - name: run native tests (MacOS)
         if: matrix.os == 'macos-latest'
         run: npm run test-native
-      - name: uninstall semgrep
-        run: python -m pip uninstall -y semgrep
       - name: run js tests (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run -a npm run test-js
