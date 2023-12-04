@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -eu
 # Check if lspjs exists and if its a symlink then exit
 if [ -L lspjs ]; then
