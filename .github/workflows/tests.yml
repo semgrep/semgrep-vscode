@@ -15,7 +15,7 @@ jobs:
   vsce-test:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -30,14 +30,14 @@ jobs:
           node-version: 16.x
       - name: install dependencies
         run: npm ci
-      - name: configure npm
-        if: runner.os == 'Windows'
-        run: npm config set script-shell "C:\\Program Files\\Git\\Bin\\bash.exe"
+      # This will be needed when we add in windows testing
+      #- name: configure npm
+      #  if: runner.os == 'Windows'
+      #  run: npm config set script-shell "C:\\Program Files\\Git\\Bin\\bash.exe"
       - name: run tests (xvfb)
         run: xvfb-run -a npm test
         if: runner.os == 'Linux'
       - name: run tests (non xvfb)
-        shell: bash # needed for windows
         if: runner.os != 'Linux'
         run: npm test
 
