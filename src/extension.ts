@@ -7,7 +7,6 @@ import { registerCommands } from "./commands";
 import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
-import { LanguageClient } from "vscode-languageclient/node";
 
 export let global_env: Environment | null = null;
 
