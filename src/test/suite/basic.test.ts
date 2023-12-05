@@ -1,12 +1,15 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
 import * as cp from "child_process";
+import * as fs from "fs";
+
 import {
   LanguageClient,
   ProtocolNotificationType,
   PublishDiagnosticsNotification,
   PublishDiagnosticsParams,
 } from "vscode-languageclient/node";
+import path = require("path");
 
 const SCAN_TIMEOUT = 35000;
 const SKIPPED_FILES = [
@@ -74,17 +77,24 @@ suite("Extension Features", function () {
   }
   assert.strictEqual(workfolders.length, 1, "Workspace folder exists");
   const workfolderPath = workfolders[0].uri.fsPath;
+  const cacheFile = `${path.basename(workfolderPath)}_results.json`;
   console.log(`Running semgrep CLI in ${workfolderPath}`);
-  // get semgrep results to compare against
-  const semgrepResults = JSON.parse(
-    cp
+  let semgrepResultsJson: string;
+  // Check if we have cached results
+  if (fs.existsSync(cacheFile)) {
+    semgrepResultsJson = fs.readFileSync(cacheFile).toString();
+  } else {
+    semgrepResultsJson = cp
       .execSync(`semgrep --json --config=auto `, {
         // needed as some repos have large outputs
         maxBuffer: 1024 * 1024 * 100,
         cwd: workfolderPath,
       })
-      .toString()
-  );
+      .toString();
+    fs.writeFileSync(cacheFile, semgrepResultsJson);
+  }
+  // get semgrep results to compare against
+  const semgrepResults = JSON.parse(semgrepResultsJson);
   const resultsHashMap: Map<string, any> = new Map();
   // group by file
   semgrepResults.results.forEach((result: any) => {
@@ -96,9 +106,7 @@ suite("Extension Features", function () {
   });
 
   suiteSetup(async () => {
-    const filesToUnstage = semgrepResults.results
-      .map((result: any) => result.path)
-      .join(" ");
+    const filesToUnstage = Array.from(resultsHashMap.keys()).join(" ");
     // unstage files so the extension picks them up
     makeFileUntracked(workfolderPath, filesToUnstage);
     const env = await getEnv();

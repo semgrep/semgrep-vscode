@@ -72,6 +72,7 @@ async function main() {
       console.log(`Running in ${repoPath}`);
       // Clone repo
       cp.execSync(`git clone ${repoUrl} ${repoPath}`); // nosem
+
       // Download VS Code, unzip it and run the integration test
       try {
         await runTests({
