@@ -46,6 +46,12 @@ jobs:
       - name: run js tests (MacOS)
         if: matrix.os == 'macos-latest'
         run: npm run test-js
+      - name: upload semgrep results for windows
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: semgrep-results
+          path: ./*_results.json
   vsce-test-windows:
     needs: vsce-test
     runs-on: windows-latest
@@ -65,8 +71,10 @@ jobs:
         run: git config --system core.longpaths true
       - name: pretest
         run: npm run pretest
-      - name: run native tests (Windows)
-        run: npm run test-native
+      - name: download semgrep results from linux
+        uses: actions/download-artifact@v3
+        with:
+          name: semgrep-results
       - name: run js tests (Windows)
         run: npm run test-js
 
