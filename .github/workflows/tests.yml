@@ -60,6 +60,9 @@ jobs:
         # This is needed so download-lspjs.sh can run
       - name: configure npm
         run: npm config set script-shell "C:\\Program Files\\Git\\Bin\\bash.exe"
+        # windows doesn't like long paths :(
+      - name: Support longpaths
+        run: git config --system core.longpaths true
       - name: pretest
         run: npm run pretest
       - name: run native tests (Windows)
