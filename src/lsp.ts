@@ -146,7 +146,7 @@ async function serverOptionsCli(
 
 function serverOptionsJs(env: Environment) {
   const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
-  const stackSize = env.config.cfg.get("stackSizeJS");
+  const stackSize = env.config.cfg.get("stackSizeJS", 1000000);
   const serverOptionsJs = {
     run: {
       module: serverModule,
