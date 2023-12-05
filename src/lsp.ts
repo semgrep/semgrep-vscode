@@ -144,19 +144,20 @@ async function serverOptionsCli(
   return serverOptions;
 }
 
-function serverOptionsJs() {
+function serverOptionsJs(env: Environment) {
   const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
+  const stackSize = env.config.cfg.get("stackSizeJS");
   const serverOptionsJs = {
     run: {
       module: serverModule,
       transport: TransportKind.ipc,
-      options: { execArgv: ["--stack-size=1000000"] },
+      options: { execArgv: [`--stack-size=${stackSize}`] },
     },
     debug: {
       module: serverModule,
       transport: TransportKind.ipc,
       options: {
-        execArgv: ["--nolazy", "--inspect=6009", "--stack-size=1000000"],
+        execArgv: ["--nolazy", "--inspect=6009", `--stack-size=${stackSize}`],
       },
     },
   };
@@ -203,7 +204,7 @@ async function lspOptions(
 
   let serverOptions;
   if (process.platform === "win32" || env.config.get("useJS")) {
-    serverOptions = serverOptionsJs();
+    serverOptions = serverOptionsJs(env);
   } else {
     // Don't call this before as it can crash the extension on windows
     serverOptions = await serverOptionsCli(env);

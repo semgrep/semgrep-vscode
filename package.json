@@ -115,6 +115,11 @@
           "type": "boolean",
           "default": false
         },
+        "semgrep.stackSizeJS": {
+          "description": "Maximum stack size (in KB) for the Javascript version of the extension. Warning, this is experimental and may break or have performance issues",
+          "type": "integer",
+          "default": 1000000
+        },
         "semgrep.ignoreCliVersion": {
           "type": "boolean",
           "default": false,
