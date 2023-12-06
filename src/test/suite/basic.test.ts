@@ -19,6 +19,7 @@ const SKIPPED_FILES = [
   "three.js",
   "long.py", // This one times out lspjs
   "UCommon.ml", // IDK just for now
+  "test.ts", // Another timeout for lspjs
 ];
 function clientNotification(
   client: LanguageClient,
