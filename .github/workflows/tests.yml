@@ -74,7 +74,10 @@ jobs:
       - name: download semgrep results from linux
         uses: actions/download-artifact@v3
         with:
-          name: semgrep-results
+          name: semgrep_results
+          path: ./
+      - name: ls
+        run: ls -R
       - name: run js tests (Windows)
         run: npm run test-js
 
