@@ -81,12 +81,17 @@ suite("Extension Features", function () {
   assert.strictEqual(workfolders.length, 1, "Workspace folder exists");
   const workfolderPath = workfolders[0].uri.fsPath;
   const cacheFile = `${path.basename(workfolderPath)}_results.json`;
-  console.log(`Running semgrep CLI in ${workfolderPath}`);
   let semgrepResultsJson: string;
+  console.log(`Using workfolder ${workfolderPath}`);
+  console.log(`Cache file ${cacheFile}`);
+  console.log(`CWD ${process.cwd()}`);
+  console.log(`Exists: ${fs.existsSync(cacheFile)}`);
   // Check if we have cached results
   if (fs.existsSync(cacheFile)) {
+    console.log(`Using cached results from ${cacheFile}`);
     semgrepResultsJson = fs.readFileSync(cacheFile).toString();
   } else {
+    console.log(`Running semgrep CLI in ${workfolderPath}`);
     semgrepResultsJson = cp
       .execSync(`semgrep --json --config=auto `, {
         // needed as some repos have large outputs
