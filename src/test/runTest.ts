@@ -64,6 +64,11 @@ async function main() {
         USE_JS: process.env["USE_JS"],
       };
     }
+    const cwd = process.cwd();
+    extensionTestsEnv = {
+      ...extensionTestsEnv,
+      CWD: cwd,
+    };
     for (const repo of REPOS) {
       const repoName = repo[0];
       const repoUrl = repo[1];

@@ -72,6 +72,10 @@ async function getEnv() {
 }
 
 suite("Extension Features", function () {
+  if (process.env["CWD"] && process.env["CWD"] !== process.cwd()) {
+    console.log(`Changing CWD to ${process.env["CWD"]}`);
+    process.chdir(process.env["CWD"] as string);
+  }
   let client: LanguageClient;
   const workfolders = vscode.workspace.workspaceFolders;
   this.timeout(SCAN_TIMEOUT);
@@ -83,9 +87,6 @@ suite("Extension Features", function () {
   const cacheFile = `${path.basename(workfolderPath)}_results.json`;
   let semgrepResultsJson: string;
   console.log(`Using workfolder ${workfolderPath}`);
-  console.log(`Cache file ${cacheFile}`);
-  console.log(`CWD ${process.cwd()}`);
-  console.log(`Exists: ${fs.existsSync(cacheFile)}`);
   // Check if we have cached results
   if (fs.existsSync(cacheFile)) {
     console.log(`Using cached results from ${cacheFile}`);
