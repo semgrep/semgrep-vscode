@@ -113,8 +113,8 @@ suite("Extension Features", function () {
     // unstage files so the extension picks them up
     makeFileUntracked(workfolderPath, filesToUnstage);
     const env = await getEnv();
-    client = env.client;
     await env.startupPromise;
+    client = env.client;
   });
   resultsHashMap.forEach((result, path) => {
     for (const skippedFile of SKIPPED_FILES) {
