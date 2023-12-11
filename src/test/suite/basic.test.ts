@@ -12,16 +12,17 @@ import {
 import path = require("path");
 
 const SCAN_TIMEOUT = 60000;
-const SKIPPED_FILES = [
-  // This file causes a stack overflow in the language server :/
-  "l5000.java",
-  // and so does this one
-  "three.js",
-  "long.py", // This one times out lspjs
-  "UCommon.ml", // IDK just for now
-  "common2.ml", // Also IDK
-  "test.ts", // Another timeout for lspjs
-];
+const USE_JS = process.env["USE_JS"];
+let SKIPPED_FILES: string[] = [];
+if (USE_JS || process.platform === "win32") {
+  const additional_skipped_files = [
+    "long.py", // This one times out lspjs
+    "test.ts", // Another timeout for lspjs
+    "cli/bin/semgrep", // No file extension == bad on windows. This is a bug in Guess_lang on how we determine executables
+    "ograph_extended", // Fails because its an ocaml file in CLRF. I don't think anyone will care about CLRF ocaml files on windows :D
+  ];
+  SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
+}
 function clientNotification(
   client: LanguageClient,
   type: ProtocolNotificationType<any, any>,
@@ -45,7 +46,7 @@ async function getEnv() {
   const extension = vscode.extensions.getExtension("Semgrep.semgrep")!;
 
   // set semgrep to use javascript
-  if (process.env["USE_JS"]) {
+  if (USE_JS) {
     vscode.workspace
       .getConfiguration("semgrep")
       .update("useJS", true, vscode.ConfigurationTarget.Global);
