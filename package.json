@@ -309,7 +309,7 @@
     "@types/which": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
-    "@vscode/test-electron": "^2.1.3",
+    "@vscode/test-electron": "^2.3.8",
     "esbuild": "^0.17.19",
     "eslint": "^7.6.0",
     "find-process": "^1.4.7",
