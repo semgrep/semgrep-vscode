@@ -1,7 +1,6 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
 import * as cp from "child_process";
-b;
 import * as fs from "fs";
 
 import {
