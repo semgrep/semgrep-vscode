@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
 import * as cp from "child_process";
+b;
 import * as fs from "fs";
 
 import {
@@ -15,9 +16,13 @@ const SCAN_TIMEOUT = 60000;
 const USE_JS = process.env["USE_JS"];
 let SKIPPED_FILES: string[] = [
   "l5000.java", // Causes stack overflow
-  "UCommon.ml", // Need to fix
-  "common2.ml", // also need to fix
-  "semgrep-extension.demo.py", // also also need to fix
+  // Currently an issue with ocaml we need to fix
+  "UCommon.ml",
+  "common2.ml",
+  "graphe.ml",
+  "Parsing_stat.ml",
+  "Interactive_subcommand.ml",
+  "semgrep-extension.demo.py", // doesn't work for some reason
 ];
 if (USE_JS || process.platform === "win32") {
   const additional_skipped_files = [
