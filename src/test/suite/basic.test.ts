@@ -125,9 +125,11 @@ suite("Extension Features", function () {
   });
 
   suiteSetup(async () => {
-    const filesToUnstage = Array.from(resultsHashMap.keys()).join(" ");
+    const filesToUnstage = resultsHashMap.keys();
     // unstage files so the extension picks them up
-    makeFileUntracked(workfolderPath, filesToUnstage);
+    for (const file of filesToUnstage) {
+      makeFileUntracked(workfolderPath, file);
+    }
     const env = await getEnv();
     await env.startupPromise;
     client = env.client;
