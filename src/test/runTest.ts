@@ -9,10 +9,14 @@ import {
 } from "@vscode/test-electron";
 
 const REPOS = [
-  ["semgrep", "https://github.com/semgrep/semgrep.git"],
-  ["juice-shop", "https://github.com/juice-shop/juice-shop.git"],
-  ["semgrep-vscode", "https://github.com/semgrep/semgrep-vscode.git"],
-  ["semgrep-intellij", "https://github.com/semgrep/semgrep-intellij.git"],
+  ["semgrep", "https://github.com/semgrep/semgrep.git", "v1.52.0"],
+  ["juice-shop", "https://github.com/juice-shop/juice-shop.git", "v15.0.0"],
+  ["semgrep-vscode", "https://github.com/semgrep/semgrep-vscode.git", "v1.5.2"],
+  [
+    "semgrep-intellij",
+    "https://github.com/semgrep/semgrep-intellij.git",
+    "v0.1.5",
+  ],
 ];
 async function main() {
   // Download VSCode
@@ -72,12 +76,13 @@ async function main() {
     for (const repo of REPOS) {
       const repoName = repo[0];
       const repoUrl = repo[1];
+      const tag = repo[2];
       console.log(`Running tests for ${repoName}`);
       const repoPath = path.join(tmpDir.name, repoName); // nosem
       console.log(`Running in ${repoPath}`);
       // Clone repo
       cp.execSync(`git clone ${repoUrl} ${repoPath}`); // nosem
-
+      cp.execSync(`git checkout ${tag}`, { cwd: repoPath }); // nosem
       // Download VS Code, unzip it and run the integration test
       try {
         await runTests({
