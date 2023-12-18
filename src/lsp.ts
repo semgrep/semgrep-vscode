@@ -18,7 +18,6 @@ import {
   ServerOptions,
   Executable,
   TransportKind,
-  State,
 } from "vscode-languageclient/node";
 
 import * as which from "which";
@@ -242,9 +241,9 @@ async function start(env: Environment): Promise<void> {
   const startupPromise = new Promise<void>((resolve) => {
     // set 30s timeout for rules loading
     setTimeout(() => {
-      console.error("Rules loading timeout, starting anyway");
+      console.warn("Rules loading timeout, starting anyway");
       resolve();
-    }, 30000);
+    }, 120000);
     c.onNotification("$/progress", (params) => {
       if (params?.value?.kind == "end") {
         env.logger.log("Rules loaded");
