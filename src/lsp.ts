@@ -18,6 +18,7 @@ import {
   ServerOptions,
   Executable,
   TransportKind,
+  State,
 } from "vscode-languageclient/node";
 
 import * as which from "which";
@@ -238,15 +239,20 @@ async function start(env: Environment): Promise<void> {
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
 
-  await c.start();
   const startupPromise = new Promise<void>((resolve) => {
-    c.onNotification("$/progress", (params) => {
-      if (params?.value?.kind == "end") {
-        env.logger.log("Rules loaded");
-        resolve();
+    c.onDidChangeState((e) => {
+      if (e.newState == State.Starting) {
+        c.onNotification("$/progress", (params) => {
+          if (params?.value?.kind == "end") {
+            env.logger.log("Rules loaded");
+            resolve();
+          }
+        });
       }
     });
   });
+
+  await c.start();
   env.client = c;
   env.startupPromise = startupPromise;
 }

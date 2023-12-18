@@ -125,14 +125,19 @@ suite("Extension Features", function () {
   });
 
   suiteSetup(async () => {
-    const filesToUnstage = resultsHashMap.keys();
+    const filesToUnstage = Array.from(resultsHashMap.keys());
     // unstage files so the extension picks them up
+    console.log(`Unstaging ${filesToUnstage.length} files}`);
     for (const file of filesToUnstage) {
       makeFileUntracked(workfolderPath, file);
     }
+    console.log("Starting extension");
     const env = await getEnv();
+    console.log("Waiting for extension to start");
     await env.startupPromise;
+    console.log("Extension started");
     client = env.client;
+    console.log("Starting tests");
   });
   resultsHashMap.forEach((result, path) => {
     for (const skippedFile of SKIPPED_FILES) {
