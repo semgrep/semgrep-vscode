@@ -238,21 +238,21 @@ async function start(env: Environment): Promise<void> {
   // register commands
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
-
+  await c.start();
   const startupPromise = new Promise<void>((resolve) => {
-    c.onDidChangeState((e) => {
-      if (e.newState == State.Starting) {
-        c.onNotification("$/progress", (params) => {
-          if (params?.value?.kind == "end") {
-            env.logger.log("Rules loaded");
-            resolve();
-          }
-        });
+    // set 30s timeout for rules loading
+    setTimeout(() => {
+      console.error("Rules loading timeout, starting anyway");
+      resolve();
+    }, 30000);
+    c.onNotification("$/progress", (params) => {
+      if (params?.value?.kind == "end") {
+        env.logger.log("Rules loaded");
+        resolve();
       }
     });
   });
 
-  await c.start();
   env.client = c;
   env.startupPromise = startupPromise;
 }
