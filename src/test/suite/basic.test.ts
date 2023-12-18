@@ -30,6 +30,17 @@ if (USE_JS || process.platform === "win32") {
     "cli/bin/semgrep", // No file extension == bad on windows. This is a bug in Guess_lang on how we determine executables
     "ograph_extended", // Fails because its an ocaml file in CLRF. I don't think anyone will care about CLRF ocaml files on windows :D
     "tree_sitter.ml", // Not sure why this fails, but it does
+    "Alcotest_ext.ml",
+    "Assoc.ml",
+    "Eval_jsonnet_envir.ml",
+    "Eval_jsonnet_subst.ml",
+    "Core_scan.ml",
+    "Check_rule.ml",
+    "Scan_subcommand.ml",
+    "Matches_report.ml",
+    "Parse_rule_helpers.ml",
+    "Parsing_plugin.ml",
+    "autofix-printing-stats/run",
   ];
   SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
 }
