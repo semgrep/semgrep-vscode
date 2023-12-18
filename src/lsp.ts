@@ -144,14 +144,21 @@ async function serverOptionsCli(
   return serverOptions;
 }
 
-function serverOptionsJs() {
+function serverOptionsJs(env: Environment) {
   const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
+  const stackSize = env.config.get("stackSizeJS");
   const serverOptionsJs = {
-    run: { module: serverModule, transport: TransportKind.ipc },
+    run: {
+      module: serverModule,
+      transport: TransportKind.ipc,
+      options: { execArgv: [`--stack-size=${stackSize}`] },
+    },
     debug: {
       module: serverModule,
       transport: TransportKind.ipc,
-      options: { execArgv: ["--nolazy", "--inspect=6009"] },
+      options: {
+        execArgv: ["--nolazy", "--inspect=6009", `--stack-size=${stackSize}`],
+      },
     },
   };
   vscode.window.showWarningMessage(
@@ -197,7 +204,7 @@ async function lspOptions(
 
   let serverOptions;
   if (process.platform === "win32" || env.config.get("useJS")) {
-    serverOptions = serverOptionsJs();
+    serverOptions = serverOptionsJs(env);
   } else {
     // Don't call this before as it can crash the extension on windows
     serverOptions = await serverOptionsCli(env);
@@ -231,7 +238,24 @@ async function start(env: Environment): Promise<void> {
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
   await c.start();
+  const startupPromise = new Promise<void>((resolve) => {
+    // set 30s timeout for rules loading
+    if (process.platform === "win32") {
+      setTimeout(() => {
+        console.warn("Rules loading timeout, starting anyway");
+        resolve();
+      }, 30000);
+    }
+    c.onNotification("$/progress", (params) => {
+      if (params?.value?.kind == "end") {
+        env.logger.log("Rules loaded");
+        resolve();
+      }
+    });
+  });
+
   env.client = c;
+  env.startupPromise = startupPromise;
 }
 
 async function stop(env: Environment | null): Promise<void> {

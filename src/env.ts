@@ -33,7 +33,6 @@ export class Environment {
   private _config: Config = new Config();
   semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
   private _client: LanguageClient | null = null;
-
   private constructor(
     readonly context: ExtensionContext,
     config: Config,
@@ -41,7 +40,8 @@ export class Environment {
     readonly documentView: SemgrepDocumentProvider,
     readonly channel: OutputChannel,
     readonly logger: Logger,
-    public version: string = ""
+    public version: string = "",
+    public startupPromise?: Promise<void>
   ) {
     this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
@@ -81,12 +81,14 @@ export class Environment {
   set client(client: LanguageClient | null) {
     this._client = client;
   }
+
   get client(): LanguageClient | null {
     if (!this._client) {
       window.showWarningMessage("Semgrep Language Server not active");
     }
     return this._client;
   }
+
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);

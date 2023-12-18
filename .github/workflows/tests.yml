@@ -28,11 +28,56 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: npm ci
-      - run: xvfb-run -a npm test
-        if: runner.os == 'Linux'
-      - run: npm test
-        if: runner.os != 'Linux'
+      - name: install dependencies
+        run: npm ci
+      - name: pretest
+        run: npm run pretest
+      - name: run native tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run -a npm run test-native
+      - name: run native tests (MacOS)
+        if: matrix.os == 'macos-latest'
+        run: npm run test-native
+      - name: uninstall semgrep
+        run: python -m pip uninstall -y semgrep
+      - name: run js tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run -a npm run test-js
+      - name: run js tests (MacOS)
+        if: matrix.os == 'macos-latest'
+        run: npm run test-js
+      - name: upload semgrep results for windows
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: semgrep-results
+          path: ./*_results.json
+  vsce-test-windows:
+    needs: vsce-test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: install dependencies
+        run: npm ci
+        # This is needed so download-lspjs.sh can run
+      - name: configure npm
+        run: npm config set script-shell "C:\\Program Files\\Git\\Bin\\bash.exe"
+        # windows doesn't like long paths :(
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      - name: pretest
+        run: npm run pretest
+      - name: download semgrep results from linux
+        uses: actions/download-artifact@v3
+        with:
+          name: semgrep-results
+          path: ./
+      - name: run js tests (Windows)
+        run: npm run test-js
 
   vsce-prepublish:
     runs-on: ubuntu-latest

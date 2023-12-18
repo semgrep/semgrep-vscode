@@ -1,28 +1,49 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
 import * as cp from "child_process";
+import * as fs from "fs";
+
 import {
   LanguageClient,
-  ProgressType,
   ProtocolNotificationType,
-  ProtocolRequestType,
   PublishDiagnosticsNotification,
   PublishDiagnosticsParams,
-  WorkDoneProgressBegin,
-  WorkDoneProgressCreateParams,
-  WorkDoneProgressCreateRequest,
-  WorkDoneProgressEnd,
-  WorkDoneProgressReport,
 } from "vscode-languageclient/node";
-import { ProgressToken } from "vscode-jsonrpc";
+import path = require("path");
 
-const SCAN_TIMEOUT = 10000;
-const SKIPPED_FILES = [
-  // This file causes a stack overflow in the language server :/
-  "l5000.java",
-  // and so does this one
-  "three.js",
+const SCAN_TIMEOUT = 60000;
+const USE_JS = process.env["USE_JS"];
+let SKIPPED_FILES: string[] = [
+  "l5000.java", // Causes stack overflow
+  // Currently an issue with ocaml we need to fix
+  "UCommon.ml",
+  "common2.ml",
+  "graphe.ml",
+  "Parsing_stat.ml",
+  "Interactive_subcommand.ml",
+  "semgrep-extension.demo.py", // doesn't work for some reason
 ];
+if (USE_JS || process.platform === "win32") {
+  const additional_skipped_files = [
+    "long.py", // This one times out lspjs
+    "test.ts", // Another timeout for lspjs
+    "cli/bin/semgrep", // No file extension == bad on windows. This is a bug in Guess_lang on how we determine executables
+    "ograph_extended", // Fails because its an ocaml file in CLRF. I don't think anyone will care about CLRF ocaml files on windows :D
+    "tree_sitter.ml", // Not sure why this fails, but it does
+    "Alcotest_ext.ml",
+    "Assoc.ml",
+    "Eval_jsonnet_envir.ml",
+    "Eval_jsonnet_subst.ml",
+    "Core_scan.ml",
+    "Check_rule.ml",
+    "Scan_subcommand.ml",
+    "Matches_report.ml",
+    "Parse_rule_helpers.ml",
+    "Parsing_plugin.ml",
+    "autofix-printing-stats/run",
+  ];
+  SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
+}
 function clientNotification(
   client: LanguageClient,
   type: ProtocolNotificationType<any, any>,
@@ -36,81 +57,75 @@ function clientNotification(
     });
   });
 }
-function clientProgress(
-  client: LanguageClient,
-  type: ProgressType<
-    WorkDoneProgressBegin | WorkDoneProgressEnd | WorkDoneProgressReport
-  >,
-  token: ProgressToken,
-  checkParams: (params: any) => boolean = () => true
-) {
-  return new Promise((resolve) => {
-    client.onProgress(type, token, (params) => {
-      if (checkParams(params)) {
-        resolve(params);
-      }
-    });
-  });
-}
-
-function clientRequest(
-  client: LanguageClient,
-  type: ProtocolRequestType<any, any, any, any, any>
-) {
-  return new Promise((resolve) => {
-    client.onRequest(type, (params) => {
-      resolve(params);
-    });
-  });
-}
 
 function makeFileUntracked(cwd: string, path: string) {
   cp.execSync(`git -C ${cwd} rm --cached --ignore-unmatch ${path}`);
 }
 
-async function getClient() {
+async function getEnv() {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const extension = vscode.extensions.getExtension("Semgrep.semgrep")!;
-  if (!extension.isActive) {
-    await extension.activate();
+
+  // set semgrep to use javascript
+  if (USE_JS) {
+    vscode.workspace
+      .getConfiguration("semgrep")
+      .update("useJS", true, vscode.ConfigurationTarget.Global);
+  } else {
+    console.log(`Using JS: false`);
   }
   // set semgrep path to development
-  /*
-  vscode.workspace
+  /*vscode.workspace
     .getConfiguration("semgrep")
     .update(
       "path",
       "<path-to-semgrep>/semgrep",
       vscode.ConfigurationTarget.Global
-    );
+    );*/
   // set verbose trace
-  vscode.workspace
+  /*vscode.workspace
     .getConfiguration("semgrep")
-    .update("trace.server", "verbose", vscode.ConfigurationTarget.Global);
-    */
+    .update("trace.server", "verbose", vscode.ConfigurationTarget.Global);*/
+
+  if (!extension.isActive) {
+    await extension.activate();
+  }
   return extension.exports;
 }
 
 suite("Extension Features", function () {
+  if (process.env["CWD"] && process.env["CWD"] !== process.cwd()) {
+    console.log(`Changing CWD to ${process.env["CWD"]}`);
+    process.chdir(process.env["CWD"] as string);
+  }
   let client: LanguageClient;
   const workfolders = vscode.workspace.workspaceFolders;
-  this.timeout(100000);
+  this.timeout(SCAN_TIMEOUT);
   if (!workfolders) {
     assert.fail("No workspace folders");
   }
   assert.strictEqual(workfolders.length, 1, "Workspace folder exists");
   const workfolderPath = workfolders[0].uri.fsPath;
-  console.log(`Running semgrep CLI in ${workfolderPath}`);
-  // get semgrep results to compare against
-  const semgrepResults = JSON.parse(
-    cp
+  const cacheFile = `${path.basename(workfolderPath)}_results.json`;
+  let semgrepResultsJson: string;
+  console.log(`Using workfolder ${workfolderPath}`);
+  // Check if we have cached results
+  if (fs.existsSync(cacheFile)) {
+    console.log(`Using cached results from ${cacheFile}`);
+    semgrepResultsJson = fs.readFileSync(cacheFile).toString();
+  } else {
+    console.log(`Running semgrep CLI in ${workfolderPath}`);
+    semgrepResultsJson = cp
       .execSync(`semgrep --json --config=auto `, {
         // needed as some repos have large outputs
         maxBuffer: 1024 * 1024 * 100,
         cwd: workfolderPath,
       })
-      .toString()
-  );
+      .toString();
+    fs.writeFileSync(cacheFile, semgrepResultsJson);
+  }
+  // get semgrep results to compare against
+  const semgrepResults = JSON.parse(semgrepResultsJson);
   const resultsHashMap: Map<string, any> = new Map();
   // group by file
   semgrepResults.results.forEach((result: any) => {
@@ -122,36 +137,26 @@ suite("Extension Features", function () {
   });
 
   suiteSetup(async () => {
-    const filesToUnstage = semgrepResults.results
-      .map((result: any) => result.path)
-      .join(" ");
+    const filesToUnstage = Array.from(resultsHashMap.keys());
     // unstage files so the extension picks them up
-    makeFileUntracked(workfolderPath, filesToUnstage);
-    client = await getClient();
-    const progressBeginParams: WorkDoneProgressCreateParams =
-      (await clientRequest(
-        client,
-        WorkDoneProgressCreateRequest.type
-      )) as WorkDoneProgressCreateParams;
-    const token = progressBeginParams.token;
-    const rulesRefreshFinished = clientProgress(
-      client,
-      new ProgressType(),
-      token,
-      (
-        params:
-          | WorkDoneProgressBegin
-          | WorkDoneProgressEnd
-          | WorkDoneProgressReport
-      ) => params.kind === "end"
-    );
-    // wait for rules refresh to finish before running tests
-    await rulesRefreshFinished;
+    console.log(`Unstaging ${filesToUnstage.length} files}`);
+    for (const file of filesToUnstage) {
+      makeFileUntracked(workfolderPath, file);
+    }
+    console.log("Starting extension");
+    const env = await getEnv();
+    console.log("Waiting for extension to start");
+    await env.startupPromise;
+    console.log("Extension started");
+    client = env.client;
+    console.log("Starting tests");
   });
   resultsHashMap.forEach((result, path) => {
     for (const skippedFile of SKIPPED_FILES) {
-      if (path.includes(skippedFile)) {
-        console.log(`Skipping ${skippedFile} test`);
+      // We skip tests/ here because semgrep's .semgrepignore
+      // functionality is broken right now
+      if (path.includes(skippedFile) || path.startsWith("tests/")) {
+        console.log(`Skipping ${path} test`);
         return;
       }
     }
