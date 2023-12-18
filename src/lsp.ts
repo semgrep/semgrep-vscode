@@ -240,10 +240,12 @@ async function start(env: Environment): Promise<void> {
   await c.start();
   const startupPromise = new Promise<void>((resolve) => {
     // set 30s timeout for rules loading
-    setTimeout(() => {
-      console.warn("Rules loading timeout, starting anyway");
-      resolve();
-    }, 120000);
+    if (process.platform === "win32") {
+      setTimeout(() => {
+        console.warn("Rules loading timeout, starting anyway");
+        resolve();
+      }, 30000);
+    }
     c.onNotification("$/progress", (params) => {
       if (params?.value?.kind == "end") {
         env.logger.log("Rules loaded");
