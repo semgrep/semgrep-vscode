@@ -10,7 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+## v1.6.0 - 2023-12-19
+### Added
 
+- Added LSP.js support, so Semgrep VSCode supports Windows without WSL
+
+### Changed
 ## v1.5.0 - 2023-07-27
 
 ### Added
