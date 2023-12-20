@@ -176,7 +176,7 @@
         },
         "semgrep.scan.onlyGitDirty": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Only scan lines changed since the last commit"
         },
         "semgrep.scan.pro_intrafile": {
@@ -297,7 +297,7 @@
     "test-js": "USE_JS=1 node ./out/src/test/runTest.js",
     "test": "npm run test-native && npm run test-js",
     "clean": "rm -rf ./out",
-    "setup-lspjs": "./download-lspjs.sh Main.bc.js language-server-wasm.js semgrep-lsp-bindings.js semgrep-lsp.js"
+    "setup-lspjs": "echo \"disabled for now\""
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
