@@ -302,7 +302,7 @@
     "test-js": "USE_JS=1 node ./out/src/test/runTest.js",
     "test": "npm run test-native && npm run test-js",
     "clean": "rm -rf ./out",
-    "setup-lspjs": "echo \"disabled for now\""
+    "setup-lspjs": "./download-lspjs.sh Main.bc.js language-server-wasm.js semgrep-lsp-bindings.js semgrep-lsp.js"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
