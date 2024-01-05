@@ -147,17 +147,28 @@ async function serverOptionsCli(
 function serverOptionsJs(env: Environment) {
   const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
   const stackSize = env.config.get("stackSizeJS");
+  const heapSize = env.config.get("heapSizeJS");
   const serverOptionsJs = {
     run: {
       module: serverModule,
       transport: TransportKind.ipc,
-      options: { execArgv: [`--stack-size=${stackSize}`] },
+      options: {
+        execArgv: [
+          `--stack-size=${stackSize}`,
+          `--max-old-space-size=${heapSize}`,
+        ],
+      },
     },
     debug: {
       module: serverModule,
       transport: TransportKind.ipc,
       options: {
-        execArgv: ["--nolazy", "--inspect=6009", `--stack-size=${stackSize}`],
+        execArgv: [
+          "--nolazy",
+          "--inspect=6009",
+          `--stack-size=${stackSize}`,
+          `--max-old-space-size=${heapSize}`,
+        ],
       },
     },
   };

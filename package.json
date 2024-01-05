@@ -120,6 +120,11 @@
           "type": "integer",
           "default": 1000000
         },
+        "semgrep.heapSizeJS": {
+          "description": "Maximum heap size (in MB) for the Javascript version of the extension. Increase if the extension crashes while downloading rules. Warning, this is experimental and may break or have performance issues.",
+          "type": "integer",
+          "default": 4096
+        },
         "semgrep.ignoreCliVersion": {
           "type": "boolean",
           "default": false,
@@ -176,7 +181,7 @@
         },
         "semgrep.scan.onlyGitDirty": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Only scan lines changed since the last commit"
         },
         "semgrep.scan.pro_intrafile": {

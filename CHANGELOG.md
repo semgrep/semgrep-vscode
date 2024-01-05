@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Heap size setting for LSP.js
+
 ### Changed
 
 ## v1.6.0 - 2023-12-19
