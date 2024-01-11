@@ -111,8 +111,8 @@ Run Semgrep extension commands through the [Visual Studio Code Command Palette](
 - `Semgrep Restart Language Server`: Restart the langauge server
 - `Semgrep: Scan changed files in a workspace`: Scan files that have been changed since the last commit in your current workspace.
 - `Semgrep: Search by pattern`: Search for patterns in code using Semgrep pattern syntax. For more information, see [Pattern syntax](https://semgrep.dev/docs/writing-rules/pattern-syntax/) documentation.
-- `Semgrep: Show Generic AST`: Show AST nodes when hovering over code
-- `Semgrep: Show named Generic AST`: 
+- `Semgrep: Show Generic AST`: Show generic AST in a new window
+- `Semgrep: Show named Generic AST`: Show named AST in a new window
 - `Semgrep: Sign in`: Sign in or log in to the Semgrep Cloud Platform (this command opens a new window in your browser). When you sign in, you can automatically scan with Semgrep [Pro rules](https://semgrep.dev/docs/semgrep-code/pro-rules/) and add additional rules to the [Policies](https://semgrep.dev/orgs/-/policies) in Semgrep Code. If you are logged in with the command-line interface using <code>semgrep&nbsp;login</code>, you are already signed in with the Visual Studio Code Semgrep extension also. Alternatively, you can log in through your command-line interface by running `semgrep login`.
 - `Semgrep: Sign out`: Log out from Semgrep Cloud Platform. Alternatively, you can sign out through your command-line interface by running `semgrep logout`.
 - `Semgrep: Update rules`: For logged-in users. If the rules in the [Policies](https://semgrep.dev/orgs/-/policies) or rules included through the **Semgrep › Scan: Configuration** configuration option have been changed, this command loads the new configuration of your rules for your next scan.
