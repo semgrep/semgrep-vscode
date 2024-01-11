@@ -2,28 +2,28 @@
 
 [Semgrep](https://semgrep.dev/) is a fast, static analysis tool powered by an open-source engine for finding bugs, detecting vulnerabilities, and enforcing code standards. Semgrep Visual Studio Code extension scans lines when you change or open files or all files in your workspace. It offers:
 
-* Automatic scans whenever you open a file
-* Inline results and problem highlighting, as well as quick links to the definitions of the rules underlying the findings
-* Autofix, which allows you to apply Semgrep's suggested resolution for the findings
+- Automatic scans whenever you open a file
+- Inline results and problem highlighting, as well as quick links to the definitions of the rules underlying the findings
+- Autofix, which allows you to apply Semgrep's suggested resolution for the findings
 
 <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3" controls="controls">
 </video>
 
 ## Prerequisites
 
-* Windows users must use Semgrep extension v1.6.2 or later.
-* It's highly recommended that macOS, Linux, and WSL users install the Semgrep command-line interface (CLI) before using the Semgrep VS Code extension for a more performant and stable experience. The extension communicates with the CLI to run scans. To install the CLI:
+- Windows users must use Semgrep extension v1.6.2 or later.
+- It's highly recommended that macOS, Linux, and WSL users install the Semgrep command-line interface (CLI) before using the Semgrep VS Code extension for a more performant and stable experience. The extension communicates with the CLI to run scans. To install the CLI:
 
-   ```sh
-   # macOS
-   $ brew install semgrep
+  ```sh
+  # macOS
+  $ brew install semgrep
 
-   # Ubuntu/WSL/Linux/macOS
-   $ python3 -m pip install semgrep
+  # Ubuntu/WSL/Linux/macOS
+  $ python3 -m pip install semgrep
 
-   # use Docker to try Semgrep without installing the CLI
-   $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
-   ```
+  # use Docker to try Semgrep without installing the CLI
+  $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
+  ```
 
 ## Quickstart
 
@@ -86,8 +86,8 @@ To configure the Semgrep extension, open its **Extension Settings** page:
 - **Semgrep › Scan: Jobs**: Specify how many parallel jobs can run simultaneously. The default number of parallel jobs is one.
 - **Semgrep › Scan: Max Memory**: Sets the maximum memory in MB to use.
 - **Semgrep › Scan: Max Target Bytes**: Sets the maximum size of the target in bytes to scan.
-- **Semgrep › Scan: Only Git Dirty**: Allow Semgrep to scan your code whenever you open a new file and display the findings for lines that have changed since the last commit. On by default. 
-- **Semgrep › Scan: Pro_intrafile**: Enable intrafile scanning using the Pro Engine. 
+- **Semgrep › Scan: Only Git Dirty**: Allow Semgrep to scan your code whenever you open a new file and display the findings for lines that have changed since the last commit. On by default.
+- **Semgrep › Scan: Pro_intrafile**: Enable intrafile scanning using the Pro Engine.
 - **Semgrep › Scan: Timeout**: Set the maximum run time in seconds before Semgrep times out and stops scanning your code. The default value is 30.
 - **Semgrep › Scan: Timeout Threshold**: Set the maximum number of rules that can timeout on a file before the file is skipped. If set to 0, there will be no limit. Defaults to 3.
 - **Semgrep > Trace: Server**: This option is useful for debugging. The **messages** option displays communication of the Semgrep Visual Studio Code extension with the LSP server. The default option is **verbose**.
