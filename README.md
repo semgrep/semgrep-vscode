@@ -96,10 +96,10 @@ To configure the Semgrep extension, open its **Extension Settings** page:
 
 The following experimental features should only be used upon recommendation by Semgrep:
 
+- **Semgrep > Use JS**: Use the JavaScript version of the extension. Enabled by default for Windows users.
 - **Semgrep > Heap Size JS**: Set the maximum heap size in MB for the JavaScript version of the extension. Increase if the extension crashes while downloading rules.
 - **Semgrep > Ignore Cli Version**: Ignore the CLI Version and enable all extension features.
 - **Semgrep > Stack Size JS**: Set the maximum stack size in KB for the JavaScript version of the extension.
-- **Semgrep > Use JS**: Use the JavaScript version of the extension. Enabled by default for Windows users.
 
 ## Commands
 
