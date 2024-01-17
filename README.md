@@ -108,7 +108,7 @@ Run Semgrep extension commands through the [Visual Studio Code Command Palette](
 - `Semgrep: Scan all files in a workspace`: Scan all files in the current workspace.
 - `Semgrep Search: Clear`: Clear pattern searches from the Primary Side Bar's Semgrep Search view.
 - `Semgrep Search: Focus on Search Results View`: Bring the Primary Side Bar's Semgrep Search view into focus
-- `Semgrep Restart Language Server`: Restart the langauge server
+- `Semgrep Restart Language Server`: Restart the language server
 - `Semgrep: Scan changed files in a workspace`: Scan files that have been changed since the last commit in your current workspace.
 - `Semgrep: Search by pattern`: Search for patterns in code using Semgrep pattern syntax. For more information, see [Pattern syntax](https://semgrep.dev/docs/writing-rules/pattern-syntax/) documentation.
 - `Semgrep: Show Generic AST`: Show generic AST in a new window
@@ -117,7 +117,7 @@ Run Semgrep extension commands through the [Visual Studio Code Command Palette](
 - `Semgrep: Sign out`: Log out from Semgrep Cloud Platform. Alternatively, you can sign out through your command-line interface by running `semgrep logout`.
 - `Semgrep: Update rules`: For logged-in users. If the rules in the [Policies](https://semgrep.dev/orgs/-/policies) or rules included through the **Semgrep › Scan: Configuration** configuration option have been changed, this command loads the new configuration of your rules for your next scan.
 
-Tip: You can click the Semgrep icon in the Visual Studio Code to quickly access all available commands.
+Tip: You can click the Semgrep icon in the Visual Studio Code to access all available commands quickly.
 
 ## Support
 
