@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version of semgrep to use'
+        description: "Version of semgrep to use"
         required: true
         type: string
 
