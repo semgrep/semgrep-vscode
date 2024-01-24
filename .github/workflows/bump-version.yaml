@@ -25,7 +25,7 @@ jobs:
               echo "Invalid or unpublished version: ${SEMGREP_STATIC_VERSION}"
               exit 1
           fi
-          echo "${SEMGREP_VERSION}" > semgrep-version
+          echo "${SEMGREP_STATIC_VERSION}" > semgrep-version
       - name: Commit and push
         id: commit
         env:
