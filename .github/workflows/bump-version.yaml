@@ -20,18 +20,21 @@ jobs:
       - name: Commit and push
         id: commit
         env:
-          NEW_SEMGREP_VERSION: ${{ github.event.inputs.version }}
+          NEW_SEMGREP_VERSION: "${{ github.event.inputs.version }}"
+          GITHUB_ACTOR: "${{ github.actor }}"
+          GITHUB_RUN_ID: "${{ github.run_id }}"
+          GITHUB_RUN_ATTEMPT: "${{ github.run_attempt }}"
         run: |
-          git config user.name ${{ github.actor }}
-          git config user.email ${{ github.actor }}@users.noreply.github.com
-          BRANCH="gha/bump-version-${NEW_SEMGREP_VERSION}-${{ github.run_id }}-${{ github.run_attempt }}"
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          BRANCH="gha/bump-version-${NEW_SEMGREP_VERSION}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           SUBJECT="Bump semgrep to ${NEW_SEMGREP_VERSION}"
-          git checkout -b $BRANCH
+          git checkout -b "${BRANCH}"
           git add .
-          git commit -m "$SUBJECT"
-          git push --set-upstream origin $BRANCH
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-          echo "subject=$SUBJECT" >> $GITHUB_OUTPUT
+          git commit -m "${SUBJECT}"
+          git push --set-upstream origin "${BRANCH}"
+          echo "branch=${BRANCH}" >> ${GITHUB_OUTPUT}
+          echo "subject=${SUBJECT}" >> ${GITHUB_OUTPUT}
       - name: Create PR
         id: open-pr
         env:
@@ -41,7 +44,7 @@ jobs:
           VERSION: "${{ inputs.version }}"
         run: |
           # check if the branch already has a pull request open
-          if gh pr list --head ${SOURCE} | grep -vq "no pull requests"; then
+          if gh pr list --head "${SOURCE}" | grep -vq "no pull requests"; then
               # pull request already open
               echo "pull request from SOURCE ${SOURCE} to TARGET ${TARGET} is already open";
               echo "cancelling release"
