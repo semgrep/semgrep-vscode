@@ -33,8 +33,8 @@ jobs:
           git add .
           git commit -m "${SUBJECT}"
           git push --set-upstream origin "${BRANCH}"
-          echo "branch=${BRANCH}" >> ${GITHUB_OUTPUT}
-          echo "subject=${SUBJECT}" >> ${GITHUB_OUTPUT}
+          echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
+          echo "subject=${SUBJECT}" >> "${GITHUB_OUTPUT}"
       - name: Create PR
         id: open-pr
         env:
@@ -51,5 +51,4 @@ jobs:
               exit 1
           fi
           # open new pull request with the body of from the local template.
-          res=$(gh pr create --title "${TITLE}" --body "Bump Semgrep Version to ${VERSION}" \
-            --base "${TARGET}" --head "${SOURCE}" --reviewer semgrep/pdx)
+          gh pr create --title "${TITLE}" --body "Bump Semgrep Version to ${VERSION}" --base "${TARGET}" --head "${SOURCE}" --reviewer semgrep/pdx
