@@ -17,6 +17,11 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v2
+      - name: Update version
+        env:
+          SEMGREP_VERSION: ${{ inputs.version }}
+        run: |
+          echo "${SEMGREP_VERSION}" > semgrep-version
       - name: Commit and push
         id: commit
         env:
