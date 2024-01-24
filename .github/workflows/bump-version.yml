@@ -17,6 +17,15 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v2
+      - name: Update version
+        env:
+          SEMGREP_STATIC_VERSION: "release-${{ inputs.version }}"
+        run: |
+          if ! curl -L --silent --fail --output /dev/null --head "https://static.semgrep.dev/static/turbo/${SEMGREP_STATIC_VERSION}/engine/dist/index.mjs"; then
+              echo "Invalid or unpublished version: ${SEMGREP_STATIC_VERSION}"
+              exit 1
+          fi
+          echo "${SEMGREP_STATIC_VERSION}" > semgrep-version
       - name: Commit and push
         id: commit
         env:
@@ -42,6 +51,7 @@ jobs:
           TARGET: "${{ github.event.repository.default_branch }}"
           TITLE: "chore: Release Version ${{ inputs.version }}"
           VERSION: "${{ inputs.version }}"
+          GH_TOKEN: "${{ github.token }}"
         run: |
           # check if the branch already has a pull request open
           if gh pr list --head "${SOURCE}" | grep -vq "no pull requests"; then
@@ -51,4 +61,4 @@ jobs:
               exit 1
           fi
           # open new pull request with the body of from the local template.
-          gh pr create --title "${TITLE}" --body "Bump Semgrep Version to ${VERSION}" --base "${TARGET}" --head "${SOURCE}" --reviewer semgrep/pdx
+          gh pr create --title "${TITLE}" --body "Bump Semgrep Version to ${VERSION}" --base "${TARGET}" --head "${SOURCE}"
