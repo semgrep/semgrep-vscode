@@ -19,8 +19,12 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update version
         env:
-          SEMGREP_VERSION: "${{ inputs.version }}"
+          SEMGREP_STATIC_VERSION: "release-${{ inputs.version }}"
         run: |
+          if ! curl -L --silent "https://static.semgrep.dev/static/turbo/${SEMGREP_STATIC_VERSION}/engine/dist/index.mjs"; then
+              echo "Invalid or unpublished version: ${SEMGREP_STATIC_VERSION}"
+              exit 1
+          fi
           echo "${SEMGREP_VERSION}" > semgrep-version
       - name: Commit and push
         id: commit
@@ -57,4 +61,4 @@ jobs:
               exit 1
           fi
           # open new pull request with the body of from the local template.
-          gh pr create --title "${TITLE}" --body "Bump Semgrep Version to ${VERSION}" --base "${TARGET}" --head "${SOURCE}" --reviewer semgrep/pdx
+          gh pr create --title "${TITLE}" --body "Bump Semgrep Version to ${VERSION}" --base "${TARGET}" --head "${SOURCE}"
