@@ -11,7 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## v1.6.3 - 2024-02-02
+
+### Added
+
+### Changed
+
 - Updated README
+- Bumped LSP.js version
 
 ## v1.6.2 - 2024-01-05
 
