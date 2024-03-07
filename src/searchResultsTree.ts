@@ -110,6 +110,8 @@ export class SemgrepSearchProvider
       this.items.push(new TextItem("No results found :("));
     }
 
+    this.items.push(new TextItem("HELLO!!!"));
+
     const searchInfo: TextItem[] = [];
 
     const paramsInfo = new TextItem("Search Parameters:");
