@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 import { SearchParams } from "../lspExtensions";
+import { webkitCommand } from "../interface/commands";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -11,6 +12,26 @@ export class SemgrepSearchWebviewProvider
   private _view?: vscode.WebviewView;
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
+
+  handleMessage(data: webkitCommand): void {
+    switch (data.command) {
+      case "webkit/semgrep/hello":
+        {
+          vscode.window.showInformationMessage("hello!");
+        }
+        break;
+      case "webkit/semgrep/search": {
+        // vscode.window.showInformationMessage(
+        //   `Starting search for pattern ${data.command}`
+        // );
+        const searchParams: SearchParams = {
+          pattern: data.pattern,
+          language: null,
+        };
+        vscode.commands.executeCommand("semgrep.search", searchParams, null);
+      }
+    }
+  }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -28,28 +49,9 @@ export class SemgrepSearchWebviewProvider
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-    console.log("in here");
-
     webviewView.webview.onDidReceiveMessage((data) => {
-      console.log("Did receive message", data);
-      switch (data.command) {
-        case "hello":
-          {
-            vscode.window.showInformationMessage(data.text);
-          }
-          break;
-        case "startSearch": {
-          console.log("case startSearch");
-          vscode.window.showInformationMessage(
-            `Starting search for pattern ${data.command}`
-          );
-          const searchParams: SearchParams = {
-            pattern: data.pattern,
-            language: null,
-          };
-          vscode.commands.executeCommand("semgrep.search", searchParams, null);
-        }
-      }
+      console.debug("Did receive message", data);
+      this.handleMessage(data);
     });
   }
 
@@ -98,38 +100,20 @@ export class SemgrepSearchWebviewProvider
     `;
   }
 
-  private _setWebviewMessageListener(webview: vscode.Webview) {
-    webview.onDidReceiveMessage(
-      (message: any) => {
-        const command = message.command;
-        const text = message.text;
+  // private _setWebviewMessageListener(webview: vscode.Webview) {
+  //   webview.onDidReceiveMessage(
+  //     (message: any) => {
+  //       const command = message.command;
+  //       const text = message.text;
 
-        switch (command) {
-          case "hello":
-            vscode.window.showInformationMessage(text);
-            return;
-        }
-      },
-      undefined,
-      this._disposables
-    );
-  }
-}
-
-/**
- * A helper function that returns a unique alphanumeric identifier called a nonce.
- *
- * @remarks This function is primarily used to help enforce content security
- * policies for resources/scripts being executed in a webview context.
- *
- * @returns A nonce
- */
-function getNonce(): string {
-  let text = "";
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
+  //       switch (command) {
+  //         case "hello":
+  //           vscode.window.showInformationMessage(text);
+  //           return;
+  //       }
+  //     },
+  //     undefined,
+  //     this._disposables
+  //   );
+  // }
 }
