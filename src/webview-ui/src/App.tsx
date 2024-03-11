@@ -24,16 +24,15 @@ const App: React.FC = () => {
         placeholder="Pattern"
         style={{ padding: "4px 0", width: "100%" }}
         onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          setPattern(e.currentTarget.value);
           if (e.key == "Enter") {
             vscode.postMessage({
-              command: "hello",
-              text: e.currentTarget.value,
+              command: "startSearch",
+              pattern: pattern,
             });
           }
         }}
       ></VSCodeTextField>
-      <VSCodeButton onClick={handleHowdyClick}>Howdy!</VSCodeButton>
-      {pattern}
     </main>
   );
 };
