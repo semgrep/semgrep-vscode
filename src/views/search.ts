@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
+import { SearchParams } from "../lspExtensions";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -32,9 +33,21 @@ export class SemgrepSearchWebviewProvider
     webviewView.webview.onDidReceiveMessage((data) => {
       console.log("Did receive message", data);
       switch (data.command) {
-        case "hello": {
-          console.log("case hello");
-          vscode.window.showInformationMessage(data.text);
+        case "hello":
+          {
+            vscode.window.showInformationMessage(data.text);
+          }
+          break;
+        case "startSearch": {
+          console.log("case startSearch");
+          vscode.window.showInformationMessage(
+            `Starting search for pattern ${data.command}`
+          );
+          const searchParams: SearchParams = {
+            pattern: data.pattern,
+            language: null,
+          };
+          vscode.commands.executeCommand("semgrep.search", searchParams, null);
         }
       }
     });

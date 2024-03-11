@@ -110,8 +110,6 @@ export class SemgrepSearchProvider
       this.items.push(new TextItem("No results found :("));
     }
 
-    this.items.push(new TextItem("HELLO!!!"));
-
     const searchInfo: TextItem[] = [];
 
     const paramsInfo = new TextItem("Search Parameters:");
@@ -151,7 +149,7 @@ export class SemgrepSearchProvider
     editSearch.command = { title: "Edit Search", command: "semgrep.search" };
     searchInfo.push(editSearch);
 
-    this.items = [...searchInfo, ...this.items];
+    this.items = [...this.items];
     this._onDidChange.fire(undefined);
   }
 
