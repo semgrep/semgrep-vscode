@@ -34,9 +34,14 @@ export class FileItem extends vscode.TreeItem {
 }
 
 export class MatchItem extends vscode.TreeItem {
-  constructor(readonly range: vscode.Range, readonly file: FileItem) {
+  constructor(
+    readonly range: vscode.Range,
+    readonly file: FileItem,
+    readonly fix: string | null
+  ) {
     super("child", vscode.TreeItemCollapsibleState.None);
     this.contextValue = "match-item";
+    this.fix = fix;
   }
 }
 
@@ -46,8 +51,13 @@ export class TextItem extends vscode.TreeItem {
   }
 }
 
+export type SearchMatch = {
+  range: vscode.Range;
+  fix: string | null;
+};
+
 export class SearchResult {
-  constructor(readonly uri: string, readonly ranges: vscode.Range[]) {}
+  constructor(readonly uri: string, readonly matches: SearchMatch[]) {}
 }
 
 export class SemgrepSearchProvider
@@ -60,9 +70,18 @@ export class SemgrepSearchProvider
   readonly onDidChangeTreeData = this._onDidChange.event;
 
   private items: (FileItem | TextItem)[] = [];
-  public replace: string | null = null;
+  private fix_text: string | null = null;
 
   public lastSearch: SearchParams | null = null;
+
+  getFilesWithFixes(): FileItem[] {
+    return this.items.flatMap((i) => {
+      if (i instanceof FileItem && i.matches.some((m) => m.fix != null)) {
+        return [i];
+      }
+      return [];
+    });
+  }
 
   replaceAll(): void {
     const edits = this.items
@@ -71,8 +90,8 @@ export class SemgrepSearchProvider
         const edit = new vscode.WorkspaceEdit();
         if (item instanceof FileItem) {
           item.matches.forEach((match) => {
-            if (item.resourceUri && this.replace) {
-              edit.replace(item.resourceUri, match.range, this.replace);
+            if (item.resourceUri && match.fix) {
+              edit.replace(item.resourceUri, match.range, match.fix);
             }
           });
         }
@@ -83,25 +102,22 @@ export class SemgrepSearchProvider
 
   clearSearch(): void {
     this.lastSearch = null;
-    this.replace = null;
+    this.fix_text = null;
     this.items = [];
 
     this._onDidChange.fire(undefined);
   }
 
-  setSearchItems(
-    results: SearchResult[],
-    params: SearchParams,
-    replace: string | null
-  ): void {
+  setSearchItems(results: SearchResult[], params: SearchParams): void {
     this.lastSearch = params;
-    this.replace = replace;
+    this.fix_text = params.fix;
 
     this.items = results.map((r) => {
       const uri = vscode.Uri.parse(r.uri);
       const fi = new FileItem(uri, []);
-      const matches = r.ranges.map(
-        (m) => new MatchItem(new vscode.Range(m.start, m.end), fi)
+      const matches = r.matches.map(
+        (m) =>
+          new MatchItem(new vscode.Range(m.range.start, m.range.end), fi, m.fix)
       );
       fi.matches = matches;
       return fi;

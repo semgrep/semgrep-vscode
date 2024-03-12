@@ -32,6 +32,7 @@ export interface LoginStatusParams {
 export interface SearchParams {
   pattern: string;
   language: string | null;
+  fix: string | null;
 }
 
 export interface SearchResults {

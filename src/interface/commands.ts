@@ -33,5 +33,5 @@ export const search = "webkit/semgrep/search";
 export const hello = "webkit/semgrep/hello";
 
 export type webkitCommand =
-  | { command: typeof search; pattern: string }
+  | { command: typeof search; pattern: string; fix: string | null }
   | { command: typeof hello };

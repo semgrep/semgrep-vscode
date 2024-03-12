@@ -87,6 +87,12 @@
         "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
       },
       {
+        "command": "semgrep.search.replaceAll",
+        "title": "Semgrep Search: Replace All Matches",
+        "icon": "$(tools)",
+        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+      },
+      {
         "command": "semgrep.restartLanguageServer",
         "title": "Semgrep: Restart Language Server"
       }
@@ -227,6 +233,11 @@
     ],
     "menus": {
       "view/title": [
+        {
+          "command": "semgrep.search.replaceAll",
+          "when": "view == semgrep-search-results && semgrep.searchHasFix",
+          "group": "navigation"
+        },
         {
           "command": "semgrep.search.clear",
           "when": "view == semgrep-search-results && semgrep.searchHasResults",
