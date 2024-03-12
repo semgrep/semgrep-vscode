@@ -11,7 +11,6 @@ import {
   search,
   SearchParams,
 } from "./lspExtensions";
-import { searchQuickPick } from "./searchQuickPick";
 import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
 
@@ -128,8 +127,6 @@ export function registerCommands(env: Environment): void {
         }
         env.searchView.setSearchItems(result.locations, searchParams, replace);
         vscode.commands.executeCommand("semgrep-search-results.focus");
-      } else {
-        searchQuickPick(env);
       }
     }
   );

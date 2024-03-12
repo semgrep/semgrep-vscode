@@ -110,46 +110,6 @@ export class SemgrepSearchProvider
       this.items.push(new TextItem("No results found :("));
     }
 
-    const searchInfo: TextItem[] = [];
-
-    const paramsInfo = new TextItem("Search Parameters:");
-    searchInfo.push(paramsInfo);
-
-    const searchPattern = new TextItem("Pattern:");
-    searchPattern.description = params.pattern;
-    searchPattern.iconPath = new vscode.ThemeIcon("microscope");
-    searchInfo.push(searchPattern);
-
-    const searchLanguage = new TextItem("Language:");
-    searchLanguage.description = params.language ? params.language : "All";
-    searchLanguage.iconPath = new vscode.ThemeIcon("symbol-object");
-    searchInfo.push(searchLanguage);
-
-    if (replace) {
-      const searchReplace = new TextItem("Replace with:");
-      searchReplace.description = replace;
-      searchReplace.iconPath = new vscode.ThemeIcon("search-replace");
-      searchInfo.push(searchReplace);
-    }
-    const actions = new TextItem("Actions:");
-    searchInfo.push(actions);
-
-    if (replace) {
-      const replaceAction = new TextItem("Replace All");
-      replaceAction.iconPath = new vscode.ThemeIcon("search-replace-all");
-      replaceAction.command = {
-        title: "Replace All",
-        command: "semgrep.search.replace",
-      };
-      searchInfo.push(replaceAction);
-    }
-
-    const editSearch = new TextItem("Edit Search");
-    editSearch.iconPath = new vscode.ThemeIcon("pencil");
-    editSearch.command = { title: "Edit Search", command: "semgrep.search" };
-    searchInfo.push(editSearch);
-
-    this.items = [...this.items];
     this._onDidChange.fire(undefined);
   }
 
