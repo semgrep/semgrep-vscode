@@ -38,17 +38,15 @@ export async function activate(
   const statusBar = createStatusBar();
   registerCommands(env);
   statusBar.show();
-  vscode.window.registerTreeDataProvider(
-    "semgrep-search-results",
-    env.searchView
-  );
 
   // register stuff for search webview
   const provider = new SemgrepSearchWebviewProvider(context.extensionUri);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       SemgrepSearchWebviewProvider.viewType,
-      provider
+      provider,
+      // This makes it so that we don't lose matches hwen we close the sidebar!
+      { webviewOptions: { retainContextWhenHidden: true } }
     )
   );
   env.provider = provider;

@@ -223,45 +223,10 @@
           "type": "webview",
           "id": "semgrep.searchView",
           "name": "Code Search"
-        },
-        {
-          "id": "semgrep-search-results",
-          "name": "Search Results",
-          "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
         }
       ]
     },
-    "viewsWelcome": [
-      {
-        "view": "semgrep-search-results",
-        "contents": "No results yet (run a query in the text box above!)"
-      }
-    ],
     "menus": {
-      "view/title": [
-        {
-          "command": "semgrep.search.replaceAll",
-          "when": "view == semgrep-search-results && semgrep.searchHasFix",
-          "group": "navigation"
-        },
-        {
-          "command": "semgrep.search.clear",
-          "when": "view == semgrep-search-results && semgrep.searchHasResults",
-          "group": "navigation"
-        },
-        {
-          "command": "semgrep.search.refresh",
-          "when": "view == semgrep-search-results && semgrep.searchHasResults",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "semgrep.search.replace",
-          "when": "view == semgrep-search-results && semgrep.searchHasFix",
-          "group": "inline"
-        }
-      ],
       "editor/context": [
         {
           "command": "semgrep.showAst",

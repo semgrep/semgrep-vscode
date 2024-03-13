@@ -1,0 +1,30 @@
+import { useState } from "react";
+import { MatchItem } from "./MatchItem";
+import { ViewResult } from "../../types/results";
+
+import styles from "./SearchResults.module.css";
+
+function splitByLastSlash(str: string): [string, string] {
+  const lastIndex = str.lastIndexOf("/");
+  if (lastIndex !== -1) {
+    const beforeLastSlash = str.substring(0, lastIndex);
+    const afterLastSlash = str.substring(lastIndex + 1);
+    return [beforeLastSlash, afterLastSlash];
+  } else {
+    // If no slash is found, return the original string and an empty string
+    return ["", str];
+  }
+}
+
+export interface PathHeaderProps {
+  path: string;
+}
+export const PathHeader: React.FC<PathHeaderProps> = ({ path }) => {
+  const [prefix, filename] = splitByLastSlash(path);
+  return (
+    <div className={styles["path-header"]}>
+      <a className={styles["file-name"]}>{filename}</a>
+      <span className={styles["prefix-path"]}>{prefix}</span>
+    </div>
+  );
+};
