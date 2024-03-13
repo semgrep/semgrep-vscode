@@ -4,10 +4,10 @@ import {
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { useState } from "react";
-import { MatchResult, SearchResult } from "../../types/searchResult";
+import { SearchMatch } from "../../../../searchResultsTree";
 
 export interface MatchItemProps {
-  match: MatchResult;
+  match: SearchMatch;
 }
 export const MatchItem: React.FC<MatchItemProps> = ({ match }) => {
   return <>{match.range}</>;

@@ -4,11 +4,11 @@ import {
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { useState } from "react";
-import { SearchResult } from "../../types/searchResult";
+import { SearchResults } from "../../../../lspExtensions";
 
 export interface SearchResultEntryProps {
-  entry: SearchResult;
+  entry: SearchResults;
 }
 export const FileItem: React.FC<SearchResultEntryProps> = ({ entry }) => {
-  return <>{entry.uri}</>;
+  return <>{entry.locations.length}</>;
 };
