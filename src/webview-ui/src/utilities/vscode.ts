@@ -1,4 +1,9 @@
 import type { WebviewApi } from "vscode-webview";
+import {
+  extensionToWebviewCommand,
+  webviewToExtensionCommand,
+} from "../../../interface/interface";
+import { State } from "../types/state";
 
 /**
  * A utility wrapper around the acquireVsCodeApi() function, which enables
@@ -10,13 +15,21 @@ import type { WebviewApi } from "vscode-webview";
  * enabled by acquireVsCodeApi.
  */
 class VSCodeAPIWrapper {
-  private readonly vsCodeApi: WebviewApi<unknown> | undefined;
+  private readonly vsCodeApi: WebviewApi<State> | undefined;
+  // This is set by the webview App.tsx!
+  public onChange: ((state: State) => void) | null = null;
 
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
     // context (i.e. VS Code development window or web browser)
     if (typeof acquireVsCodeApi === "function") {
       this.vsCodeApi = acquireVsCodeApi();
+
+      // Handle messages sent from the extension to the webview
+      window.addEventListener("message", (event) => {
+        const message = event.data; // The json data that the extension sent
+        this.handleMessageFromExtension(message);
+      });
     }
   }
 
@@ -28,13 +41,32 @@ class VSCodeAPIWrapper {
    *
    * @param message Abitrary data (must be JSON serializable) to send to the extension context.
    */
-  public postMessage(message: unknown) {
+  public sendMessageToExtension(message: unknown) {
     if (this.vsCodeApi) {
       this.vsCodeApi.postMessage(message);
     } else {
       console.log(message);
     }
   }
+
+  handleMessageFromExtension(data: extensionToWebviewCommand) {
+    switch (data.command) {
+      case "extension/semgrep/results": {
+        this.sendMessageToExtension({
+          command: "webview/semgrep/print",
+          message: `Got results ${data.results.locations.length}`,
+        });
+        // update the state of the webview component!
+        if (this.onChange) {
+          this.onChange({ results: data.results });
+        }
+      }
+    }
+  }
+
+  /* We shouldn't actually need this code for now, because we are storing the
+     webview state inside of the component itself.
+   */
 
   /**
    * Get the persistent state stored for this webview.
@@ -44,7 +76,7 @@ class VSCodeAPIWrapper {
    *
    * @return The current state or `undefined` if no state has been set.
    */
-  public getState(): unknown | undefined {
+  public getState(): State | undefined {
     if (this.vsCodeApi) {
       return this.vsCodeApi.getState();
     } else {
@@ -64,7 +96,7 @@ class VSCodeAPIWrapper {
    *
    * @return The new state.
    */
-  public setState<T extends unknown | undefined>(newState: T): T {
+  public setState<T extends State | undefined>(newState: T): T {
     if (this.vsCodeApi) {
       return this.vsCodeApi.setState(newState);
     } else {
