@@ -7,7 +7,7 @@ import { registerCommands } from "./commands";
 import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
-import { SemgrepSearchWebviewProvider } from "./views/search";
+import { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export let global_env: Environment | null = null;
 
@@ -43,10 +43,15 @@ export async function activate(
     env.searchView
   );
 
-  // register stuff for calico colors webview demo (from activate of the demo)
-	const provider = new SemgrepSearchWebviewProvider(context.extensionUri);
-	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(SemgrepSearchWebviewProvider.viewType, provider));
+  // register stuff for search webview
+  const provider = new SemgrepSearchWebviewProvider(context.extensionUri);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      SemgrepSearchWebviewProvider.viewType,
+      provider
+    )
+  );
+  env.provider = provider;
 
   // register content provider for the AST showing document
   vscode.workspace.registerTextDocumentContentProvider(

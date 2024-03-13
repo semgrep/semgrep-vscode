@@ -11,6 +11,7 @@ import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
 import { SemgrepSearchProvider } from "./searchResultsTree";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { LanguageClient } from "vscode-languageclient/node";
+import { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -33,6 +34,7 @@ export class Environment {
   private _config: Config = new Config();
   semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
   private _client: LanguageClient | null = null;
+  private _provider: SemgrepSearchWebviewProvider | null = null;
   private constructor(
     readonly context: ExtensionContext,
     config: Config,
@@ -87,6 +89,17 @@ export class Environment {
       window.showWarningMessage("Semgrep Language Server not active");
     }
     return this._client;
+  }
+
+  set provider(provider: SemgrepSearchWebviewProvider) {
+    this._provider = provider;
+  }
+
+  get provider(): SemgrepSearchWebviewProvider | null {
+    if (!this._provider) {
+      window.showWarningMessage("Semgrep Search Webview not active");
+    }
+    return this._provider;
   }
 
   static async create(context: ExtensionContext): Promise<Environment> {

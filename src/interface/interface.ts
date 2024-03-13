@@ -13,6 +13,8 @@
  * LICENSE for more details.
  */
 
+import { SearchResults } from "../lspExtensions";
+
 /*****************************************************************************/
 /* Prelude */
 /*****************************************************************************/
@@ -28,10 +30,25 @@
    See `search.ts` for the view which implements the handler.
  */
 
-export const search = "webkit/semgrep/search";
-/* just a test command. can be removed later. */
-export const hello = "webkit/semgrep/hello";
+/*****************************************************************************/
+/* Webview to extension commandsj */
+/*****************************************************************************/
 
-export type webkitCommand =
+export const search = "webview/semgrep/search";
+/* just a test command. can be removed later. */
+export const print = "webview/semgrep/print";
+
+export type webviewToExtensionCommand =
   | { command: typeof search; pattern: string; fix: string | null }
-  | { command: typeof hello };
+  | { command: typeof print; message: string };
+
+/*****************************************************************************/
+/* Extension to webview commands */
+/*****************************************************************************/
+
+export const results = "extension/semgrep/results";
+
+export type extensionToWebviewCommand = {
+  command: typeof results;
+  results: SearchResults;
+};

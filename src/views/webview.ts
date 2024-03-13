@@ -2,7 +2,10 @@ import * as vscode from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 import { SearchParams } from "../lspExtensions";
-import { webkitCommand } from "../interface/commands";
+import {
+  extensionToWebviewCommand,
+  webviewToExtensionCommand,
+} from "../interface/interface";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -13,14 +16,17 @@ export class SemgrepSearchWebviewProvider
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
-  handleMessage(data: webkitCommand): void {
+  // Handle messages from webview -> extension
+  handleMessageFromWebview(data: webviewToExtensionCommand): void {
     switch (data.command) {
-      case "webkit/semgrep/hello":
+      // This is needed because the webview cannot actually print to the
+      // debug console, we need the extension to do that for us.
+      case "webview/semgrep/print":
         {
-          vscode.window.showInformationMessage("hello!");
+          console.log("webview print", data.message);
         }
         break;
-      case "webkit/semgrep/search": {
+      case "webview/semgrep/search": {
         // vscode.window.showInformationMessage(
         //   `Starting search for pattern ${data.command}`
         // );
@@ -32,6 +38,11 @@ export class SemgrepSearchWebviewProvider
         vscode.commands.executeCommand("semgrep.search", searchParams);
       }
     }
+  }
+
+  // Send messages from extension -> webview
+  sendMessageToWebview(data: extensionToWebviewCommand): void {
+    this._view?.webview.postMessage(data);
   }
 
   public resolveWebviewView(
@@ -52,7 +63,7 @@ export class SemgrepSearchWebviewProvider
 
     webviewView.webview.onDidReceiveMessage((data) => {
       console.debug("Did receive message", data);
-      this.handleMessage(data);
+      this.handleMessageFromWebview(data);
     });
   }
 
