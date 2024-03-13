@@ -40,11 +40,13 @@ export const search = "webview/semgrep/search";
 /* just a test command. can be removed later. */
 export const print = "webview/semgrep/print";
 export const select = "webview/semgrep/select";
+export const replace = "webview/semgrep/replace";
 
 export type webviewToExtensionCommand =
   | { command: typeof search; pattern: string; fix: string | null }
   | { command: typeof print; message: string }
-  | { command: typeof select; uri: string; range: vscode.Range };
+  | { command: typeof select; uri: string; range: vscode.Range }
+  | { command: typeof replace; uri: string; range: vscode.Range; fix: string };
 
 /*****************************************************************************/
 /* Extension to webview commands */
