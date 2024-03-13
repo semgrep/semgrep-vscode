@@ -55,12 +55,12 @@
 .match-buttons {
   display: flex;
   margin-left: auto;
-  cursor: pointer;
 }
 
 .match-item {
   list-style: none;
   display: flex;
+  cursor: pointer;
 }
 
 .match-text-box {
@@ -81,7 +81,6 @@
   padding-top: 1px;
   font-size: 13px;
   height: 20px;
-  cursor: pointer;
 }
 .match-text-deleted {
   text-decoration: line-through;
