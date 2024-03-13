@@ -78,6 +78,8 @@ async function viewResultsOfSearchResults(
             before: before,
             inside: inside,
             after: after,
+            isFixed: false,
+            isDismissed: false,
             searchMatch: match,
           };
         })
