@@ -28,7 +28,7 @@ export const MatchItem: React.FC<MatchItemProps> = ({ match }) => {
   }
 
   return (
-    <li>
+    <li className={styles["match-item"]}>
       <div className={styles["match-text-box"]}>
         {before}
         {matchText}
