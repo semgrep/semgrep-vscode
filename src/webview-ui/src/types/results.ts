@@ -6,6 +6,11 @@ export type ViewMatch = {
   inside: string;
   after: string;
 
+  // Flags set on each match. Initially false, and populated if the
+  // button is clicked to fix or dismiss the match.
+  isFixed: boolean;
+  isDismissed: boolean;
+
   searchMatch: SearchMatch;
 };
 
