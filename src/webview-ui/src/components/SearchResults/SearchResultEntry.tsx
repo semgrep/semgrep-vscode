@@ -9,6 +9,7 @@ import { ViewResult } from "../../types/results";
 import { PathHeader } from "./PathHeader";
 
 import styles from "./SearchResults.module.css";
+import { EntryHeader } from "./EntryHeader";
 
 export interface SearchResultEntryProps {
   result: ViewResult;
@@ -16,15 +17,22 @@ export interface SearchResultEntryProps {
 export const SearchResultEntry: React.FC<SearchResultEntryProps> = ({
   result,
 }) => {
-  const { path } = result;
+  const [isExpanded, setIsExpanded] = useState(true);
+
   return (
     <div>
-      <PathHeader path={path} />
-      <ul className={styles["matches-list"]}>
-        {result.matches.map((match) => (
-          <MatchItem uri={result.uri} match={match} />
-        ))}
-      </ul>
+      <EntryHeader
+        result={result}
+        isExpanded={isExpanded}
+        toggleIsExpanded={() => setIsExpanded(!isExpanded)}
+      />
+      {isExpanded && (
+        <ul className={styles["matches-list"]}>
+          {result.matches.map((match) => (
+            <MatchItem uri={result.uri} match={match} />
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
