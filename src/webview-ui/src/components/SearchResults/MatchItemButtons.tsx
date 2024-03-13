@@ -13,46 +13,28 @@ import { VscClose, VscReplace } from "react-icons/vsc";
 
 export interface MatchItemButtonsProps {
   isHovered: boolean;
-  uri: string;
   match: ViewMatch;
+  onFix: (match: ViewMatch) => void;
+  onDismiss: (match: ViewMatch) => void;
 }
 export const MatchItemButtons: React.FC<MatchItemButtonsProps> = ({
   isHovered,
-  uri,
   match,
+  onFix,
+  onDismiss,
 }) => {
   if (!isHovered) {
     return null;
   }
 
-  function onReplace() {
-    // This should be true, but the type system is having troubles here.
-    if (match.searchMatch.fix !== null) {
-      vscode.sendMessageToExtension({
-        command: "webview/semgrep/replace",
-        uri: uri,
-        range: match.searchMatch.range,
-        fix: match.searchMatch.fix,
-      });
-    }
-  }
-
-  function onDismiss() {
-    vscode.sendMessageToExtension({
-      command: "webview/semgrep/select",
-      uri: uri,
-      range: match.searchMatch.range,
-    });
-  }
-
   return (
     <div className={styles["match-buttons"]}>
       {match.searchMatch.fix ? (
-        <div onClick={() => onReplace()}>
+        <div onClick={() => onFix(match)}>
           <VscReplace role="button" title="Replace" tabIndex={0} />
         </div>
       ) : null}
-      <div onClick={onDismiss}>
+      <div onClick={() => onDismiss(match)}>
         <VscClose role="button" title="Dismiss" tabIndex={0} />
       </div>
     </div>
