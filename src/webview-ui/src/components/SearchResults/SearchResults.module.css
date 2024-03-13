@@ -3,3 +3,59 @@
   padding: 0 4px 8px;
   line-height: 1.4em;
 }
+
+.path-header {
+  display: flex;
+}
+
+.file-name {
+  white-space: pre;
+}
+
+.prefix-path {
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: gray;
+  margin-left: 0.5em;
+}
+
+.matches-list {
+  list-style-type: none;
+  padding-left: 10px;
+}
+
+.match-text-box {
+  /* flex: 1; */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: pre;
+  /* font-size: 13px;
+  line-height: 22px;
+  height: 22px; */
+  /* I also couldn't figure out how to make the text gray, so I just
+     set it here. This is probably a proble on different themes.
+   */
+  color: gray;
+  /* This isn't normally here, but I kept having the tops of my
+     boxes cut off for some reason. This fixes it.
+   */
+  padding-top: 1px;
+  height: 20px;
+  cursor: pointer;
+}
+.match-text-deleted {
+  text-decoration: line-through;
+  background-color: var(--vscode-diffEditor-removedTextBackground);
+  border: 1px solid var(--vscode-diffEditor-removedTextBackground);
+}
+.match-text-inserted {
+  background-color: var(--vscode-diffEditor-insertedTextBackground);
+  /* :not(:empty): {
+    border: 1px solid var(--vscode-diffEditor-insertedLineBackground);
+  } */
+}
+.match-text-normal {
+  background-color: var(--vscode-editor-findMatchHighlightBackground);
+  border: 1px solid var(--vscode-editor-findMatchHighlightBorder);
+}

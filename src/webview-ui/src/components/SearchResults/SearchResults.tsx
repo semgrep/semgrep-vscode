@@ -3,10 +3,10 @@ import {
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { useState } from "react";
-import { SearchResults as SearchResultsType } from "../../../../lspExtensions";
 import { State } from "../../types/state";
 
 import styles from "./SearchResults.module.css";
+import { SearchResultEntry } from "./SearchResultEntry";
 
 export interface SearchResultsProps {
   state: State | undefined;
@@ -18,13 +18,18 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
     0
   );
   const numFiles = state?.results.locations.length;
+
+  if (state === undefined) {
+    return null;
+  }
   return (
-    <>
+    <div>
       <div className={styles["matches-summary"]}>
-        {state === undefined
-          ? ""
-          : `${numMatches} matches in ${numFiles} files`}
+        {`${numMatches} matches in ${numFiles} files`}
       </div>
-    </>
+      {state.results.locations.map((result) => (
+        <SearchResultEntry result={result} />
+      ))}
+    </div>
   );
 };

@@ -52,6 +52,10 @@ class VSCodeAPIWrapper {
   handleMessageFromExtension(data: extensionToWebviewCommand) {
     switch (data.command) {
       case "extension/semgrep/results": {
+        this.sendMessageToExtension({
+          command: "webview/semgrep/print",
+          message: "Received results from extension",
+        });
         // update the state of the webview component!
         if (this.onChange) {
           this.onChange({ results: data.results });

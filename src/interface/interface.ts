@@ -14,6 +14,7 @@
  */
 
 import { SearchResults } from "../lspExtensions";
+import { ViewResult, ViewResults } from "../webview-ui/src/types/results";
 
 /*****************************************************************************/
 /* Prelude */
@@ -50,5 +51,5 @@ export const results = "extension/semgrep/results";
 
 export type extensionToWebviewCommand = {
   command: typeof results;
-  results: SearchResults;
+  results: ViewResults;
 };
