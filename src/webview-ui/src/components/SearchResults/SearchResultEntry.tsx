@@ -22,7 +22,7 @@ export const SearchResultEntry: React.FC<SearchResultEntryProps> = ({
       <PathHeader path={path} />
       <ul className={styles["matches-list"]}>
         {result.matches.map((match) => (
-          <MatchItem match={match} />
+          <MatchItem uri={result.uri} match={match} />
         ))}
       </ul>
     </div>

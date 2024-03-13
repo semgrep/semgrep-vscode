@@ -15,6 +15,7 @@
 
 import { SearchResults } from "../lspExtensions";
 import { ViewResult, ViewResults } from "../webview-ui/src/types/results";
+import * as vscode from "vscode";
 
 /*****************************************************************************/
 /* Prelude */
@@ -38,10 +39,12 @@ import { ViewResult, ViewResults } from "../webview-ui/src/types/results";
 export const search = "webview/semgrep/search";
 /* just a test command. can be removed later. */
 export const print = "webview/semgrep/print";
+export const select = "webview/semgrep/select";
 
 export type webviewToExtensionCommand =
   | { command: typeof search; pattern: string; fix: string | null }
-  | { command: typeof print; message: string };
+  | { command: typeof print; message: string }
+  | { command: typeof select; uri: string; range: vscode.Range };
 
 /*****************************************************************************/
 /* Extension to webview commands */

@@ -67,6 +67,7 @@ async function viewResultsOfSearchResults(
       ? vscode.workspace.workspaceFolders[0].uri.fsPath
       : "";
     return {
+      uri: result.uri,
       path: path.relative(workspacePath, uri.fsPath),
       matches: await Promise.all(
         result.matches.map(async (match) => {
@@ -213,7 +214,6 @@ export function registerCommands(env: Environment): void {
         });
         console.log("view results sent");
         env.searchView.setSearchItems(result.locations, searchParams);
-        vscode.commands.executeCommand("semgrep-search-results.focus");
       }
     }
   );

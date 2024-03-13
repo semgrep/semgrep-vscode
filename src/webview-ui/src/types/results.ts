@@ -10,6 +10,9 @@ export type ViewMatch = {
 };
 
 export type ViewResult = {
+  uri: string;
+  // This path has already been processed to be relative to the workspace
+  // path.
   path: string;
   matches: ViewMatch[];
 };
