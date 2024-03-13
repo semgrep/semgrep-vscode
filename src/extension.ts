@@ -44,7 +44,9 @@ export async function activate(
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       SemgrepSearchWebviewProvider.viewType,
-      provider
+      provider,
+      // This makes it so that we don't lose matches hwen we close the sidebar!
+      { webviewOptions: { retainContextWhenHidden: true } }
     )
   );
   env.provider = provider;
