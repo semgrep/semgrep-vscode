@@ -25,7 +25,7 @@ export const MatchItem: React.FC<MatchItemProps> = ({
 }) => {
   const { before, inside, after } = match;
 
-  let matchText;
+  let matchText: JSX.Element | undefined;
   if (match.searchMatch.fix) {
     matchText = (
       <>
