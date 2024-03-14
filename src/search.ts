@@ -55,6 +55,14 @@ async function viewResultsOfSearchResults(
 /* Searching */
 /*****************************************************************************/
 
+/* The protocol we have established with the LSP is that we start a search via
+   /semgrep/search, and continuously hit it with /semgrep/searchOngoing to
+   ask it for new data.
+   When we get data, we send it back to the webview.
+   This `searchLoop` maintains a tight loop handling each search request, but
+   it also uses the unique scan IDs associated to each scan to know to stop
+   early, if
+ */
 async function searchLoop(
   scanID: string,
   env: Environment,
@@ -68,6 +76,12 @@ async function searchLoop(
      meaning that the search this loop is for has terminated.
      We need to stop this loop, and send no more results to the webview.
    */
+  // TODO: This actually has a race condition... if a separate searchLoop
+  // changes the scanID after we pass this check, then we might hit the
+  // LSP with a /semgrep/searchOngoing request, _after_ the new
+  // /semgrep/search.
+  // This means that we will get results for the new search, but not send
+  // it to the webview.
   if (env.scanID !== null && scanID !== env.scanID) {
     return;
   }
