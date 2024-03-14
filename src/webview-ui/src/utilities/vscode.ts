@@ -1,5 +1,6 @@
 import type { WebviewApi } from "vscode-webview";
 import {
+  SearchLanguage,
   extensionToWebviewCommand,
   webviewToExtensionCommand,
 } from "../../../interface/interface";
@@ -19,6 +20,9 @@ class VSCodeAPIWrapper {
   private readonly vsCodeApi: WebviewApi<State> | undefined;
   // This is set by the webview App.tsx!
   public onUpdate: ((results: ViewResults) => void) | null = null;
+  public onUpdateActiveLang:
+    | ((activeLang: SearchLanguage | null) => void)
+    | null = null;
 
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
@@ -52,14 +56,25 @@ class VSCodeAPIWrapper {
 
   handleMessageFromExtension(data: extensionToWebviewCommand) {
     switch (data.command) {
-      case "extension/semgrep/results": {
-        // this.sendMessageToExtension({
-        //   command: "webview/semgrep/print",
-        //   message: "Received results from extension",
-        // });
-        // update the state of the webview component!
-        if (this.onUpdate) {
-          this.onUpdate(data.results);
+      case "extension/semgrep/results":
+        {
+          // this.sendMessageToExtension({
+          //   command: "webview/semgrep/print",
+          //   message: "Received results from extension",
+          // });
+          // update the state of the webview component!
+          if (this.onUpdate) {
+            this.onUpdate(data.results);
+          }
+        }
+        break;
+      case "extension/semgrep/activeLang": {
+        this.sendMessageToExtension({
+          command: "webview/semgrep/print",
+          message: `Received language! ${data.lang}`,
+        });
+        if (this.onUpdateActiveLang) {
+          this.onUpdateActiveLang(data.lang);
         }
       }
     }

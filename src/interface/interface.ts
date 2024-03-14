@@ -13,6 +13,7 @@
  * LICENSE for more details.
  */
 
+import { SUPPORTED_LANGS } from "../constants";
 import { SearchResults } from "../lspExtensions";
 import { ViewResult, ViewResults } from "../webview-ui/src/types/results";
 import * as vscode from "vscode";
@@ -42,6 +43,7 @@ export const print = "webview/semgrep/print";
 export const select = "webview/semgrep/select";
 export const replace = "webview/semgrep/replace";
 export const replaceAll = "webview/semgrep/replaceAll";
+export const getLanguage = "webview/semgrep/getActiveLang";
 
 export type webviewToExtensionCommand =
   | {
@@ -51,19 +53,29 @@ export type webviewToExtensionCommand =
       includes: string[];
       excludes: string[];
       scanID: string;
+      lang: SearchLanguage | null; // null means all languages
     }
   | { command: typeof print; message: string }
   | { command: typeof select; uri: string; range: vscode.Range }
   | { command: typeof replace; uri: string; range: vscode.Range; fix: string }
-  | { command: typeof replaceAll; matches: ViewResults };
+  | { command: typeof replaceAll; matches: ViewResults }
+  | { command: typeof getLanguage };
 
 /*****************************************************************************/
 /* Extension to webview commands */
 /*****************************************************************************/
 
 export const results = "extension/semgrep/results";
+export const activeLang = "extension/semgrep/activeLang";
 
-export type extensionToWebviewCommand = {
-  command: typeof results;
-  results: ViewResults;
-};
+export type SearchLanguage = (typeof SUPPORTED_LANGS)[number];
+
+export type extensionToWebviewCommand =
+  | {
+      command: typeof results;
+      results: ViewResults;
+    }
+  | {
+      command: typeof activeLang;
+      lang: SearchLanguage | null;
+    };

@@ -3,9 +3,11 @@ import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 import { SearchParams } from "../lspExtensions";
 import {
+  SearchLanguage,
   extensionToWebviewCommand,
   webviewToExtensionCommand,
 } from "../interface/interface";
+import { SUPPORTED_LANGS } from "../constants";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -30,7 +32,7 @@ export class SemgrepSearchWebviewProvider
         const searchParams: SearchParams = {
           lspParams: {
             pattern: data.pattern,
-            language: null,
+            language: data.lang,
             fix: data.fix,
             includes: data.includes,
             excludes: data.excludes,
@@ -62,12 +64,32 @@ export class SemgrepSearchWebviewProvider
         >{
           selection: data.range,
         });
+        break;
+      }
+      case "webview/semgrep/getActiveLang": {
+        const activeLang = vscode.window.activeTextEditor?.document.languageId;
+        // we'll only send the language to the webview if we can determine it maps to a semgrep language
+        if (
+          activeLang &&
+          SUPPORTED_LANGS.includes(activeLang as SearchLanguage)
+        ) {
+          this.sendMessageToWebview({
+            command: "extension/semgrep/activeLang",
+            lang: activeLang,
+          });
+        } else {
+          this.sendMessageToWebview({
+            command: "extension/semgrep/activeLang",
+            lang: null,
+          });
+        }
       }
     }
   }
 
   // Send messages from extension -> webview
   sendMessageToWebview(data: extensionToWebviewCommand): void {
+    console.log("Sending message to webview", data);
     this._view?.webview.postMessage(data);
   }
 

@@ -2,6 +2,8 @@ import { vscode } from "./../../utilities/vscode";
 import {
   VSCodeButton,
   VSCodeTextArea,
+  VSCodeDropdown,
+  VSCodeOption,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState } from "react";
@@ -9,6 +11,8 @@ import { MainInputs } from "./MainInputs";
 
 import styles from "./TopSection.module.css";
 import { VscEllipsis } from "react-icons/vsc";
+import { SUPPORTED_LANGS } from "../../../../constants";
+import { SearchLanguage } from "../../../../interface/interface";
 import { TextBox } from "../utils/TextBox";
 
 export interface TopSectionProps {
@@ -16,6 +20,8 @@ export interface TopSectionProps {
 }
 export const TopSection: React.FC<TopSectionProps> = ({ onNewSearch }) => {
   const [showOptions, setShowOptions] = useState(false);
+  const [pattern, setPattern] = useState("");
+  const [fix, setFix] = useState("");
 
   return (
     <div className={styles["top-section"]}>
