@@ -2,7 +2,7 @@
 
 .matches-summary {
   color: var(--vscode-search-resultsInfoForeground);
-  padding: 8px 4px 8px;
+  padding: 8px;
   line-height: 1.4em;
   display: flex;
 }

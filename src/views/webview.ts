@@ -130,8 +130,10 @@ export class SemgrepSearchWebviewProvider
           <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
           <title>Hello World</title>
+          <style>
+          </style>
         </head>
-        <body>
+        <body style="padding: 0">
           <div id="root"></div>
           <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
         </body>
