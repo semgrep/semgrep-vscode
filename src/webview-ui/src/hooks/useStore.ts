@@ -29,7 +29,10 @@ export function generateUniqueID(): string {
 
 export function useSearch(onNewSearch: (scanID: string) => void): void {
   function splitAndTrim(value: string): string[] {
-    return value.split(",").map((s) => s.trim());
+    return value
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s !== "");
   }
   const fixValue = store.fix === "" ? null : store.fix;
   const scanID = generateUniqueID();
