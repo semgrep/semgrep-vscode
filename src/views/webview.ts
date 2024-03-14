@@ -32,6 +32,8 @@ export class SemgrepSearchWebviewProvider
             pattern: data.pattern,
             language: null,
             fix: data.fix,
+            includes: data.includes,
+            excludes: data.excludes,
           },
           scanID: data.scanID,
         };
@@ -114,6 +116,10 @@ export class SemgrepSearchWebviewProvider
         "index.js"
       )
     );
+    // The global CSS file
+    const globalStylesUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "global.css")
+    );
 
     const nonce = getNonce();
 
@@ -126,6 +132,7 @@ export class SemgrepSearchWebviewProvider
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
+          <link rel="stylesheet" type="text/css" href="${globalStylesUri}">
           <title>Hello World</title>
           <style>
           </style>
