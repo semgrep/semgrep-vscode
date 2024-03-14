@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { SearchMatch } from "../../../searchResultsTree";
 
 export type ViewMatch = {
@@ -23,5 +22,6 @@ export type ViewResult = {
 };
 
 export type ViewResults = {
+  scanID: string;
   locations: ViewResult[];
 };

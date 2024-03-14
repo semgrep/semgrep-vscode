@@ -14,16 +14,11 @@ import {
 } from "./lspExtensions";
 import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
-import {
-  FileItem,
-  MatchItem,
-  SearchResult,
-  getPreviewChunks,
-} from "./searchResultsTree";
 import { get } from "http";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as path from "path";
 import { applyFixAndSave, replaceAll } from "./utils";
+import { handleSearch } from "./search";
 
 /*****************************************************************************/
 /* Prelude */
@@ -56,41 +51,6 @@ async function replaceAndOpenUriContent(
   if (active_editor.viewColumn) {
     vscode.window.showTextDocument(doc, active_editor.viewColumn + 1 || 0);
   }
-}
-
-async function viewResultsOfSearchResults(
-  results: SearchResults
-): Promise<ViewResults> {
-  async function viewResultofSearchResult(result: SearchResult) {
-    const uri = vscode.Uri.parse(result.uri);
-    const doc = await vscode.workspace.openTextDocument(uri);
-    const workspacePath = vscode.workspace.workspaceFolders
-      ? vscode.workspace.workspaceFolders[0].uri.fsPath
-      : "";
-    return {
-      uri: result.uri,
-      path: path.relative(workspacePath, uri.fsPath),
-      matches: await Promise.all(
-        result.matches.map(async (match) => {
-          const range = new vscode.Range(match.range.start, match.range.end);
-          const { before, inside, after } = getPreviewChunks(doc, range);
-          return {
-            before: before,
-            inside: inside,
-            after: after,
-            isFixed: false,
-            isDismissed: false,
-            searchMatch: match,
-          };
-        })
-      ),
-    };
-  }
-  return {
-    locations: await Promise.all(
-      results.locations.map(viewResultofSearchResult)
-    ),
-  };
 }
 
 /*****************************************************************************/
@@ -191,33 +151,8 @@ export function registerCommands(env: Environment): void {
 
   vscode.commands.registerCommand(
     "semgrep.search",
-    async (searchParams: SearchParams | null) => {
-      if (searchParams != null) {
-        const result = await env.client?.sendRequest(search, searchParams);
-        vscode.commands.executeCommand(
-          "setContext",
-          "semgrep.searchHasResults",
-          true
-        );
-        if (searchParams.fix) {
-          vscode.commands.executeCommand(
-            "setContext",
-            "semgrep.searchHasFix",
-            true
-          );
-        }
-        if (!result) {
-          return;
-        }
-        console.log(result.locations);
-        const viewResults = await viewResultsOfSearchResults(result);
-        env.provider?.sendMessageToWebview({
-          command: "extension/semgrep/results",
-          results: viewResults,
-        });
-        console.log("view results sent");
-        env.searchView.setSearchItems(result.locations, searchParams);
-      }
+    async (searchParams: SearchParams) => {
+      await handleSearch(env, searchParams);
     }
   );
 
@@ -230,13 +165,8 @@ export function registerCommands(env: Environment): void {
     }
   });
 
+  /* TODO: port to webview */
   vscode.commands.registerCommand("semgrep.search.clear", () => {
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.searchHasResults",
-      false
-    );
-    vscode.commands.executeCommand("setContext", "semgrep.searchHasFix", false);
     env.searchView.clearSearch();
   });
 

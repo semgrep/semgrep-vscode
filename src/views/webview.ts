@@ -31,9 +31,12 @@ export class SemgrepSearchWebviewProvider
         //   `Starting search for pattern ${data.command}`
         // );
         const searchParams: SearchParams = {
-          pattern: data.pattern,
-          language: null,
-          fix: data.fix,
+          lspParams: {
+            pattern: data.pattern,
+            language: null,
+            fix: data.fix,
+          },
+          scanID: data.scanID,
         };
         vscode.commands.executeCommand("semgrep.search", searchParams);
         break;

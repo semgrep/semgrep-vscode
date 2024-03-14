@@ -29,7 +29,15 @@ export interface LoginStatusParams {
   loggedIn: boolean;
 }
 
+// These are the parameters sent from the webview to the extnesion, which
+// is a superset of the parameters sent to the LSP.
+// Hence, the two different types `SearchParams` and `LspSearchParams` here.
 export interface SearchParams {
+  scanID: string;
+  lspParams: LspSearchParams;
+}
+
+export interface LspSearchParams {
   pattern: string;
   language: string | null;
   fix: string | null;
@@ -58,8 +66,12 @@ export const loginStatus = new lc.RequestType0<LoginStatusParams | null, void>(
   "semgrep/loginStatus"
 );
 
-export const search = new lc.RequestType<SearchParams, SearchResults, void>(
+export const search = new lc.RequestType<LspSearchParams, SearchResults, void>(
   "semgrep/search"
+);
+
+export const searchOngoing = new lc.RequestType0<SearchResults, void>(
+  "semgrep/searchOngoing"
 );
 
 export const showAst = new lc.RequestType<ShowAstParams, string, void>(

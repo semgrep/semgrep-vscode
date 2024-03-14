@@ -44,7 +44,12 @@ export const replace = "webview/semgrep/replace";
 export const replaceAll = "webview/semgrep/replaceAll";
 
 export type webviewToExtensionCommand =
-  | { command: typeof search; pattern: string; fix: string | null }
+  | {
+      command: typeof search;
+      pattern: string;
+      fix: string | null;
+      scanID: string;
+    }
   | { command: typeof print; message: string }
   | { command: typeof select; uri: string; range: vscode.Range }
   | { command: typeof replace; uri: string; range: vscode.Range; fix: string }
