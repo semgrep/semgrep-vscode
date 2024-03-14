@@ -1,0 +1,20 @@
+/* TOP SECTION */
+
+.top-section {
+  padding: 0px 12px;
+}
+
+.main-input {
+  padding: 4px 0px;
+}
+
+.option-button {
+  background: transparent;
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  width: fit-content;
+  border: none;
+  position: absolute;
+  /* silly hack to get it enough to the right */
+  right: 12px;
+}
