@@ -76,12 +76,15 @@ async function searchLoop(
      meaning that the search this loop is for has terminated.
      We need to stop this loop, and send no more results to the webview.
    */
-  // TODO: This actually has a race condition... if a separate searchLoop
+  // THINK: This could have a race condition... if a separate searchLoop
   // changes the scanID after we pass this check, then we might hit the
   // LSP with a /semgrep/searchOngoing request, _after_ the new
   // /semgrep/search.
   // This means that we will get results for the new search, but not send
   // it to the webview.
+  // INFO: Javascript async functions only yield at `await` points, which
+  // means we could be safe, if not for the fact that `viewResultsOfSearchResults`
+  // is in fact called via `await`.
   if (env.scanID !== null && scanID !== env.scanID) {
     return;
   }
@@ -105,7 +108,7 @@ async function searchLoop(
        Time to loop!
      */
     const results = await env.client?.sendRequest(searchOngoing);
-    searchLoop(scanID, env, results);
+    await searchLoop(scanID, env, results);
   }
 }
 
