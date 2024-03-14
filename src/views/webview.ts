@@ -27,9 +27,6 @@ export class SemgrepSearchWebviewProvider
         }
         break;
       case "webview/semgrep/search": {
-        // vscode.window.showInformationMessage(
-        //   `Starting search for pattern ${data.command}`
-        // );
         const searchParams: SearchParams = {
           lspParams: {
             pattern: data.pattern,

@@ -30,7 +30,9 @@ export const MatchItem: React.FC<MatchItemProps> = ({
     matchText = (
       <>
         <span className={styles["match-text-deleted"]}>{inside}</span>
-        <span className={styles["match-text-inserted"]}>fix</span>
+        <span className={styles["match-text-inserted"]}>
+          {match.searchMatch.fix}
+        </span>
       </>
     );
   } else {
