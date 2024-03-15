@@ -70,7 +70,7 @@ const App: React.FC = () => {
 
   return (
     <main>
-      <TopSection onNewSearch={onNewSearch} />
+      <TopSection onNewSearch={onNewSearch} state={state} />
       {state && <SearchResults state={state} />}
     </main>
   );

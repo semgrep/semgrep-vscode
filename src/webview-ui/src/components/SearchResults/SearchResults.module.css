@@ -7,11 +7,6 @@
   display: flex;
 }
 
-.replace-all-button {
-  margin-left: auto;
-  cursor: pointer;
-}
-
 /* ENTRY HEADERS */
 
 .entry-header {

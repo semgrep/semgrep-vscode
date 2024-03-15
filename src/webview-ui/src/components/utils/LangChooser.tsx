@@ -5,6 +5,16 @@ import { FormEventHandler, useState } from "react";
 import { Store, useStore } from "../../hooks/useStore";
 import { SUPPORTED_LANGS } from "../../../../constants";
 
+const style = {
+  // this makes it not quite as weirdly tall
+  //   "--design-unit": "2",
+  // I tried setting the borderRadius directly and it doesn't work.
+  // For some reason it just doesn't show up in the styles.
+  // This does, though.
+  "--corner-radius": "2",
+  //   padding: "0",
+};
+
 export interface LangChooserProps {
   keyName: keyof Store;
 }
@@ -47,6 +57,7 @@ export const LangChooser: React.FC<LangChooserProps> = ({ keyName }) => {
     <VSCodeDropdown
       value={activeLang ?? "all"}
       onChange={(e: any) => handleUpdateLang(e.currentTarget.value)}
+      style={style}
     >
       <VSCodeOption>all</VSCodeOption>
       {SUPPORTED_LANGS.map((l) => (

@@ -14,8 +14,8 @@ const style = {
   // For some reason it just doesn't show up in the styles.
   // This does, though.
   "--corner-radius": "2",
+  // padding: "2px 0",
   width: "100%",
-  padding: "2px 0px",
 };
 
 export interface TextBoxProps {

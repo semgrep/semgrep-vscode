@@ -1,0 +1,19 @@
+.search-row {
+  display: flex;
+  column-gap: 2px;
+  padding: 2px 0;
+}
+
+.replace-all-button {
+  margin-left: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 1px;
+  color: var(--vscode-icon-foreground);
+}
+
+.disabled {
+  color: var(--vscode-disabledForeground);
+}

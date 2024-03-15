@@ -14,18 +14,23 @@ import { VscEllipsis } from "react-icons/vsc";
 import { SUPPORTED_LANGS } from "../../../../constants";
 import { SearchLanguage } from "../../../../interface/interface";
 import { TextBox } from "../utils/TextBox";
+import { State } from "../../types/state";
 
 export interface TopSectionProps {
   onNewSearch: (scanID: string) => void;
+  state: State | null;
 }
-export const TopSection: React.FC<TopSectionProps> = ({ onNewSearch }) => {
+export const TopSection: React.FC<TopSectionProps> = ({
+  onNewSearch,
+  state,
+}) => {
   const [showOptions, setShowOptions] = useState(false);
   const [pattern, setPattern] = useState("");
   const [fix, setFix] = useState("");
 
   return (
     <div className={styles["top-section"]}>
-      <MainInputs onNewSearch={onNewSearch} />
+      <MainInputs onNewSearch={onNewSearch} state={state} />
       <div>
         <div
           role="button"
