@@ -46,15 +46,14 @@ export const TextBox: React.FC<TextBoxProps> = ({
         onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key == "Enter" && !e.shiftKey) {
             e.preventDefault();
-            useSearch(onNewSearch);
           }
         }}
         value={content}
         // I literally have no idea what the type of this or the below handler should be
         // We use the onChange here because there's a delta between when the onKeyPress
         // is fired and when the value is updated
-        onInput={(e: any) => {
-          setContent(e.target.value);
+        onInput={() => {
+          useSearch(onNewSearch);
         }}
       />
     </>

@@ -1,6 +1,6 @@
 import assert from "assert";
 import { useEffect } from "react";
-import { useLocalStorage } from "react-use";
+import { useDebounce, useLocalStorage } from "react-use";
 import { vscode } from "../utilities/vscode";
 import { SUPPORTED_LANGS } from "../../../constants";
 import { SearchLanguage } from "../../../interface/interface";
@@ -39,15 +39,21 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
       .map((s) => s.trim())
       .filter((s) => s !== "");
   }
+  const scanID = generateUniqueID();
+  onNewSearch(scanID);
+  // We put all these references to the store after the call to `onNewSearch`.
+  // This is because the edit to the store and the retrieval down here are racey,
+  // and it is possible for us to send a search request with outdated information,
+  // because the store has not been updated yet.
+  // I have observed that as long as we get the data after thsi `onNewSearch` call,
+  // the setting seems to already have happened. But it could still be racey.
   const fixValue = store.fix === "" ? null : store.fix;
   const lang = SUPPORTED_LANGS.includes(store.language as SearchLanguage)
     ? (store.language as SearchLanguage)
     : null;
-  const scanID = generateUniqueID();
   // do some naive parsing here
   const includes = splitAndTrim(store.includes);
   const excludes = splitAndTrim(store.excludes);
-  onNewSearch(scanID);
   vscode.sendMessageToExtension({
     command: "webview/semgrep/search",
     pattern: store.pattern,
