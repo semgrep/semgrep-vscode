@@ -13,8 +13,6 @@ import { VscReplaceAll } from "react-icons/vsc";
 import { useStore } from "../../hooks/useStore";
 import { PatternList } from "./PatternList";
 
-type simplePattern = { isPositive: boolean; pattern: string };
-
 export interface MainInputsProps {
   onNewSearch: (scanID: string) => void;
   state: State | null;
@@ -23,7 +21,6 @@ export const MainInputs: React.FC<MainInputsProps> = ({
   onNewSearch,
   state,
 }) => {
-  const [pattern, setPattern] = useStore("pattern");
   const [fix, setFix] = useStore("fix");
 
   function onFixAll() {

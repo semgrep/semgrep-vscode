@@ -4,6 +4,7 @@ import { useLocalStorage } from "react-use";
 import { vscode } from "../utilities/vscode";
 import { SUPPORTED_LANGS } from "../../../constants";
 import { SearchLanguage } from "../../../interface/interface";
+import { simplePattern } from "../components/TopSection/PatternList";
 
 export interface Store {
   pattern: string;
@@ -11,7 +12,7 @@ export interface Store {
   includes: string;
   excludes: string;
   language: string;
-  simplePatterns: string[];
+  simplePatterns: simplePattern[];
 }
 
 const localStorageKeys: Record<keyof Store, string> = {
@@ -53,7 +54,10 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
   onNewSearch(scanID);
   vscode.sendMessageToExtension({
     command: "webview/semgrep/search",
-    pattern: store.pattern,
+    patterns: [
+      { positive: true, pattern: store.pattern },
+      ...store.simplePatterns,
+    ],
     fix: fixValue,
     includes: includes,
     excludes: excludes,

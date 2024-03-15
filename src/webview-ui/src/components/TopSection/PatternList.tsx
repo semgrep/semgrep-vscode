@@ -18,7 +18,7 @@ import {
 import { useStore } from "../../hooks/useStore";
 import { PatternBadge } from "./PatternBadge";
 
-export type simplePattern = { isPositive: boolean; pattern: string };
+export type simplePattern = { positive: boolean; pattern: string };
 
 export function isLast(index: number | null, patterns: simplePattern[]) {
   return (
@@ -35,7 +35,7 @@ export const PatternList: React.FC<PatternListProps> = ({
   state,
 }) => {
   const [pattern, setPattern] = useStore("pattern");
-  const [patterns, setPatterns] = useState<simplePattern[]>([]);
+  const [patterns, setPatterns] = useStore("simplePatterns");
 
   const [numRerenders, setNumRerenders] = useState(0);
 
@@ -59,19 +59,19 @@ export const PatternList: React.FC<PatternListProps> = ({
   }
 
   function onNewPattern() {
-    const newPatterns = patterns.concat({ isPositive: true, pattern: "" });
+    const newPatterns = patterns.concat({ positive: true, pattern: "" });
     setPatterns(newPatterns);
     setNumRerenders(numRerenders + 1);
   }
 
-  function mk(p: simplePattern, index: number | null) {
+  function mkPattern(p: simplePattern, index: number | null) {
     return (
       <div className={styles["search-row"]}>
         <PatternBadge
-          isPositive={p.isPositive}
+          positive={p.positive}
           onPositivityToggle={() =>
             setPatternAtIndex(index, {
-              isPositive: !p.isPositive,
+              positive: !p.positive,
               pattern: p.pattern,
             })
           }
@@ -86,7 +86,7 @@ export const PatternList: React.FC<PatternListProps> = ({
           value={p.pattern}
           onChange={(value: string) =>
             setPatternAtIndex(index, {
-              isPositive: p.isPositive,
+              positive: p.positive,
               pattern: value,
             })
           }
@@ -106,8 +106,8 @@ export const PatternList: React.FC<PatternListProps> = ({
   }
   return (
     <div className={styles["pattern-list"]}>
-      {mk({ isPositive: true, pattern: pattern }, null)}
-      {patterns.map((p: simplePattern, index: number) => mk(p, index))}
+      {mkPattern({ positive: true, pattern: pattern }, null)}
+      {patterns.map((p: simplePattern, index: number) => mkPattern(p, index))}
     </div>
   );
 };

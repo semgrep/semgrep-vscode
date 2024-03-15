@@ -52,7 +52,7 @@ export const getLanguage = "webview/semgrep/getActiveLang";
 export type webviewToExtensionCommand =
   | {
       command: typeof search;
-      pattern: string;
+      patterns: { positive: boolean; pattern: string }[];
       fix: string | null;
       includes: string[];
       excludes: string[];
