@@ -29,7 +29,11 @@
 
 .matches-summary {
   color: var(--vscode-search-resultsInfoForeground);
-  padding: 8px;
+  /* asymmetric hacks because the spacing of the above
+     bar encroaches on us a bit
+   */
+  padding-top: 5px;
+  padding-bottom: 8px;
   line-height: 1.4em;
   display: flex;
 }
