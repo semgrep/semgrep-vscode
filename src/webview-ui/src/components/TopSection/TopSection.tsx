@@ -15,6 +15,7 @@ import { SUPPORTED_LANGS } from "../../../../constants";
 import { SearchLanguage } from "../../../../interface/interface";
 import { TextBox } from "../utils/TextBox";
 import { State } from "../../types/state";
+import { MatchesSummary } from "./MatchesSummary";
 
 export interface TopSectionProps {
   onNewSearch: (scanID: string) => void;
@@ -25,8 +26,6 @@ export const TopSection: React.FC<TopSectionProps> = ({
   state,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
-  const [pattern, setPattern] = useState("");
-  const [fix, setFix] = useState("");
 
   return (
     <div className={styles["top-section"]}>
@@ -56,6 +55,7 @@ export const TopSection: React.FC<TopSectionProps> = ({
           />
         )}
       </div>
+      <MatchesSummary state={state} />
     </div>
   );
 };

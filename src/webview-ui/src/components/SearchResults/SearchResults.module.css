@@ -1,10 +1,7 @@
-/* MATCH SUMMARY */
+/* MATCHES SECTION */
 
-.matches-summary {
-  color: var(--vscode-search-resultsInfoForeground);
-  padding: 8px;
-  line-height: 1.4em;
-  display: flex;
+.matches-section {
+  padding-left: 5px;
 }
 
 /* ENTRY HEADERS */

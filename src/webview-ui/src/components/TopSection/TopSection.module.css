@@ -24,3 +24,12 @@
   right: 12px;
   font-size: 16px;
 }
+
+/* MATCH SUMMARY */
+
+.matches-summary {
+  color: var(--vscode-search-resultsInfoForeground);
+  padding: 8px;
+  line-height: 1.4em;
+  display: flex;
+}
