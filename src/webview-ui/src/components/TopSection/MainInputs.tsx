@@ -10,6 +10,10 @@ import { LangChooser } from "../utils/LangChooser";
 import styles from "./MainInputs.module.css";
 import { State } from "../../types/state";
 import { VscReplaceAll } from "react-icons/vsc";
+import { useStore } from "../../hooks/useStore";
+import { PatternList } from "./PatternList";
+
+type simplePattern = { isPositive: boolean; pattern: string };
 
 export interface MainInputsProps {
   onNewSearch: (scanID: string) => void;
@@ -19,6 +23,9 @@ export const MainInputs: React.FC<MainInputsProps> = ({
   onNewSearch,
   state,
 }) => {
+  const [pattern, setPattern] = useStore("pattern");
+  const [fix, setFix] = useStore("fix");
+
   function onFixAll() {
     if (state) {
       vscode.sendMessageToExtension({
@@ -35,21 +42,14 @@ export const MainInputs: React.FC<MainInputsProps> = ({
 
   return (
     <>
-      <div className={styles["search-row"]}>
-        <TextBox
-          onNewSearch={onNewSearch}
-          placeholder="Pattern"
-          isMultiline={true}
-          keyName="pattern"
-        />
-        <LangChooser keyName="language" />
-      </div>
+      <PatternList onNewSearch={onNewSearch} state={state} />
       <div className={styles["search-row"]}>
         <TextBox
           onNewSearch={onNewSearch}
           placeholder="Fix"
           isMultiline={true}
-          keyName="fix"
+          value={fix}
+          onChange={setFix}
         />
         <div
           className={`${styles["replace-all-button"]} ${
