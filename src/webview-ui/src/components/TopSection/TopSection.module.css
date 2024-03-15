@@ -1,7 +1,12 @@
 /* TOP SECTION */
 
 .top-section {
-  padding: 0px 12px;
+  padding: 0px 12px 12px 12px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--vscode-sideBar-background);
 }
 
 .main-input {
