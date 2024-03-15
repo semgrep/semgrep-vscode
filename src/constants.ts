@@ -45,4 +45,4 @@ export const SUPPORTED_LANGS = [
   "vue",
   "xml",
   "yaml",
-];
+] as const;

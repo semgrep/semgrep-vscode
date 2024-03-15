@@ -3,9 +3,11 @@ import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 import { SearchParams } from "../lspExtensions";
 import {
+  SearchLanguage,
   extensionToWebviewCommand,
   webviewToExtensionCommand,
 } from "../interface/interface";
+import { SUPPORTED_LANGS } from "../constants";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -27,14 +29,13 @@ export class SemgrepSearchWebviewProvider
         }
         break;
       case "webview/semgrep/search": {
-        // vscode.window.showInformationMessage(
-        //   `Starting search for pattern ${data.command}`
-        // );
         const searchParams: SearchParams = {
           lspParams: {
             pattern: data.pattern,
-            language: null,
+            language: data.lang,
             fix: data.fix,
+            includes: data.includes,
+            excludes: data.excludes,
           },
           scanID: data.scanID,
         };
@@ -63,12 +64,32 @@ export class SemgrepSearchWebviewProvider
         >{
           selection: data.range,
         });
+        break;
+      }
+      case "webview/semgrep/getActiveLang": {
+        const activeLang = vscode.window.activeTextEditor?.document.languageId;
+        // we'll only send the language to the webview if we can determine it maps to a semgrep language
+        if (
+          activeLang &&
+          SUPPORTED_LANGS.includes(activeLang as SearchLanguage)
+        ) {
+          this.sendMessageToWebview({
+            command: "extension/semgrep/activeLang",
+            lang: activeLang,
+          });
+        } else {
+          this.sendMessageToWebview({
+            command: "extension/semgrep/activeLang",
+            lang: null,
+          });
+        }
       }
     }
   }
 
   // Send messages from extension -> webview
   sendMessageToWebview(data: extensionToWebviewCommand): void {
+    console.log("Sending message to webview", data);
     this._view?.webview.postMessage(data);
   }
 
@@ -117,6 +138,10 @@ export class SemgrepSearchWebviewProvider
         "index.js"
       )
     );
+    // The global CSS file
+    const globalStylesUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "global.css")
+    );
 
     const nonce = getNonce();
 
@@ -129,6 +154,7 @@ export class SemgrepSearchWebviewProvider
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
+          <link rel="stylesheet" type="text/css" href="${globalStylesUri}">
           <title>Hello World</title>
           <style>
           </style>

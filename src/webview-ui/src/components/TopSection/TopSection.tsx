@@ -1,62 +1,61 @@
 import { vscode } from "./../../utilities/vscode";
 import {
   VSCodeButton,
+  VSCodeTextArea,
+  VSCodeDropdown,
+  VSCodeOption,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState } from "react";
+import { MainInputs } from "./MainInputs";
 
-export function generateUniqueID(): string {
-  return Math.random().toString(36).substring(7);
-}
+import styles from "./TopSection.module.css";
+import { VscEllipsis } from "react-icons/vsc";
+import { SUPPORTED_LANGS } from "../../../../constants";
+import { SearchLanguage } from "../../../../interface/interface";
+import { TextBox } from "../utils/TextBox";
+import { State } from "../../types/state";
+
 export interface TopSectionProps {
   onNewSearch: (scanID: string) => void;
+  state: State | null;
 }
-export const TopSection: React.FC<TopSectionProps> = ({ onNewSearch }) => {
+export const TopSection: React.FC<TopSectionProps> = ({
+  onNewSearch,
+  state,
+}) => {
+  const [showOptions, setShowOptions] = useState(false);
   const [pattern, setPattern] = useState("");
   const [fix, setFix] = useState("");
 
-  function searchQuery(pattern: string, fix: string) {
-    const fixValue = fix === "" ? null : fix;
-    const scanID = generateUniqueID();
-    onNewSearch(scanID);
-    vscode.sendMessageToExtension({
-      command: "webview/semgrep/search",
-      pattern: pattern,
-      fix: fixValue,
-      scanID: scanID,
-    });
-  }
-
   return (
-    <>
-      <VSCodeTextField
-        autofocus
-        placeholder="Pattern"
-        style={{ padding: "4px 8px", width: "calc(100% - 16px)" }}
-        onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-          if (e.key == "Enter") {
-            searchQuery(e.currentTarget.value, fix);
-          }
-        }}
-        // I literally have no idea what the type of this or the below handler should be
-        // We use the onChange here because there's a delta between when the onKeyPress
-        // is fired and when the value is updated
-        onChange={(e: any) => {
-          setPattern(e.target.value);
-        }}
-      />
-      <VSCodeTextField
-        placeholder="Autofix"
-        style={{ padding: "4px 8px", width: "calc(100% - 16px)" }}
-        onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-          if (e.key == "Enter") {
-            searchQuery(pattern, e.currentTarget.value);
-          }
-        }}
-        onChange={(e: any) => {
-          setFix(e.target.value);
-        }}
-      />
-    </>
+    <div className={styles["top-section"]}>
+      <MainInputs onNewSearch={onNewSearch} state={state} />
+      <div>
+        <div
+          role="button"
+          onClick={() => setShowOptions(!showOptions)}
+          className={styles["option-button"]}
+        >
+          <VscEllipsis />
+        </div>
+        {showOptions && (
+          <TextBox
+            description="files to include"
+            onNewSearch={onNewSearch}
+            isMultiline={false}
+            keyName="includes"
+          />
+        )}
+        {showOptions && (
+          <TextBox
+            description="files to exclude"
+            onNewSearch={onNewSearch}
+            isMultiline={false}
+            keyName="excludes"
+          />
+        )}
+      </div>
+    </div>
   );
 };

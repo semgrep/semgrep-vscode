@@ -63,9 +63,14 @@ const App: React.FC = () => {
     });
   }
 
+  // just indicate that we are ready to receive the active language
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/getActiveLang",
+  });
+
   return (
     <main>
-      <TopSection onNewSearch={onNewSearch} />
+      <TopSection onNewSearch={onNewSearch} state={state} />
       {state && <SearchResults state={state} />}
     </main>
   );

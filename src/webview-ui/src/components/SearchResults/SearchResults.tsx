@@ -25,24 +25,12 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
     return null;
   }
 
-  function onFixAll() {
-    if (state !== undefined) {
-      vscode.sendMessageToExtension({
-        command: "webview/semgrep/replaceAll",
-        matches: state.results,
-      });
-    }
-  }
-
   const status = state.searchConcluded ? "" : "(searching)";
 
   return (
     <div>
       <div className={styles["matches-summary"]}>
         {`${numMatches} matches in ${numFiles} files ${status}`}
-        <div className={styles["replace-all-button"]} onClick={onFixAll}>
-          <VscReplaceAll role="button" title="Replace All" tabIndex={0} />
-        </div>
       </div>
       {state.results.locations.map((result) => (
         <SearchResultEntry result={result} />
