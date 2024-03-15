@@ -57,6 +57,13 @@
   margin-left: auto;
 }
 
+.match-button {
+  border-radius: 5px;
+  :hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+  }
+}
+
 .match-item {
   list-style: none;
   display: flex;

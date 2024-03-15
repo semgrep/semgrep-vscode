@@ -22,11 +22,11 @@ export const MatchItemButtons: React.FC<MatchItemButtonsProps> = ({
   return (
     <div className={styles.matchButtons}>
       {match.searchMatch.fix ? (
-        <div onClick={() => onFix(match)}>
+        <div className={styles["match-button"]} onClick={() => onFix(match)}>
           <VscReplace role="button" title="Replace" tabIndex={0} />
         </div>
       ) : null}
-      <div onClick={() => onDismiss(match)}>
+      <div className={styles["match-button"]} onClick={() => onDismiss(match)}>
         <VscClose role="button" title="Dismiss" tabIndex={0} />
       </div>
     </div>
