@@ -5,7 +5,7 @@ import {
   search,
   searchOngoing,
 } from "./lspExtensions";
-import { SearchResult, getPreviewChunks } from "./searchResultsTree";
+import { SearchResult } from "./searchResultsTree";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as vscode from "vscode";
 import { Environment } from "./env";
@@ -20,7 +20,6 @@ async function viewResultsOfSearchResults(
 ): Promise<ViewResults> {
   async function viewResultofSearchResult(result: SearchResult) {
     const uri = vscode.Uri.parse(result.uri);
-    const doc = await vscode.workspace.openTextDocument(uri);
     const workspacePath = vscode.workspace.workspaceFolders
       ? vscode.workspace.workspaceFolders[0].uri.fsPath
       : "";
@@ -29,12 +28,7 @@ async function viewResultsOfSearchResults(
       path: path.relative(workspacePath, uri.fsPath),
       matches: await Promise.all(
         result.matches.map(async (match) => {
-          const range = new vscode.Range(match.range.start, match.range.end);
-          const { before, inside, after } = getPreviewChunks(doc, range);
           return {
-            before: before,
-            inside: inside,
-            after: after,
             isFixed: false,
             isDismissed: false,
             searchMatch: match,
