@@ -15,7 +15,11 @@
 
 import { SUPPORTED_LANGS } from "../constants";
 import { SearchResults } from "../lspExtensions";
-import { ViewResult, ViewResults } from "../webview-ui/src/types/results";
+import {
+  ViewMatch,
+  ViewResult,
+  ViewResults,
+} from "../webview-ui/src/types/results";
 import * as vscode from "vscode";
 
 /*****************************************************************************/
@@ -68,7 +72,7 @@ export type webviewToExtensionCommand =
 export const results = "extension/semgrep/results";
 export const activeLang = "extension/semgrep/activeLang";
 
-export type SearchLanguage = (typeof SUPPORTED_LANGS)[number];
+export type SearchLanguage = typeof SUPPORTED_LANGS[number];
 
 export type extensionToWebviewCommand =
   | {
