@@ -31,7 +31,7 @@ export class SemgrepSearchWebviewProvider
       case "webview/semgrep/search": {
         const searchParams: SearchParams = {
           lspParams: {
-            pattern: data.pattern,
+            patterns: data.patterns,
             language: data.lang,
             fix: data.fix,
             includes: data.includes,
@@ -83,6 +83,35 @@ export class SemgrepSearchWebviewProvider
             lang: null,
           });
         }
+        break;
+      }
+      case "webview/semgrep/exportRule": {
+        console.log("opening");
+        const lines = data.patterns
+          .map((pat) =>
+            pat.positive
+              ? `    - pattern: '${pat.pattern}'`
+              : `    - pattern-not: '${pat.pattern}'`
+          )
+          .join("\n");
+        vscode.workspace
+          .openTextDocument({
+            content: [
+              `rules:\n`,
+              `  - id: search-rule\n`,
+              `    language: ${
+                data.language === "all" ? [] : `[${data.language}]`
+              }\n`,
+              `    message: |\n`,
+              `      You can run this rule with Semgrep CLI to search your code and\n`,
+              `      enforce certain practices!\n`,
+              `    severity: ERROR\n`,
+              `    patterns:\n`,
+              `${lines}\n`,
+            ].join(""),
+            language: "yaml",
+          })
+          .then((doc) => vscode.window.showTextDocument(doc));
       }
     }
   }

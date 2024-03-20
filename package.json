@@ -87,6 +87,12 @@
         "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
       },
       {
+        "command": "semgrep.search.exportRule",
+        "title": "Semgrep Search: Export Rule",
+        "icon": "$(search-remove)",
+        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+      },
+      {
         "command": "semgrep.search.replace",
         "title": "Semgrep Search: Semantic Replace",
         "icon": "$(replace)",

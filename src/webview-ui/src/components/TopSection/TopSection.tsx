@@ -16,6 +16,7 @@ import { SearchLanguage } from "../../../../interface/interface";
 import { TextBox } from "../utils/TextBox";
 import { State } from "../../types/state";
 import { MatchesSummary } from "./MatchesSummary";
+import { useStore } from "../../hooks/useStore";
 
 export interface TopSectionProps {
   onNewSearch: (scanID: string) => void;
@@ -26,6 +27,8 @@ export const TopSection: React.FC<TopSectionProps> = ({
   state,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
+  const [includes, setIncludes] = useStore("includes");
+  const [excludes, setExcludes] = useStore("excludes");
 
   return (
     <div className={styles["top-section"]}>
@@ -43,7 +46,8 @@ export const TopSection: React.FC<TopSectionProps> = ({
             description="files to include"
             onNewSearch={onNewSearch}
             isMultiline={false}
-            keyName="includes"
+            value={includes}
+            onChange={setIncludes}
           />
         )}
         {showOptions && (
@@ -51,7 +55,8 @@ export const TopSection: React.FC<TopSectionProps> = ({
             description="files to exclude"
             onNewSearch={onNewSearch}
             isMultiline={false}
-            keyName="excludes"
+            value={excludes}
+            onChange={setExcludes}
           />
         )}
       </div>

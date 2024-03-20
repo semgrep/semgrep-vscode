@@ -5,6 +5,8 @@ import { TopSection } from "./components/TopSection/TopSection";
 import { SearchResults } from "./components/SearchResults/SearchResults";
 import { State } from "./types/state";
 import { ViewResults } from "./types/results";
+import { InfoBlurb } from "./components/utils/InfoBlurb";
+import { clearStore, exportRule, useStore } from "./hooks/useStore";
 
 const App: React.FC = () => {
   /* The states are as follows:
@@ -15,6 +17,11 @@ const App: React.FC = () => {
        have saved results in `results`. This scan had ID scanID.
    */
   const [state, setState] = useState<State | null>(null);
+
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/print",
+    message: "app loaded",
+  });
 
   // This code registers a handler with the VSCode interfacing infrastrucure,
   // outside of this component.
@@ -54,6 +61,14 @@ const App: React.FC = () => {
     }
   };
 
+  vscode.onClear = () => {
+    clearStore();
+    setState(null);
+  };
+  vscode.onExportRule = () => {
+    exportRule();
+  };
+
   // On a new search, we will generate a new (hopefully) unique scan ID, and wait
   // to receive results.
   function onNewSearch(scanID: string) {
@@ -66,7 +81,7 @@ const App: React.FC = () => {
   return (
     <main>
       <TopSection onNewSearch={onNewSearch} state={state} />
-      {state && <SearchResults state={state} />}
+      {state ? <SearchResults state={state} /> : <InfoBlurb />}
     </main>
   );
 };

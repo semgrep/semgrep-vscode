@@ -6,6 +6,7 @@ import {
 } from "../../../interface/interface";
 import { State } from "../types/state";
 import { ViewResults } from "../types/results";
+import { clearStore } from "../hooks/useStore";
 
 /**
  * A utility wrapper around the acquireVsCodeApi() function, which enables
@@ -23,6 +24,8 @@ class VSCodeAPIWrapper {
   public onUpdateActiveLang:
     | ((activeLang: SearchLanguage | null) => void)
     | null = null;
+  public onClear: (() => void) | null = null;
+  public onExportRule: (() => void) | null = null;
 
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
@@ -82,6 +85,18 @@ class VSCodeAPIWrapper {
         });
         if (this.onUpdateActiveLang) {
           this.onUpdateActiveLang(data.lang);
+        }
+        break;
+      }
+      case "extension/semgrep/clear": {
+        if (this.onClear) {
+          this.onClear();
+        }
+        break;
+      }
+      case "extension/semgrep/exportRuleRequest": {
+        if (this.onExportRule) {
+          this.onExportRule();
         }
       }
     }

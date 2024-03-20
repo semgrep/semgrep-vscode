@@ -4,6 +4,7 @@ import { useLocalStorage } from "react-use";
 import { vscode } from "../utilities/vscode";
 import { SUPPORTED_LANGS } from "../../../constants";
 import { SearchLanguage } from "../../../interface/interface";
+import { simplePattern } from "../components/TopSection/PatternList";
 
 export interface Store {
   pattern: string;
@@ -11,6 +12,7 @@ export interface Store {
   includes: string;
   excludes: string;
   language: string;
+  simplePatterns: simplePattern[];
 }
 
 const localStorageKeys: Record<keyof Store, string> = {
@@ -19,15 +21,22 @@ const localStorageKeys: Record<keyof Store, string> = {
   includes: "semgrep-search-includes",
   excludes: "semgrep-search-excludes",
   language: "semgrep-search-language",
+  simplePatterns: "semgrep-search-simple-patterns",
 };
 
-const store: Record<keyof Store, string> = {
-  pattern: "",
-  fix: "",
-  includes: "",
-  excludes: "",
-  language: "",
-};
+function defaultStore() {
+  return {
+    pattern: "",
+    fix: "",
+    includes: "",
+    excludes: "",
+    language: "",
+    simplePatterns: [],
+  };
+}
+
+const store: Store = defaultStore();
+
 export function generateUniqueID(): string {
   return Math.random().toString(36).substring(7);
 }
@@ -50,7 +59,10 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
   onNewSearch(scanID);
   vscode.sendMessageToExtension({
     command: "webview/semgrep/search",
-    pattern: store.pattern,
+    patterns: [
+      { positive: true, pattern: store.pattern },
+      ...store.simplePatterns,
+    ],
     fix: fixValue,
     includes: includes,
     excludes: excludes,
@@ -59,10 +71,67 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
   });
 }
 
-export function useStore(key: keyof Store): [string, (value: string) => void] {
-  const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
-  useEffect(() => {
-    store[key] = field;
-  }, [field, key]);
-  return [field, setField];
+export function useStore(key: keyof Store): [any, (value: any) => void] {
+  if (key === "simplePatterns") {
+    const [field = [], setField] = useLocalStorage(localStorageKeys[key], []);
+    useEffect(() => {
+      store[key] = field;
+    }, [field, key]);
+    return [field, setField];
+  } else {
+    const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
+    useEffect(() => {
+      store[key] = field;
+    }, [field, key]);
+    return [field, setField];
+  }
+}
+
+export function clearStore() {
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/print",
+    message: "in cleastore",
+  });
+  const newStore = defaultStore();
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/print",
+    message: "in cleastore 2",
+  });
+  // for (const k in store) {
+  // vscode.sendMessageToExtension({
+  //   command: "webview/semgrep/print",
+  //   message: `key ${k}`
+  // })
+  //   const key: keyof Store = k as keyof Store;
+  //   if (key === "simplePatterns") {
+  //     const [field = [], setField] = useLocalStorage(localStorageKeys[key], []);
+  //     store[key] = newStore[key];
+  //     setField(newStore[key]);
+  //   } else {
+  //     const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
+  //     store[key] = newStore[key];
+  //     setField(newStore[key])
+  //   }
+  // }
+  const [field = "", setField] = useLocalStorage(
+    localStorageKeys["pattern"],
+    ""
+  );
+  setField("'");
+  localStorage.clear();
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/print",
+    message: `store is ${JSON.stringify(store)}`,
+  });
+}
+
+export function exportRule() {
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/exportRule",
+    patterns: [
+      { positive: true, pattern: store.pattern },
+      ...store.simplePatterns,
+    ],
+    language: store.language,
+  });
 }
