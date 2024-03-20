@@ -297,7 +297,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "npm run setup-lspjs && esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-base": "npm run setup-lspjs && esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node && esbuild ./src/webview-ui/index.tsx --bundle --outfile=out/webview.js",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./ && npm run esbuild",
@@ -308,10 +308,7 @@
     "test": "npm run test-native && npm run test-js",
     "clean": "rm -rf ./out",
     "setup-lspjs": "./download-lspjs.sh Main.bc.js language-server-wasm.js semgrep-lsp-bindings.js semgrep-lsp.js",
-    "install:all": "npm install && cd src/webview-ui && npm install",
-    "start:webview": "cd src/webview-ui && npm run start",
-    "build:webview": "cd src/webview-ui && npm run build",
-    "build:webview:watch": "cd src/webview-ui && npm run build:watch"
+    "install:all": "npm install"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
@@ -321,9 +318,13 @@
     "@types/tmp": "^0.2.3",
     "@types/vscode": "1.66.0",
     "@types/which": "^2.0.1",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
     "@vscode/test-electron": "^2.3.8",
+    "@types/vscode-webview": "^1.57.0",
+    "@vitejs/plugin-react": "^1.0.7",
     "esbuild": "^0.17.19",
     "eslint": "^7.6.0",
     "find-process": "^1.4.7",
@@ -342,6 +343,8 @@
     "vscode-jsonrpc": "^6.0.0",
     "vscode-languageclient": "^8.0.1",
     "vscode-languageserver": "^9.0.1",
-    "which": "^2.0.2"
+    "which": "^2.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }

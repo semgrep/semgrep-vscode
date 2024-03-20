@@ -3,10 +3,12 @@
     "module": "commonjs",
     "target": "es6",
     "outDir": "out",
-    "lib": ["es2021"],
+    "lib": ["es2021", "dom", "dom.iterable"],
+    "esModuleInterop": false,
     "sourceMap": true,
     "rootDir": ".",
-    "strict": true
+    "strict": true,
+    "jsx": "react-jsx"
   },
   "include": ["src"],
   "exclude": ["node_modules", ".vscode-test"]

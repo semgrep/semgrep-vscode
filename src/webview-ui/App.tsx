@@ -5,7 +5,7 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
 import { useState } from "react";
-import { webkitCommand } from "../../interface/commands";
+import { webkitCommand } from "../interface/commands";
 
 const App: React.FC = () => {
   return (
@@ -22,7 +22,7 @@ const App: React.FC = () => {
             } as webkitCommand);
           }
         }}
-      ></VSCodeTextField>
+      />
     </main>
   );
 };

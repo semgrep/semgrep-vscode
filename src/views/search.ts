@@ -49,21 +49,15 @@ export class SemgrepSearchWebviewProvider
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    const assetsPath = vscode.Uri.joinPath(
-      this._extensionUri,
-      "src",
-      "webview-ui",
-      "build",
-      "assets"
-    );
+    const assetsPath = vscode.Uri.joinPath(this._extensionUri, "out");
 
     // The CSS file from the React build output
     const stylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "index.css")
+      vscode.Uri.joinPath(assetsPath, "webview.css")
     );
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "index.js")
+      vscode.Uri.joinPath(assetsPath, "webview.js")
     );
 
     const nonce = randomUUID();
