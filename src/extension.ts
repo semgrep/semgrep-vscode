@@ -27,6 +27,7 @@ export async function activate(
   context: ExtensionContext
 ): Promise<Environment | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
+
   await activateLsp(env);
   if (!env.client) {
     vscode.window.showErrorMessage(
