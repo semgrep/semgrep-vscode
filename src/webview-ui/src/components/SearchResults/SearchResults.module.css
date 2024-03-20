@@ -1,10 +1,7 @@
-/* MATCH SUMMARY */
+/* MATCHES SECTION */
 
-.matches-summary {
-  color: var(--vscode-search-resultsInfoForeground);
-  padding: 8px;
-  line-height: 1.4em;
-  display: flex;
+.matches-section {
+  padding-left: 5px;
 }
 
 /* ENTRY HEADERS */
@@ -27,6 +24,8 @@
 
 .path-header {
   display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .file-name {
@@ -56,6 +55,13 @@
 .match-buttons {
   display: flex;
   margin-left: auto;
+}
+
+.match-button {
+  border-radius: 5px;
+  :hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+  }
 }
 
 .match-item {

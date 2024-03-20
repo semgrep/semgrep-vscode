@@ -75,7 +75,7 @@ export class SemgrepSearchWebviewProvider
         ) {
           this.sendMessageToWebview({
             command: "extension/semgrep/activeLang",
-            lang: activeLang,
+            lang: activeLang as SearchLanguage,
           });
         } else {
           this.sendMessageToWebview({
