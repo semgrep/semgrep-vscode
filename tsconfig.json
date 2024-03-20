@@ -4,7 +4,7 @@
     "target": "es6",
     "outDir": "out",
     "lib": ["es2021", "dom", "dom.iterable"],
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "sourceMap": true,
     "rootDir": ".",
     "strict": true,
