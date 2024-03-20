@@ -36,7 +36,7 @@ export class SemgrepSearchWebviewProvider
 
     webviewView.webview.options = {
       // Allow scripts in the webview
-      enableScripts: true,
+      // enableScripts: true,
 
       localResourceRoots: [this._extensionUri],
     };
