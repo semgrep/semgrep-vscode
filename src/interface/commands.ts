@@ -29,9 +29,5 @@
  */
 
 export const search = "webkit/semgrep/search";
-/* just a test command. can be removed later. */
-export const hello = "webkit/semgrep/hello";
 
-export type webkitCommand =
-  | { command: typeof search; pattern: string }
-  | { command: typeof hello };
+export type webkitCommand = { command: typeof search; pattern: string };

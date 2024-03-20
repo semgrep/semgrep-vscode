@@ -3,6 +3,7 @@ import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 import { SearchParams } from "../lspExtensions";
 import { webkitCommand } from "../interface/commands";
+import { randomUUID } from "crypto";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -15,11 +16,6 @@ export class SemgrepSearchWebviewProvider
 
   handleMessage(data: webkitCommand): void {
     switch (data.command) {
-      case "webkit/semgrep/hello":
-        {
-          vscode.window.showInformationMessage("hello!");
-        }
-        break;
       case "webkit/semgrep/search": {
         // vscode.window.showInformationMessage(
         //   `Starting search for pattern ${data.command}`
@@ -50,36 +46,29 @@ export class SemgrepSearchWebviewProvider
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage((data) => {
-      console.debug("Did receive message", data);
       this.handleMessage(data);
     });
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
+    const assetsPath = vscode.Uri.joinPath(
+      this._extensionUri,
+      "src",
+      "webview-ui",
+      "build",
+      "assets"
+    );
+
     // The CSS file from the React build output
     const stylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "src",
-        "webview-ui",
-        "build",
-        "assets",
-        "index.css"
-      )
+      vscode.Uri.joinPath(assetsPath, "index.css")
     );
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "src",
-        "webview-ui",
-        "build",
-        "assets",
-        "index.js"
-      )
+      vscode.Uri.joinPath(assetsPath, "index.js")
     );
 
-    const nonce = getNonce();
+    const nonce = randomUUID();
 
     // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
     return /*html*/ `

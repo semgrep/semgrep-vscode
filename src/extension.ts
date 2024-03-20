@@ -40,9 +40,13 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   );
 
   // register stuff for calico colors webview demo (from activate of the demo)
-	const provider = new SemgrepSearchWebviewProvider(context.extensionUri);
-	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(SemgrepSearchWebviewProvider.viewType, provider));
+  const provider = new SemgrepSearchWebviewProvider(context.extensionUri);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      SemgrepSearchWebviewProvider.viewType,
+      provider
+    )
+  );
 
   // register content provider for the AST showing document
   vscode.workspace.registerTextDocumentContentProvider(
