@@ -1,10 +1,6 @@
 import { vscode } from "./utilities/vscode";
-import {
-  VSCodeButton,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
+import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
-import { useState } from "react";
 import { webkitCommand } from "../interface/commands";
 
 const App: React.FC = () => {

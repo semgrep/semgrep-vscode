@@ -36,7 +36,8 @@ export class SemgrepSearchWebviewProvider
 
     webviewView.webview.options = {
       // Allow scripts in the webview
-      // enableScripts: true,
+      // Without this, the search bar won't show up!
+      enableScripts: true,
 
       localResourceRoots: [this._extensionUri],
     };
