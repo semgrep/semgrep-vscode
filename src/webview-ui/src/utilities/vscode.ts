@@ -32,7 +32,7 @@ class VSCodeAPIWrapper {
     if (this.vsCodeApi) {
       this.vsCodeApi.postMessage(message);
     } else {
-      console.log(message);
+      console.debug("no vscode api detected:", message);
     }
   }
 
@@ -48,8 +48,13 @@ class VSCodeAPIWrapper {
     if (this.vsCodeApi) {
       return this.vsCodeApi.getState();
     } else {
-      const state = localStorage.getItem("vscodeState");
-      return state ? JSON.parse(state) : undefined;
+      try {
+        const state = localStorage.getItem("vscodeState");
+        return state ? JSON.parse(state) : undefined;
+      } catch (e) {
+        console.error("error getting local storage:", e);
+        return undefined;
+      }
     }
   }
 
@@ -64,12 +69,17 @@ class VSCodeAPIWrapper {
    *
    * @return The new state.
    */
-  public setState<T extends unknown | undefined>(newState: T): T {
+  public setState<T extends unknown | undefined>(newState: T): T | undefined {
     if (this.vsCodeApi) {
       return this.vsCodeApi.setState(newState);
     } else {
-      localStorage.setItem("vscodeState", JSON.stringify(newState));
-      return newState;
+      try {
+        localStorage.setItem("vscodeState", JSON.stringify(newState));
+        return newState;
+      } catch (e) {
+        console.error("error getting local storage:", e);
+        return undefined;
+      }
     }
   }
 }

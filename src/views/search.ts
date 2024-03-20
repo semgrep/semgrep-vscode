@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import { getUri } from "../utilities/getUri";
-import { getNonce } from "../utilities/getNonce";
 import { SearchParams } from "../lspExtensions";
 import { webkitCommand } from "../interface/commands";
 import { randomUUID } from "crypto";
