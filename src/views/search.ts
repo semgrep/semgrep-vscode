@@ -28,9 +28,10 @@ export class SemgrepSearchWebviewProvider
   }
 
   public resolveWebviewView(
-    webviewView: vscode.WebviewView,
-    context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken
+    webviewView: vscode.WebviewView
+    // these are unused, so commented out
+    // context: vscode.WebviewViewResolveContext,
+    // _token: vscode.CancellationToken
   ): void {
     this._view = webviewView;
 
