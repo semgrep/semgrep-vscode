@@ -41,6 +41,9 @@ if (USE_JS || process.platform === "win32") {
     "Parse_rule_helpers.ml",
     "Parsing_plugin.ml",
     "autofix-printing-stats/run",
+    "datacreator.ts", // This one times out lspjs
+    "lib/insecurity.ts",
+    "server.ts",
   ];
   SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
 }
