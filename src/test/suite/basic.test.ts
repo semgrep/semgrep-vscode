@@ -139,7 +139,7 @@ suite("Extension Features", function () {
   suiteSetup(async () => {
     const filesToUnstage = Array.from(resultsHashMap.keys());
     // unstage files so the extension picks them up
-    console.log(`Unstaging ${filesToUnstage.length} files}`);
+    console.log(`Unstaging ${filesToUnstage.length} files`);
     for (const file of filesToUnstage) {
       makeFileUntracked(workfolderPath, file);
     }

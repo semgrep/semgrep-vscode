@@ -35,6 +35,11 @@ async function main() {
   );
   // Setup temp dir for all repos
   const tmpDir = tmp.dirSync({ unsafeCleanup: true });
+  const realTmpDir = cp
+    .execSync(`pwd -P`, { cwd: tmpDir.name })
+    .toString()
+    .trim();
+  console.log(`Using tmp dir ${realTmpDir}`);
   let hasFailed = false;
   try {
     // The folder containing the Extension Manifest package.json
@@ -78,7 +83,7 @@ async function main() {
       const repoUrl = repo[1];
       const tag = repo[2];
       console.log(`Running tests for ${repoName}`);
-      const repoPath = path.join(tmpDir.name, repoName); // nosem
+      const repoPath = path.join(realTmpDir, repoName); // nosem
       console.log(`Running in ${repoPath}`);
       // Clone repo
       cp.execSync(`git clone ${repoUrl} ${repoPath}`); // nosem
