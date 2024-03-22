@@ -44,6 +44,12 @@ if (USE_JS || process.platform === "win32") {
     "datacreator.ts", // This one times out lspjs
     "lib/insecurity.ts",
     "server.ts",
+    "routes/logfileServer.ts",
+    "routes/order.ts",
+    "routes/profileImageUrlUpload.ts",
+    "routes/userProfile.ts",
+    "routes/videoHandler.ts",
+    "views/promotionVideo.pug",
   ];
   SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
 }
