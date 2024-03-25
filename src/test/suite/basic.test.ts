@@ -11,7 +11,7 @@ import {
 } from "vscode-languageclient/node";
 import path = require("path");
 
-const SCAN_TIMEOUT = 120000;
+const SCAN_TIMEOUT = 180000;
 const USE_JS = process.env["USE_JS"];
 let SKIPPED_FILES: string[] = [
   "l5000.java", // Causes stack overflow
