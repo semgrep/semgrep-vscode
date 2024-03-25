@@ -51,6 +51,7 @@ if (USE_JS || process.platform === "win32") {
     "routes/videoHandler.ts",
     "views/promotionVideo.pug",
     "routes/login.ts",
+    "lib/startup/validatePreconditions.ts",
   ];
   SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
 }
