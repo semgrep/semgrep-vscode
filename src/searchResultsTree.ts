@@ -149,7 +149,7 @@ export class SemgrepSearchProvider
     editSearch.command = { title: "Edit Search", command: "semgrep.search" };
     searchInfo.push(editSearch);
 
-    this.items = [...searchInfo, ...this.items];
+    this.items = [...this.items];
     this._onDidChange.fire(undefined);
   }
 
