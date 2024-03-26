@@ -23,11 +23,7 @@ async function createOrUpdateEnvironment(
   return global_env ? global_env.reloadConfig() : initEnvironment(context);
 }
 
-export async function activate(
-  context: ExtensionContext
-): Promise<Environment | undefined> {
-  const env: Environment = await createOrUpdateEnvironment(context);
-  await activateLsp(env);
+async function afterClientStart(context: ExtensionContext, env: Environment) {
   if (!env.client) {
     vscode.window.showErrorMessage(
       "Semgrep Extension failed to activate, please check output"
@@ -71,6 +67,14 @@ export async function activate(
       }
     }
   });
+}
+
+export async function activate(
+  context: ExtensionContext
+): Promise<Environment | undefined> {
+  const env: Environment = await createOrUpdateEnvironment(context);
+  await activateLsp(env);
+  await afterClientStart(context, env);
   return env;
 }
 

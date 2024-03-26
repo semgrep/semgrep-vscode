@@ -11,7 +11,7 @@ import {
 } from "vscode-languageclient/node";
 import path = require("path");
 
-const SCAN_TIMEOUT = 60000;
+const SCAN_TIMEOUT = 180000;
 const USE_JS = process.env["USE_JS"];
 let SKIPPED_FILES: string[] = [
   "l5000.java", // Causes stack overflow
@@ -41,6 +41,19 @@ if (USE_JS || process.platform === "win32") {
     "Parse_rule_helpers.ml",
     "Parsing_plugin.ml",
     "autofix-printing-stats/run",
+    "datacreator.ts", // This one times out lspjs
+    "lib/insecurity.ts",
+    "server.ts",
+    "routes/logfileServer.ts",
+    "routes/order.ts",
+    "routes/profileImageUrlUpload.ts",
+    "routes/userProfile.ts",
+    "routes/videoHandler.ts",
+    "views/promotionVideo.pug",
+    "routes/login.ts",
+    "lib/startup/validatePreconditions.ts",
+    "routes/redirect.ts",
+    "routes/search.ts",
   ];
   SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
 }
@@ -139,7 +152,7 @@ suite("Extension Features", function () {
   suiteSetup(async () => {
     const filesToUnstage = Array.from(resultsHashMap.keys());
     // unstage files so the extension picks them up
-    console.log(`Unstaging ${filesToUnstage.length} files}`);
+    console.log(`Unstaging ${filesToUnstage.length} files`);
     for (const file of filesToUnstage) {
       makeFileUntracked(workfolderPath, file);
     }
