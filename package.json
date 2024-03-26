@@ -222,7 +222,7 @@
     "viewsWelcome": [
       {
         "view": "semgrep-search-results",
-        "contents": "[$(search-view-icon) Search By Pattern](command:semgrep.search)"
+        "contents": "No results yet (run a query in the text box above!)"
       }
     ],
     "menus": {
