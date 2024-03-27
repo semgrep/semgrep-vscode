@@ -32,6 +32,7 @@ export class Logger {
 export async function applyFixAndSave(
   edit: vscode.WorkspaceEdit
 ): Promise<void> {
+  // eslint-disable-next-line no-unused-vars
   const uris = edit.entries().map(([uri, _]) => uri);
   // According to https://github.com/microsoft/vscode/issues/112109,
   // adding { isRefactoring: true} should make the fix auto-save.
