@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { SearchParams } from "./lspExtensions";
+import { applyFixAndSave } from "./utils";
 
 // Thanks to vscode references-view for this
 function getPreviewChunks(
@@ -83,11 +84,21 @@ export class SemgrepSearchProvider
     });
   }
 
-  replaceAll(): void {
-    const edits = this.items
+  async replaceItem(node: FileItem | MatchItem): Promise<void> {
+    if (node instanceof MatchItem && node.fix) {
+      const edit = new vscode.WorkspaceEdit();
+      edit.replace(node.file.uri, node.range, node.fix);
+      await applyFixAndSave(edit);
+
+      // TODO: the match view for the fixed file should be updated
+    }
+  }
+
+  async replaceAll(): Promise<void> {
+    const edit = new vscode.WorkspaceEdit();
+    this.items
       .filter((i) => i instanceof FileItem)
-      .flatMap((item) => {
-        const edit = new vscode.WorkspaceEdit();
+      .map((item) => {
         if (item instanceof FileItem) {
           item.matches.forEach((match) => {
             if (item.resourceUri && match.fix) {
@@ -95,9 +106,8 @@ export class SemgrepSearchProvider
             }
           });
         }
-        return edit;
       });
-    edits.forEach((e) => vscode.workspace.applyEdit(e));
+    await applyFixAndSave(edit);
   }
 
   clearSearch(): void {
