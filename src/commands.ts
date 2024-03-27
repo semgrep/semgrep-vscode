@@ -109,7 +109,7 @@ export function registerCommands(env: Environment): void {
 
   vscode.commands.registerCommand(
     "semgrep.search",
-    async (searchParams: SearchParams | null, replace: string | null) => {
+    async (searchParams: SearchParams | null) => {
       if (searchParams != null) {
         const result = await env.client?.sendRequest(search, searchParams);
         vscode.commands.executeCommand(
@@ -117,15 +117,17 @@ export function registerCommands(env: Environment): void {
           "semgrep.searchHasResults",
           true
         );
-        vscode.commands.executeCommand(
-          "setContext",
-          "semgrep.searchIsReplace",
-          replace != null
-        );
+        if (searchParams.fix) {
+          vscode.commands.executeCommand(
+            "setContext",
+            "semgrep.searchHasFix",
+            true
+          );
+        }
         if (!result) {
           return;
         }
-        env.searchView.setSearchItems(result.locations, searchParams, replace);
+        env.searchView.setSearchItems(result.locations, searchParams);
         vscode.commands.executeCommand("semgrep-search-results.focus");
       }
     }
@@ -135,8 +137,7 @@ export function registerCommands(env: Environment): void {
     if (env.searchView.lastSearch) {
       vscode.commands.executeCommand(
         "semgrep.search",
-        env.searchView.lastSearch,
-        env.searchView.replace
+        env.searchView.lastSearch
       );
     }
   });
@@ -147,18 +148,33 @@ export function registerCommands(env: Environment): void {
       "semgrep.searchHasResults",
       false
     );
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.searchIsReplace",
-      false
-    );
+    vscode.commands.executeCommand("setContext", "semgrep.searchHasFix", false);
     env.searchView.clearSearch();
   });
 
-  vscode.commands.registerCommand("semgrep.search.replace", () => {
-    env.searchView.replaceAll();
-    vscode.commands.executeCommand("semgrep.search.refresh");
+  vscode.commands.registerCommand("semgrep.search.replaceAll", () => {
+    vscode.commands.executeCommand(
+      "semgrep.search.reallyDoReplaceAllNotification"
+    );
   });
+
+  vscode.commands.registerCommand(
+    "semgrep.search.reallyDoReplaceAllNotification",
+    async () => {
+      const selection = await vscode.window.showWarningMessage(
+        `Really apply fix to ${
+          env.searchView.getFilesWithFixes().length
+        } files?`,
+        "Yes",
+        "No"
+      );
+
+      if (selection === "Yes") {
+        env.searchView.replaceAll();
+        vscode.commands.executeCommand("semgrep.search.refresh");
+      }
+    }
+  );
 
   vscode.commands.registerCommand("semgrep.restartLanguageServer", () => {
     vscode.window.showInformationMessage("Restarting Semgrep Language Server");

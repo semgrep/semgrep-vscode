@@ -30,4 +30,8 @@
 
 export const search = "webkit/semgrep/search";
 
-export type webkitCommand = { command: typeof search; pattern: string };
+export type webkitCommand = {
+  command: typeof search;
+  pattern: string;
+  fix: string | null;
+};
