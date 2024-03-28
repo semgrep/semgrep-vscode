@@ -355,7 +355,8 @@
     "glob": "^7.1.6",
     "mocha": "^9.1.4",
     "tmp": "^0.2.1",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "typescript-plugin-css-modules": "^5.1.0"
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.7",
