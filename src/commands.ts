@@ -164,6 +164,10 @@ export function registerCommands(env: Environment): void {
         if (!result) {
           return;
         }
+        env.provider?.sendMessageToWebview({
+          command: "extension/semgrep/results",
+          results: result,
+        });
         env.searchView.setSearchItems(result.locations, searchParams);
         vscode.commands.executeCommand("semgrep-search-results.focus");
       }
