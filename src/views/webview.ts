@@ -22,6 +22,7 @@ export class SemgrepSearchWebviewProvider
       // debug console, we need the extension to do that for us.
       case "webview/semgrep/print":
         {
+          // nosem:
           console.log("webview print", data.message);
         }
         break;

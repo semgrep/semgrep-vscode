@@ -1,8 +1,5 @@
 import type { WebviewApi } from "vscode-webview";
-import {
-  extensionToWebviewCommand,
-  webviewToExtensionCommand,
-} from "../../interface/interface";
+import { extensionToWebviewCommand } from "../../interface/interface";
 import { State } from "../src/types/state";
 
 /**

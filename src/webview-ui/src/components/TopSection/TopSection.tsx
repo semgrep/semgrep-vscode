@@ -1,8 +1,5 @@
 import { vscode } from "../../../utilities/vscode";
-import {
-  VSCodeButton,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
+import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
 import { useState } from "react";
 
 export const TopSection: React.FC = () => {
