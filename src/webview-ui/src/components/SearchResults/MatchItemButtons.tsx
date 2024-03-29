@@ -1,14 +1,6 @@
-import {
-  VSCodeButton,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
-import { useCallback, useState } from "react";
-import { Uri } from "vscode";
 import { ViewMatch } from "../../types/results";
 
 import styles from "./SearchResults.module.css";
-import { vscode } from "../../utilities/vscode";
-import { useHover } from "react-use";
 import { VscClose, VscReplace } from "react-icons/vsc";
 
 export interface MatchItemButtonsProps {

@@ -14,12 +14,7 @@ import {
 } from "./lspExtensions";
 import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
-import {
-  FileItem,
-  MatchItem,
-  SearchResult,
-  getPreviewChunks,
-} from "./searchResultsTree";
+import { SearchResult, getPreviewChunks } from "./searchResultsTree";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as path from "path";
 import { applyFixAndSave } from "./utils";

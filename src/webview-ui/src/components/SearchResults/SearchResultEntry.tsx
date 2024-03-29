@@ -1,10 +1,10 @@
 import { MatchItem } from "./MatchItem";
 import { ViewMatch, ViewResult } from "../../types/results";
-import { PathHeader } from "./PathHeader";
 
 import styles from "./SearchResults.module.css";
 import { EntryHeader } from "./EntryHeader";
-import * as vscodeProper from "vscode";
+import { vscode } from "../../../utilities/vscode";
+import { useState } from "react";
 
 export interface SearchResultEntryProps {
   result: ViewResult;
