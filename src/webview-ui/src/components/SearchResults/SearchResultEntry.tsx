@@ -1,9 +1,9 @@
 import { MatchItem } from "./MatchItem";
 import { ViewResult } from "../../types/results";
-import { PathHeader } from "./PathHeader";
 
 import styles from "./SearchResults.module.css";
 import { EntryHeader } from "./EntryHeader";
+import { useState } from "react";
 
 export interface SearchResultEntryProps {
   result: ViewResult;
