@@ -42,6 +42,13 @@ export class SemgrepSearchWebviewProvider
         vscode.commands.executeCommand("semgrep.search.replace", data);
         break;
       }
+      case "webview/semgrep/replaceAll": {
+        vscode.commands.executeCommand(
+          "semgrep.search.replaceAll",
+          data.matches
+        );
+        break;
+      }
       case "webview/semgrep/select": {
         const uri = vscode.Uri.parse(data.uri);
         // I'm not sure why, but this one doesn't work for some reason:
