@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "plugins": [
+      { "name": "typescript-plugin-css-modules" },
+      { "name": "esbuild-css-modules-plugin" }
+    ],
     "module": "commonjs",
     "target": "es6",
     "outDir": "out",
@@ -11,6 +14,6 @@
     "strict": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "./declaration.d.ts"],
   "exclude": ["node_modules", ".vscode-test"]
 }

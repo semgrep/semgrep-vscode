@@ -91,8 +91,10 @@ export class Environment {
     return this._client;
   }
 
-  set provider(provider: SemgrepSearchWebviewProvider) {
-    this._provider = provider;
+  set provider(provider: SemgrepSearchWebviewProvider | null) {
+    if (provider) {
+      this._provider = provider;
+    }
   }
 
   get provider(): SemgrepSearchWebviewProvider | null {
