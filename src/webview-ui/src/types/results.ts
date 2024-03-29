@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { SearchMatch } from "../../../searchResultsTree";
 
 export type ViewMatch = {

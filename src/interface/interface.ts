@@ -13,8 +13,7 @@
  * LICENSE for more details.
  */
 
-import { SearchResults } from "../lspExtensions";
-import { ViewResult, ViewResults } from "../webview-ui/src/types/results";
+import { ViewResults } from "../webview-ui/src/types/results";
 import * as vscode from "vscode";
 
 /*****************************************************************************/

@@ -1,7 +1,3 @@
-import { useState } from "react";
-import { MatchItem } from "./MatchItem";
-import { ViewResult } from "../../types/results";
-
 import styles from "./SearchResults.module.css";
 
 function splitByLastSlash(str: string): [string, string] {
