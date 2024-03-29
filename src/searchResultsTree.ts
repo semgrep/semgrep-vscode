@@ -3,7 +3,7 @@ import { SearchParams } from "./lspExtensions";
 import { applyFixAndSave } from "./utils";
 
 // Thanks to vscode references-view for this
-function getPreviewChunks(
+export function getPreviewChunks(
   doc: vscode.TextDocument,
   range: vscode.Range,
   beforeLen = 8,
