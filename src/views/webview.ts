@@ -36,6 +36,19 @@ export class SemgrepSearchWebviewProvider
           fix: data.fix,
         };
         vscode.commands.executeCommand("semgrep.search", searchParams);
+        break;
+      }
+      case "webview/semgrep/select": {
+        console.log("opening uri", data.uri);
+        const uri = vscode.Uri.parse(data.uri);
+        // I'm not sure why, but this one doesn't work for some reason:
+        // vscode.window.showTextDocument(data.uri, {selection: data.range});
+        // It always opens as an "Untitled file".
+        vscode.commands.executeCommand("vscode.open", uri, <
+          vscode.TextDocumentShowOptions
+        >{
+          selection: data.range,
+        });
       }
     }
   }

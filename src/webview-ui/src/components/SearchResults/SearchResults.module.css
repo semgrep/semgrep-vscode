@@ -1,8 +1,12 @@
+/* MATCH SUMMARY */
+
 .matches-summary {
   color: var(--vscode-search-resultsInfoForeground);
   padding: 0 4px 8px;
   line-height: 1.4em;
 }
+
+/* PATH HEADERS */
 
 .path-header {
   display: flex;
@@ -19,6 +23,8 @@
   color: gray;
   margin-left: 0.5em;
 }
+
+/* MATCHES */
 
 .matches-list {
   padding-left: 10px;

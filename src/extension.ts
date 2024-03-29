@@ -34,10 +34,6 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   const statusBar = createStatusBar();
   registerCommands(env);
   statusBar.show();
-  vscode.window.registerTreeDataProvider(
-    "semgrep-search-results",
-    env.searchView
-  );
 
   // register stuff for search webview
   const provider = new SemgrepSearchWebviewProvider(context.extensionUri);
