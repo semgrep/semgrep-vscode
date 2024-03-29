@@ -2,7 +2,6 @@ import { State } from "../../types/state";
 
 import styles from "./SearchResults.module.css";
 import { SearchResultEntry } from "./SearchResultEntry";
-import { vscode } from "../../../utilities/vscode";
 
 export interface SearchResultsProps {
   state: State | undefined;

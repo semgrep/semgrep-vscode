@@ -20,7 +20,6 @@ import {
   SearchResult,
   getPreviewChunks,
 } from "./searchResultsTree";
-import { get } from "http";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as path from "path";
 
