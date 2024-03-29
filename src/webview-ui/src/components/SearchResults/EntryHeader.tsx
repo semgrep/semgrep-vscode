@@ -1,11 +1,4 @@
-import { vscode } from "./../../utilities/vscode";
-import {
-  VSCodeBadge,
-  VSCodeButton,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
-import { useState } from "react";
-import { MatchItem } from "./MatchItem";
+import { VSCodeBadge } from "@vscode/webview-ui-toolkit/react";
 import { ViewResult } from "../../types/results";
 import { PathHeader } from "./PathHeader";
 import { VscChevronDown, VscChevronRight } from "react-icons/vsc";

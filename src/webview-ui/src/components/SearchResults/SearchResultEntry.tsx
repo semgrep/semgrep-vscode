@@ -1,9 +1,10 @@
 import { MatchItem } from "./MatchItem";
 import { ViewMatch, ViewResult } from "../../types/results";
+import { vscode } from "../../../utilities/vscode";
+import { ViewResult } from "../../types/results";
 
 import styles from "./SearchResults.module.css";
 import { EntryHeader } from "./EntryHeader";
-import { vscode } from "../../../utilities/vscode";
 import { useState } from "react";
 
 export interface SearchResultEntryProps {
