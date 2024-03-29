@@ -210,7 +210,6 @@ export function registerCommands(env: Environment): void {
           command: "extension/semgrep/results",
           results: viewResults,
         });
-        console.log("view results sent");
         env.searchView.setSearchItems(result.locations, searchParams);
       }
     }

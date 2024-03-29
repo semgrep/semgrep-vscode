@@ -39,7 +39,6 @@ export class SemgrepSearchWebviewProvider
         break;
       }
       case "webview/semgrep/select": {
-        console.log("opening uri", data.uri);
         const uri = vscode.Uri.parse(data.uri);
         // I'm not sure why, but this one doesn't work for some reason:
         // vscode.window.showTextDocument(data.uri, {selection: data.range});
