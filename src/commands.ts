@@ -17,7 +17,7 @@ import { encodeUri } from "./showAstDocument";
 import { SearchResult, getPreviewChunks } from "./searchResultsTree";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as path from "path";
-import { applyFixAndSave } from "./utils";
+import { applyFixAndSave, replaceAll } from "./utils";
 
 /*****************************************************************************/
 /* Prelude */
@@ -232,15 +232,19 @@ export function registerCommands(env: Environment): void {
     env.searchView.clearSearch();
   });
 
-  vscode.commands.registerCommand("semgrep.search.replaceAll", () => {
-    vscode.commands.executeCommand(
-      "semgrep.search.reallyDoReplaceAllNotification"
-    );
-  });
+  vscode.commands.registerCommand(
+    "semgrep.search.replaceAll",
+    (matches: ViewResults) => {
+      vscode.commands.executeCommand(
+        "semgrep.search.reallyDoReplaceAllNotification",
+        matches
+      );
+    }
+  );
 
   vscode.commands.registerCommand(
     "semgrep.search.reallyDoReplaceAllNotification",
-    async () => {
+    async (matches: ViewResults) => {
       const selection = await vscode.window.showWarningMessage(
         `Really apply fix to ${
           env.searchView.getFilesWithFixes().length
@@ -250,7 +254,7 @@ export function registerCommands(env: Environment): void {
       );
 
       if (selection === "Yes") {
-        await env.searchView.replaceAll();
+        await replaceAll(matches);
         vscode.commands.executeCommand("semgrep.search.refresh");
       }
     }

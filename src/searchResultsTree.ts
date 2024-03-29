@@ -94,22 +94,6 @@ export class SemgrepSearchProvider
     }
   }
 
-  async replaceAll(): Promise<void> {
-    const edit = new vscode.WorkspaceEdit();
-    this.items
-      .filter((i) => i instanceof FileItem)
-      .map((item) => {
-        if (item instanceof FileItem) {
-          item.matches.forEach((match) => {
-            if (item.resourceUri && match.fix) {
-              edit.replace(item.resourceUri, match.range, match.fix);
-            }
-          });
-        }
-      });
-    await applyFixAndSave(edit);
-  }
-
   clearSearch(): void {
     this.lastSearch = null;
     this.fix_text = null;
