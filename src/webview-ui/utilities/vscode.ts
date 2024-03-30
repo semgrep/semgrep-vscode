@@ -121,8 +121,13 @@ class VSCodeAPIWrapper {
     if (this.vsCodeApi) {
       return this.vsCodeApi.setState(newState);
     } else {
-      localStorage.setItem("vscodeState", JSON.stringify(newState));
-      return newState;
+      try {
+        localStorage.setItem("vscodeState", JSON.stringify(newState));
+        return newState;
+      } catch (e) {
+        console.error("Failed to set state in local storage", e);
+        return newState;
+      }
     }
   }
 }
