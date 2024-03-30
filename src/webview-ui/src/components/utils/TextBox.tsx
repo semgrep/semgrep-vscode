@@ -1,10 +1,4 @@
-import { vscode } from "./../../utilities/vscode";
-import {
-  VSCodeButton,
-  VSCodeTextArea,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
-import { useEffect, useState } from "react";
+import { VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
 import { Store, useSearch, useStore } from "../../hooks/useStore";
 
 const style = {

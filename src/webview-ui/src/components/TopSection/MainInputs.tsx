@@ -1,12 +1,4 @@
-import { vscode } from "./../../utilities/vscode";
-import {
-  VSCodeButton,
-  VSCodeTextArea,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
-import { useEffect, useState } from "react";
 import { TextBox } from "../utils/TextBox";
-import styles from "./TopSection.module.css";
 
 export interface MainInputsProps {
   onNewSearch: (scanID: string) => void;

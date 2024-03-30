@@ -1,7 +1,6 @@
-import assert from "assert";
 import { useEffect } from "react";
 import { useLocalStorage } from "react-use";
-import { vscode } from "../utilities/vscode";
+import { vscode } from "../../utilities/vscode";
 
 export interface Store {
   pattern: string;
