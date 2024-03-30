@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocalStorage } from "react-use";
+import useLocalStorage from "react-use/lib/useLocalStorage";
 import { vscode } from "../../utilities/vscode";
 
 export interface Store {
