@@ -1,5 +1,6 @@
 import type { WebviewApi } from "vscode-webview";
 import {
+  SearchLanguage,
   extensionToWebviewCommand,
   webviewToExtensionCommand,
 } from "../../interface/interface";
@@ -19,6 +20,9 @@ class VSCodeAPIWrapper {
   private readonly vsCodeApi: WebviewApi<State> | undefined;
   // This is set by the webview App.tsx!
   public onUpdate: ((results: ViewResults) => void) | null = null;
+  public onUpdateActiveLang:
+    | ((activeLang: SearchLanguage | null) => void)
+    | null = null;
 
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
@@ -46,20 +50,31 @@ class VSCodeAPIWrapper {
     if (this.vsCodeApi) {
       this.vsCodeApi.postMessage(message);
     } else {
-      console.debug("no vscode api detected:", message);
+      console.log(message);
     }
   }
 
   handleMessageFromExtension(data: extensionToWebviewCommand) {
     switch (data.command) {
-      case "extension/semgrep/results": {
-        // this.sendMessageToExtension({
-        //   command: "webview/semgrep/print",
-        //   message: "Received results from extension",
-        // });
-        // update the state of the webview component!
-        if (this.onUpdate) {
-          this.onUpdate(data.results);
+      case "extension/semgrep/results":
+        {
+          // this.sendMessageToExtension({
+          //   command: "webview/semgrep/print",
+          //   message: "Received results from extension",
+          // });
+          // update the state of the webview component!
+          if (this.onUpdate) {
+            this.onUpdate(data.results);
+          }
+        }
+        break;
+      case "extension/semgrep/activeLang": {
+        this.sendMessageToExtension({
+          command: "webview/semgrep/print",
+          message: `Received language! ${data.lang}`,
+        });
+        if (this.onUpdateActiveLang) {
+          this.onUpdateActiveLang(data.lang);
         }
       }
     }
@@ -81,13 +96,8 @@ class VSCodeAPIWrapper {
     if (this.vsCodeApi) {
       return this.vsCodeApi.getState();
     } else {
-      try {
-        const state = localStorage.getItem("vscodeState");
-        return state ? JSON.parse(state) : undefined;
-      } catch (e) {
-        console.error("error getting local storage:", e);
-        return undefined;
-      }
+      const state = localStorage.getItem("vscodeState");
+      return state ? JSON.parse(state) : undefined;
     }
   }
 
@@ -102,17 +112,12 @@ class VSCodeAPIWrapper {
    *
    * @return The new state.
    */
-  public setState<T extends State | undefined>(newState: T): T | undefined {
+  public setState<T extends State | undefined>(newState: T): T {
     if (this.vsCodeApi) {
       return this.vsCodeApi.setState(newState);
     } else {
-      try {
-        localStorage.setItem("vscodeState", JSON.stringify(newState));
-        return newState;
-      } catch (e) {
-        console.error("error getting local storage:", e);
-        return undefined;
-      }
+      localStorage.setItem("vscodeState", JSON.stringify(newState));
+      return newState;
     }
   }
 }

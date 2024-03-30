@@ -1,5 +1,5 @@
 import { VSCodeDropdown, VSCodeOption } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "../../utilities/vscode";
+import { vscode } from "../../../utilities/vscode";
 import { SearchLanguage } from "../../../../interface/interface";
 import { FormEventHandler, useState } from "react";
 import { Store, useStore } from "../../hooks/useStore";
@@ -12,7 +12,7 @@ const style = {
   // For some reason it just doesn't show up in the styles.
   // This does, though.
   "--corner-radius": "2",
-  //   padding: "0",
+  padding: "0",
 };
 
 export interface LangChooserProps {

@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import useLocalStorage from "react-use/lib/useLocalStorage";
 import { vscode } from "../../utilities/vscode";
+import { SUPPORTED_LANGS } from "../../../constants";
+import { SearchLanguage } from "../../../interface/interface";
 
 export interface Store {
   pattern: string;
   fix: string;
   includes: string;
   excludes: string;
+  language: string;
 }
 
 const localStorageKeys: Record<keyof Store, string> = {
@@ -14,6 +17,7 @@ const localStorageKeys: Record<keyof Store, string> = {
   fix: "semgrep-search-fix",
   includes: "semgrep-search-includes",
   excludes: "semgrep-search-excludes",
+  language: "semgrep-search-language",
 };
 
 const store: Record<keyof Store, string> = {
@@ -21,6 +25,7 @@ const store: Record<keyof Store, string> = {
   fix: "",
   includes: "",
   excludes: "",
+  language: "",
 };
 export function generateUniqueID(): string {
   return Math.random().toString(36).substring(7);
@@ -34,6 +39,9 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
       .filter((s) => s !== "");
   }
   const fixValue = store.fix === "" ? null : store.fix;
+  const lang = SUPPORTED_LANGS.includes(store.language as SearchLanguage)
+    ? (store.language as SearchLanguage)
+    : null;
   const scanID = generateUniqueID();
   // do some naive parsing here
   const includes = splitAndTrim(store.includes);
@@ -46,6 +54,7 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
     includes: includes,
     excludes: excludes,
     scanID: scanID,
+    lang,
   });
 }
 
