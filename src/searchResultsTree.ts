@@ -102,26 +102,26 @@ export class SemgrepSearchProvider
     this._onDidChange.fire(undefined);
   }
 
-  setSearchItems(results: SearchResult[], params: SearchParams): void {
-    this.lastSearch = params;
-    this.fix_text = params.lspParams.fix;
+  // setSearchItems(results: SearchResult[], params: SearchParams): void {
+  //   this.lastSearch = params;
+  //   this.fix_text = params.fix;
 
-    this.items = results.map((r) => {
-      const uri = vscode.Uri.parse(r.uri);
-      const fi = new FileItem(uri, []);
-      const matches = r.matches.map(
-        (m) =>
-          new MatchItem(new vscode.Range(m.range.start, m.range.end), fi, m.fix)
-      );
-      fi.matches = matches;
-      return fi;
-    });
-    if (this.items.length == 0) {
-      this.items.push(new TextItem("No results found :("));
-    }
+  //   this.items = results.map((r) => {
+  //     const uri = vscode.Uri.parse(r.uri);
+  //     const fi = new FileItem(uri, []);
+  //     const matches = r.matches.map(
+  //       (m) =>
+  //         new MatchItem(new vscode.Range(m.range.start, m.range.end), fi, m.fix)
+  //     );
+  //     fi.matches = matches;
+  //     return fi;
+  //   });
+  //   if (this.items.length == 0) {
+  //     this.items.push(new TextItem("No results found :("));
+  //   }
 
-    this._onDidChange.fire(undefined);
-  }
+  //   this._onDidChange.fire(undefined);
+  // }
 
   async getTreeItem(element: FileItem | MatchItem): Promise<vscode.TreeItem> {
     if (element instanceof MatchItem) {

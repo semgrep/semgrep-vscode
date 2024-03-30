@@ -29,7 +29,7 @@ export const TopSection: React.FC<TopSectionProps> = ({ onNewSearch }) => {
       <VSCodeTextField
         autofocus
         placeholder="Pattern"
-        style={{ padding: "4px 0", width: "100%" }}
+        style={{ padding: "4px 8px", width: "calc(100% - 16px)" }}
         onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key == "Enter") {
             searchQuery(e.currentTarget.value, fix);
@@ -44,7 +44,7 @@ export const TopSection: React.FC<TopSectionProps> = ({ onNewSearch }) => {
       />
       <VSCodeTextField
         placeholder="Autofix"
-        style={{ padding: "4px 0", width: "100%" }}
+        style={{ padding: "4px 8px", width: "calc(100% - 16px)" }}
         onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key == "Enter") {
             searchQuery(pattern, e.currentTarget.value);
