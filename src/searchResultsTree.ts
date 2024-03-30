@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import { SearchParams } from "./lspExtensions";
-import { applyFixAndSave } from "./utils";
 
 export class FileItem extends vscode.TreeItem {
   constructor(readonly uri: vscode.Uri, public matches: MatchItem[]) {
