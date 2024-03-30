@@ -104,7 +104,7 @@ export class SemgrepSearchProvider
 
   setSearchItems(results: SearchResult[], params: SearchParams): void {
     this.lastSearch = params;
-    this.fix_text = params.fix;
+    this.fix_text = params.lspParams.fix;
 
     this.items = results.map((r) => {
       const uri = vscode.Uri.parse(r.uri);
