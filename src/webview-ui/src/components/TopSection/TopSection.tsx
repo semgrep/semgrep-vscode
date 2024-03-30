@@ -2,16 +2,25 @@ import { vscode } from "../../../utilities/vscode";
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
 import { useState } from "react";
 
-export const TopSection: React.FC = () => {
+export function generateUniqueID(): string {
+  return Math.random().toString(36).substring(7);
+}
+export interface TopSectionProps {
+  onNewSearch: (scanID: string) => void;
+}
+export const TopSection: React.FC<TopSectionProps> = ({ onNewSearch }) => {
   const [pattern, setPattern] = useState("");
   const [fix, setFix] = useState("");
 
   function searchQuery(pattern: string, fix: string) {
     const fixValue = fix === "" ? null : fix;
+    const scanID = generateUniqueID();
+    onNewSearch(scanID);
     vscode.sendMessageToExtension({
       command: "webview/semgrep/search",
       pattern: pattern,
       fix: fixValue,
+      scanID: scanID,
     });
   }
 

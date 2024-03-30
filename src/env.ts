@@ -35,6 +35,15 @@ export class Environment {
   semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
   private _client: LanguageClient | null = null;
   private _provider: SemgrepSearchWebviewProvider | null = null;
+  /* The scan ID is the (hopefully) unique identifier associated to each
+     /semgrep/search request.
+     The reason why we need it is for synchronization, in the event that
+     a user issues a scan while another one is still completing. We don't
+     have a good way of reaching out to each individual searchLoop()
+     (which is asynchronous) and telling it to stop, so we change this
+     mutable variable so that it knows to stop on its own.
+   */
+  private _scanID: string | null = null;
   private constructor(
     readonly context: ExtensionContext,
     config: Config,
@@ -102,6 +111,14 @@ export class Environment {
       window.showWarningMessage("Semgrep Search Webview not active");
     }
     return this._provider;
+  }
+
+  get scanID(): string | null {
+    return this._scanID;
+  }
+
+  set scanID(val: string | null) {
+    this._scanID = val;
   }
 
   static async create(context: ExtensionContext): Promise<Environment> {

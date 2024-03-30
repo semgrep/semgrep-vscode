@@ -22,5 +22,6 @@ export type ViewResult = {
 };
 
 export type ViewResults = {
+  scanID: string;
   locations: ViewResult[];
 };
