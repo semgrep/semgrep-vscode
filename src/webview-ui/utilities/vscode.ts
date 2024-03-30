@@ -50,7 +50,7 @@ class VSCodeAPIWrapper {
     if (this.vsCodeApi) {
       this.vsCodeApi.postMessage(message);
     } else {
-      console.log(message);
+      console.debug(message);
     }
   }
 
@@ -96,8 +96,13 @@ class VSCodeAPIWrapper {
     if (this.vsCodeApi) {
       return this.vsCodeApi.getState();
     } else {
-      const state = localStorage.getItem("vscodeState");
-      return state ? JSON.parse(state) : undefined;
+      try {
+        const state = localStorage.getItem("vscodeState");
+        return state ? JSON.parse(state) : undefined;
+      } catch (e) {
+        console.error("Failed to get state from local storage", e);
+        return undefined;
+      }
     }
   }
 

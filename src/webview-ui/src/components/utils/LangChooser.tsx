@@ -1,7 +1,7 @@
 import { VSCodeDropdown, VSCodeOption } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "../../../utilities/vscode";
 import { SearchLanguage } from "../../../../interface/interface";
-import { FormEventHandler, useState } from "react";
+import { useState } from "react";
 import { Store, useStore } from "../../hooks/useStore";
 import { SUPPORTED_LANGS } from "../../../../constants";
 
