@@ -14,7 +14,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
   const numFiles = state?.results.locations.length;
   return (
     <>
-      <div className={styles["matches-summary"]}>
+      <div className={styles.matchesSummary}>
         {state === undefined
           ? ""
           : `${numMatches} matches in ${numFiles} files`}

@@ -321,7 +321,8 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "npm run setup-lspjs && esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node && esbuild ./src/webview-ui/index.tsx --bundle --outfile=out/webview.js",
+    "build-webview": "./build-webview.mjs",
+    "esbuild-base": "npm run build-webview && npm run setup-lspjs && esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./ && npm run esbuild",
@@ -350,6 +351,7 @@
     "@vitejs/plugin-react": "^1.0.7",
     "@vscode/test-electron": "^2.3.8",
     "esbuild": "^0.17.19",
+    "esbuild-css-modules-plugin": "^3.1.0",
     "eslint": "^7.6.0",
     "find-process": "^1.4.7",
     "glob": "^7.1.6",
