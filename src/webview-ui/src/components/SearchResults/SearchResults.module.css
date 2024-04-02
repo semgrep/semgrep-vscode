@@ -2,8 +2,24 @@
 
 .matches-summary {
   color: var(--vscode-search-resultsInfoForeground);
-  padding: 0 4px 8px;
+  padding: 8px 4px 8px;
   line-height: 1.4em;
+}
+
+/* ENTRY HEADERS */
+
+.entry-header {
+  display: flex;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.match-num-badge {
+  margin-left: auto;
+}
+
+.collapse-button {
+  padding-right: 5px;
 }
 
 /* PATH HEADERS */
@@ -22,13 +38,18 @@
   text-overflow: ellipsis;
   color: gray;
   margin-left: 0.5em;
+  font-size: 0.9em;
+  /* this little margin-top pushes the smaller font text down a bit, which
+     aligns it with the larger file-name to its left
+   */
+  margin-top: 1px;
 }
 
 /* MATCHES */
 
 .matches-list {
-  padding-left: 10px;
-  margin: 5px 0;
+  padding-left: 22px;
+  margin: 0;
 }
 
 .match-item {
@@ -51,6 +72,7 @@
      boxes cut off for some reason. This fixes it.
    */
   padding-top: 1px;
+  font-size: 13px;
   height: 20px;
   cursor: pointer;
 }
