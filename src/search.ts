@@ -5,10 +5,25 @@ import {
   search,
   searchOngoing,
 } from "./lspExtensions";
-import { SearchResult } from "./searchResultsTree";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as vscode from "vscode";
 import { Environment } from "./env";
+
+/*****************************************************************************/
+/* Types */
+/*****************************************************************************/
+
+export type SearchMatch = {
+  range: vscode.Range;
+  fix: string | null;
+  before: string;
+  inside: string;
+  after: string;
+};
+
+export class SearchResult {
+  constructor(readonly uri: string, readonly matches: SearchMatch[]) {}
+}
 
 /*****************************************************************************/
 /* Helpers */

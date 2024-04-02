@@ -152,20 +152,6 @@ export function registerCommands(env: Environment): void {
     }
   );
 
-  vscode.commands.registerCommand("semgrep.search.refresh", async () => {
-    if (env.searchView.lastSearch) {
-      vscode.commands.executeCommand(
-        "semgrep.search",
-        env.searchView.lastSearch
-      );
-    }
-  });
-
-  /* TODO: port to webview */
-  vscode.commands.registerCommand("semgrep.search.clear", () => {
-    env.searchView.clearSearch();
-  });
-
   vscode.commands.registerCommand(
     "semgrep.search.replaceAll",
     (matches: ViewResults) => {
@@ -180,9 +166,7 @@ export function registerCommands(env: Environment): void {
     "semgrep.search.reallyDoReplaceAllNotification",
     async (matches: ViewResults) => {
       const selection = await vscode.window.showWarningMessage(
-        `Really apply fix to ${
-          env.searchView.getFilesWithFixes().length
-        } files?`,
+        `Really apply fix to ${matches.locations.length} files?`,
         "Yes",
         "No"
       );

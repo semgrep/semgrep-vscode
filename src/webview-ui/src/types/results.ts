@@ -1,4 +1,4 @@
-import { SearchMatch } from "../../../searchResultsTree";
+import { SearchMatch } from "../../../search";
 
 export type ViewMatch = {
   // Flags set on each match. Initially false, and populated if the
