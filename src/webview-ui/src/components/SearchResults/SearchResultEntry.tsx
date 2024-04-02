@@ -1,8 +1,24 @@
-import { SearchResults } from "../../../../lspExtensions";
+import { MatchItem } from "./MatchItem";
+import { ViewResult } from "../../types/results";
+import { PathHeader } from "./PathHeader";
+
+import styles from "./SearchResults.module.css";
 
 export interface SearchResultEntryProps {
-  entry: SearchResults;
+  result: ViewResult;
 }
-export const FileItem: React.FC<SearchResultEntryProps> = ({ entry }) => {
-  return <>{entry.locations.length}</>;
+export const SearchResultEntry: React.FC<SearchResultEntryProps> = ({
+  result,
+}) => {
+  const { path } = result;
+  return (
+    <div>
+      <PathHeader path={path} />
+      <ul className={styles["matches-list"]}>
+        {result.matches.map((match) => (
+          <MatchItem match={match} />
+        ))}
+      </ul>
+    </div>
+  );
 };

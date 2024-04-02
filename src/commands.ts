@@ -10,10 +10,19 @@ import {
   showAst,
   search,
   SearchParams,
+  SearchResults,
 } from "./lspExtensions";
 import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
-import { FileItem, MatchItem } from "./searchResultsTree";
+import {
+  FileItem,
+  MatchItem,
+  SearchResult,
+  getPreviewChunks,
+} from "./searchResultsTree";
+import { get } from "http";
+import { ViewResults } from "./webview-ui/src/types/results";
+import * as path from "path";
 
 /*****************************************************************************/
 /* Prelude */
@@ -46,6 +55,38 @@ async function replaceAndOpenUriContent(
   if (active_editor.viewColumn) {
     vscode.window.showTextDocument(doc, active_editor.viewColumn + 1 || 0);
   }
+}
+
+async function viewResultsOfSearchResults(
+  results: SearchResults
+): Promise<ViewResults> {
+  async function viewResultofSearchResult(result: SearchResult) {
+    const uri = vscode.Uri.parse(result.uri);
+    const doc = await vscode.workspace.openTextDocument(uri);
+    const workspacePath = vscode.workspace.workspaceFolders
+      ? vscode.workspace.workspaceFolders[0].uri.fsPath
+      : "";
+    return {
+      path: path.relative(workspacePath, uri.fsPath),
+      matches: await Promise.all(
+        result.matches.map(async (match) => {
+          const range = new vscode.Range(match.range.start, match.range.end);
+          const { before, inside, after } = getPreviewChunks(doc, range);
+          return {
+            before: before,
+            inside: inside,
+            after: after,
+            searchMatch: match,
+          };
+        })
+      ),
+    };
+  }
+  return {
+    locations: await Promise.all(
+      results.locations.map(viewResultofSearchResult)
+    ),
+  };
 }
 
 /*****************************************************************************/
@@ -164,10 +205,12 @@ export function registerCommands(env: Environment): void {
         if (!result) {
           return;
         }
+        const viewResults = await viewResultsOfSearchResults(result);
         env.provider?.sendMessageToWebview({
           command: "extension/semgrep/results",
-          results: result,
+          results: viewResults,
         });
+        console.log("view results sent");
         env.searchView.setSearchItems(result.locations, searchParams);
         vscode.commands.executeCommand("semgrep-search-results.focus");
       }

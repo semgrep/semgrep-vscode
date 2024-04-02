@@ -1,5 +1,5 @@
-import { SearchResults } from "../../../lspExtensions";
+import { ViewResults } from "./results";
 
 export type State = {
-  results: SearchResults;
+  results: ViewResults;
 };
