@@ -11,6 +11,7 @@ import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { LanguageClient } from "vscode-languageclient/node";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { SemgrepSearchProvider } from "./searchResultsTree";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -46,6 +47,7 @@ export class Environment {
   private constructor(
     readonly context: ExtensionContext,
     config: Config,
+    readonly searchView: SemgrepSearchProvider,
     readonly documentView: SemgrepDocumentProvider,
     readonly channel: OutputChannel,
     readonly logger: Logger,
@@ -123,8 +125,16 @@ export class Environment {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);
     const logger = new Logger(config.trace, channel);
+    const searchView = new SemgrepSearchProvider();
     const documentView = new SemgrepDocumentProvider();
-    return new Environment(context, config, documentView, channel, logger);
+    return new Environment(
+      context,
+      config,
+      searchView,
+      documentView,
+      channel,
+      logger
+    );
   }
 
   static async loadConfig(context: ExtensionContext): Promise<Config> {
