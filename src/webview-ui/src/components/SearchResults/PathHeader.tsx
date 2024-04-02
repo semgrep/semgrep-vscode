@@ -18,9 +18,9 @@ export interface PathHeaderProps {
 export const PathHeader: React.FC<PathHeaderProps> = ({ path }) => {
   const [prefix, filename] = splitByLastSlash(path);
   return (
-    <div className={styles["path-header"]}>
-      <a className={styles["file-name"]}>{filename}</a>
-      <span className={styles["prefix-path"]}>{prefix}</span>
+    <div className={styles.pathHeader}>
+      <a className={styles.fileName}>{filename}</a>
+      <span className={styles.prefixPath}>{prefix}</span>
     </div>
   );
 };

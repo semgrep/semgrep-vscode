@@ -14,14 +14,14 @@ export const MatchItem: React.FC<MatchItemProps> = ({ uri, match }) => {
   if (match.searchMatch.fix) {
     matchText = (
       <>
-        <span className={styles["match-text-deleted"]}>{inside}</span>
-        <span className={styles["match-text-inserted"]}>
+        <span className={styles.matchTextDeleted}>{inside}</span>
+        <span className={styles.matchTextInserted}>
           {match.searchMatch.fix}
         </span>
       </>
     );
   } else {
-    matchText = <span className={styles["match-text-normal"]}>{inside}</span>;
+    matchText = <span className={styles.matchTextNormal}>{inside}</span>;
   }
 
   function onClick() {
@@ -33,8 +33,8 @@ export const MatchItem: React.FC<MatchItemProps> = ({ uri, match }) => {
   }
 
   return (
-    <li className={styles["match-item"]} onClick={onClick}>
-      <div className={styles["match-text-box"]} onClick={onClick}>
+    <li className={styles.matchItem} onClick={onClick}>
+      <div className={styles.matchTextBox} onClick={onClick}>
         {before}
         {matchText}
         {after}
