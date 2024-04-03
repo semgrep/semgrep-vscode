@@ -3,18 +3,15 @@
 import cssModulesPlugin from "esbuild-css-modules-plugin";
 import esbuild from "esbuild";
 
-const commonOptions = {
-  bundle: true,
-  platform: "node",
-  format: "cjs",
-  external: ["vscode"],
-};
-
 async function buildExtension(watch) {
   const options = {
     entryPoints: ["./src/extension.ts"],
-    outfile: "./out/extension.js",
-    ...commonOptions,
+    outfile: "./out/main.js",
+    bundle: true,
+    platform: "node",
+    format: "cjs",
+    external: ["vscode"],
+    sourcemap: isSourcemap,
   };
   if (watch) {
     let ctx = await esbuild.context(options);
@@ -27,8 +24,9 @@ async function buildWebview(watch) {
   let options = {
     entryPoints: ["./src/webview-ui/index.tsx"],
     outfile: "./out/webview.js",
+    bundle: true,
     plugins: [cssModulesPlugin()],
-    ...commonOptions,
+    sourcemap: isSourcemap,
   };
   if (watch) {
     let ctx = await esbuild.context(options);
@@ -39,5 +37,9 @@ async function buildWebview(watch) {
 }
 
 const isWatch = process.argv.includes("--watch");
+const isSourcemap = process.argv.includes("--sourcemap");
 
-await Promise.all([buildExtension(isWatch), buildWebview(isWatch)]);
+await Promise.all([
+  buildExtension(isWatch, isSourcemap),
+  buildWebview(isWatch, isSourcemap),
+]);
