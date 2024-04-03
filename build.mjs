@@ -5,6 +5,7 @@ import esbuild from "esbuild";
 
 async function buildExtension(watch) {
   const options = {
+    logLevel: "info",
     entryPoints: ["./src/extension.ts"],
     outfile: "./out/main.js",
     bundle: true,
@@ -22,6 +23,7 @@ async function buildExtension(watch) {
 }
 async function buildWebview(watch) {
   let options = {
+    logLevel: "info",
     entryPoints: ["./src/webview-ui/index.tsx"],
     outfile: "./out/webview.js",
     bundle: true,
