@@ -10,6 +10,7 @@ export interface Store {
   includes: string;
   excludes: string;
   language: string;
+  simplePatterns: string[];
 }
 
 const localStorageKeys: Record<keyof Store, string> = {
@@ -18,14 +19,16 @@ const localStorageKeys: Record<keyof Store, string> = {
   includes: "semgrep-search-includes",
   excludes: "semgrep-search-excludes",
   language: "semgrep-search-language",
+  simplePatterns: "semgrep-search-simple-patterns",
 };
 
-const store: Record<keyof Store, string> = {
+const store: Store = {
   pattern: "",
   fix: "",
   includes: "",
   excludes: "",
   language: "",
+  simplePatterns: [],
 };
 export function generateUniqueID(): string {
   return Math.random().toString(36).substring(7);
@@ -58,10 +61,18 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
   });
 }
 
-export function useStore(key: keyof Store): [string, (value: string) => void] {
-  const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
-  useEffect(() => {
-    store[key] = field;
-  }, [field, key]);
-  return [field, setField];
+export function useStore(key: keyof Store): [any, (value: any) => void] {
+  if (key === "simplePatterns") {
+    const [field = [], setField] = useLocalStorage(localStorageKeys[key], []);
+    useEffect(() => {
+      store[key] = field;
+    }, [field, key]);
+    return [field, setField];
+  } else {
+    const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
+    useEffect(() => {
+      store[key] = field;
+    }, [field, key]);
+    return [field, setField];
+  }
 }

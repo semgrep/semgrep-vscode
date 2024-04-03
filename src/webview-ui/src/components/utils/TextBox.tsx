@@ -14,7 +14,8 @@ const style = {
 export interface TextBoxProps {
   onNewSearch: (scanID: string) => void;
   isMultiline: boolean;
-  keyName: keyof Store;
+  value: string;
+  onChange: (value: string) => void;
   placeholder?: string;
   description?: string;
 }
@@ -22,11 +23,11 @@ export const TextBox: React.FC<TextBoxProps> = ({
   onNewSearch,
   placeholder,
   isMultiline,
-  keyName,
+  value,
+  onChange,
   description,
 }) => {
-  const [content, setContent] = useStore(keyName);
-  const numRows = isMultiline ? content.split("\n").length : 1;
+  const numRows = isMultiline ? value.split("\n").length : 1;
 
   return (
     <>
@@ -43,12 +44,12 @@ export const TextBox: React.FC<TextBoxProps> = ({
             useSearch(onNewSearch);
           }
         }}
-        value={content}
+        value={value}
         // I literally have no idea what the type of this or the below handler should be
         // We use the onChange here because there's a delta between when the onKeyPress
         // is fired and when the value is updated
         onInput={(e: any) => {
-          setContent(e.target.value);
+          onChange(e.target.value);
         }}
       />
     </>
