@@ -19,7 +19,7 @@ export const MatchItem: React.FC<MatchItemProps> = ({
 }) => {
   const { before, inside, after } = match;
 
-  let matchText;
+  let matchText: JSX.Element;
   if (match.searchMatch.fix) {
     matchText = (
       <>
@@ -41,7 +41,7 @@ export const MatchItem: React.FC<MatchItemProps> = ({
     });
   }
 
-  const [hoveredElem] = useHover((hovered) => {
+  const [hoveredElem] = useHover((hovered: boolean) => {
     return (
       <li className={styles.matchItem} onClick={onClick}>
         <div className={styles.matchTextBox}>
