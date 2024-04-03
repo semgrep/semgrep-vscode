@@ -12,13 +12,13 @@ export const TopSection: React.FC<TopSectionProps> = ({ onNewSearch }) => {
   const [showOptions, setShowOptions] = useState(false);
 
   return (
-    <div className={styles["top-section"]}>
+    <div className={styles.topSection}>
       <MainInputs onNewSearch={onNewSearch} />
       <div>
         <div
           role="button"
           onClick={() => setShowOptions(!showOptions)}
-          className={styles["option-button"]}
+          className={styles.optionButton}
         >
           <VscEllipsis />
         </div>
