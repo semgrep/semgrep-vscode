@@ -6,13 +6,14 @@ import { Store, useStore } from "../../hooks/useStore";
 import { SUPPORTED_LANGS } from "../../../../constants";
 
 const style = {
-  // this makes it not quite as weirdly tall
-  //   "--design-unit": "2",
   // I tried setting the borderRadius directly and it doesn't work.
   // For some reason it just doesn't show up in the styles.
   // This does, though.
   "--corner-radius": "2",
   padding: "0",
+  // hard-coded hacks to get the lang chooser to be center with the
+  // pattern box
+  height: "27px",
 };
 
 export interface LangChooserProps {

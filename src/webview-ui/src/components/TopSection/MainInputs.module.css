@@ -5,13 +5,15 @@
 }
 
 .replace-all-button {
-  margin-left: auto;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-bottom: 1px;
   color: var(--vscode-icon-foreground);
+  /* hack to get it to line up with the textarea */
+  margin-bottom: 2px;
+  /* make a little more room for the icon */
+  padding: 0px 3px;
 }
 
 .disabled {

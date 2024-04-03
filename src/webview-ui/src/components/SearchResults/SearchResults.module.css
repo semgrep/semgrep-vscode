@@ -27,6 +27,8 @@
 
 .path-header {
   display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .file-name {

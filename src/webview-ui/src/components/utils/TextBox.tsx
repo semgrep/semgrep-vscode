@@ -8,7 +8,6 @@ const style = {
   // For some reason it just doesn't show up in the styles.
   // This does, though.
   "--corner-radius": "2",
-  // padding: "2px 0",
   width: "100%",
 };
 
@@ -35,7 +34,8 @@ export const TextBox: React.FC<TextBoxProps> = ({
       <VSCodeTextArea
         autofocus
         placeholder={placeholder}
-        style={style}
+        /* get the description text a little farther from the box if it exists */
+        style={{ ...style, padding: description ? "2px 0px" : undefined }}
         rows={numRows}
         onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key == "Enter" && !e.shiftKey) {
