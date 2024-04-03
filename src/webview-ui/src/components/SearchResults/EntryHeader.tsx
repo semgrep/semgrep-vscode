@@ -17,16 +17,16 @@ export const EntryHeader: React.FC<EntryHeaderProps> = ({
 }) => {
   const { path } = result;
   return (
-    <div className={styles["entry-header"]} onClick={toggleIsExpanded}>
+    <div className={styles.entryHeader} onClick={toggleIsExpanded}>
       <div
-        className={styles["collapse-button"]}
+        className={styles.collapseButton}
         aria-label="ExpandButton"
         role="button"
       >
         {isExpanded ? <VscChevronDown /> : <VscChevronRight />}
       </div>
       <PathHeader path={path} />
-      <VSCodeBadge className={styles["match-num-badge"]}>
+      <VSCodeBadge className={styles.matchNumBadge}>
         {result.matches.length}
       </VSCodeBadge>
     </div>
