@@ -18,7 +18,7 @@ export const MatchesSummary: React.FC<MatchesSummaryProps> = ({ state }) => {
   const status = state.searchConcluded ? "" : "(searching)";
 
   return (
-    <div className={styles["matches-summary"]}>
+    <div className={styles.matchesSummary}>
       {`${numMatches} matches in ${numFiles} files ${status}`}
     </div>
   );
