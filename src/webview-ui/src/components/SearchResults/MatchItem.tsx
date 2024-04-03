@@ -8,8 +8,15 @@ import { MatchItemButtons } from "./MatchItemButtons";
 export interface MatchItemProps {
   uri: string;
   match: ViewMatch;
+  onFix: (match: ViewMatch) => void;
+  onDismiss: (match: ViewMatch) => void;
 }
-export const MatchItem: React.FC<MatchItemProps> = ({ uri, match }) => {
+export const MatchItem: React.FC<MatchItemProps> = ({
+  uri,
+  match,
+  onFix,
+  onDismiss,
+}) => {
   const { before, inside, after } = match;
 
   let matchText;
@@ -42,7 +49,12 @@ export const MatchItem: React.FC<MatchItemProps> = ({ uri, match }) => {
           {matchText}
           {after}
         </div>
-        <MatchItemButtons isHovered={hovered} uri={uri} match={match} />
+        <MatchItemButtons
+          isHovered={hovered}
+          match={match}
+          onFix={onFix}
+          onDismiss={onDismiss}
+        />
       </li>
     );
   });
