@@ -29,7 +29,7 @@ export const MainInputs: React.FC<MainInputsProps> = ({
 
   return (
     <>
-      <div className={styles["search-row"]}>
+      <div className={styles.searchRow}>
         <TextBox
           onNewSearch={onNewSearch}
           placeholder="Pattern"
@@ -38,7 +38,7 @@ export const MainInputs: React.FC<MainInputsProps> = ({
         />
         <LangChooser keyName="language" />
       </div>
-      <div className={styles["search-row"]}>
+      <div className={styles.searchRow}>
         <TextBox
           onNewSearch={onNewSearch}
           placeholder="Fix"
@@ -46,8 +46,8 @@ export const MainInputs: React.FC<MainInputsProps> = ({
           keyName="fix"
         />
         <div
-          className={`${styles["replace-all-button"]} ${
-            fixExists ? "" : styles["disabled"]
+          className={`${styles.replaceAllButton} ${
+            fixExists ? "" : styles.disabled
           }`}
           onClick={onFixAll}
         >
