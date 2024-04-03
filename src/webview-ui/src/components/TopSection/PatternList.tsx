@@ -1,26 +1,17 @@
-import { vscode } from "./../../utilities/vscode";
-import {
-  VSCodeButton,
-  VSCodeTextArea,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TextBox } from "../utils/TextBox";
 import { LangChooser } from "../utils/LangChooser";
 import styles from "./MainInputs.module.css";
-import { State } from "../../types/state";
-import {
-  VscReplaceAll,
-  VscAdd,
-  VscChevronDown,
-  VscClose,
-} from "react-icons/vsc";
+import { VscClose } from "react-icons/vsc";
 import { useStore } from "../../hooks/useStore";
 import { PatternBadge } from "./PatternBadge";
 
 export type simplePattern = { positive: boolean; pattern: string };
 
-export function isLast(index: number | null, patterns: simplePattern[]) {
+export function isLast(
+  index: number | null,
+  patterns: simplePattern[]
+): boolean {
   return (
     (index === null && patterns.length === 0) || index === patterns.length - 1
   );
@@ -28,12 +19,8 @@ export function isLast(index: number | null, patterns: simplePattern[]) {
 
 export interface PatternListProps {
   onNewSearch: (scanID: string) => void;
-  state: State | null;
 }
-export const PatternList: React.FC<PatternListProps> = ({
-  onNewSearch,
-  state,
-}) => {
+export const PatternList: React.FC<PatternListProps> = ({ onNewSearch }) => {
   const [pattern, setPattern] = useStore("pattern");
   const [patterns, setPatterns] = useStore("simplePatterns");
 

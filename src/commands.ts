@@ -15,7 +15,6 @@ import { encodeUri } from "./showAstDocument";
 import { ViewResults } from "./webview-ui/src/types/results";
 import { applyFixAndSave, replaceAll } from "./utils";
 import { handleSearch } from "./search";
-import { useStore } from "./webview-ui/src/hooks/useStore";
 
 /*****************************************************************************/
 /* Prelude */

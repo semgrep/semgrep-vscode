@@ -1,16 +1,5 @@
-import { vscode } from "./../../utilities/vscode";
-import {
-  VSCodeButton,
-  VSCodeTextArea,
-  VSCodeTextField,
-} from "@vscode/webview-ui-toolkit/react";
-import { useEffect, useState } from "react";
-import { TextBox } from "../utils/TextBox";
-import { LangChooser } from "../utils/LangChooser";
 import styles from "./MainInputs.module.css";
-import { State } from "../../types/state";
-import { VscReplaceAll, VscAdd, VscChevronDown } from "react-icons/vsc";
-import { useStore } from "../../hooks/useStore";
+import { VscAdd, VscChevronDown } from "react-icons/vsc";
 import { isLast, simplePattern } from "./PatternList";
 import { VscCircleSlash } from "react-icons/vsc";
 

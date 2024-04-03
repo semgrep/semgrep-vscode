@@ -32,7 +32,7 @@ export const MainInputs: React.FC<MainInputsProps> = ({
 
   return (
     <>
-      <PatternList onNewSearch={onNewSearch} state={state} />
+      <PatternList onNewSearch={onNewSearch} />
       <div className={styles.searchRow}>
         <TextBox
           onNewSearch={onNewSearch}

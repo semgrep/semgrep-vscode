@@ -85,7 +85,6 @@ export class SemgrepSearchWebviewProvider
         break;
       }
       case "webview/semgrep/exportRule": {
-        console.log("opening");
         const lines = data.patterns
           .map((pat) =>
             pat.positive
