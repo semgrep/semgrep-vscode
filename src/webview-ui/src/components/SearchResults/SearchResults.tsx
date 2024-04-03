@@ -29,10 +29,12 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
     }
   }
 
+  const status = state.searchConcluded ? "" : "(searching)";
+
   return (
     <div>
       <div className={styles.matchesSummary}>
-        {`${numMatches} matches in ${numFiles} files`}
+        {`${numMatches} matches in ${numFiles} files ${status}`}
         <div className={styles.replaceAllButton} onClick={onFixAll}>
           <VscReplaceAll role="button" title="Replace All" tabIndex={0} />
         </div>

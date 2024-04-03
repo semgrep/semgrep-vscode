@@ -4,6 +4,7 @@ import {
   webviewToExtensionCommand,
 } from "../../interface/interface";
 import { State } from "../src/types/state";
+import { ViewResults } from "../src/types/results";
 
 /**
  * A utility wrapper around the acquireVsCodeApi() function, which enables
@@ -17,7 +18,7 @@ import { State } from "../src/types/state";
 class VSCodeAPIWrapper {
   private readonly vsCodeApi: WebviewApi<State> | undefined;
   // This is set by the webview App.tsx!
-  public onChange: ((state: State) => void) | null = null;
+  public onUpdate: ((results: ViewResults) => void) | null = null;
 
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
@@ -52,13 +53,13 @@ class VSCodeAPIWrapper {
   handleMessageFromExtension(data: extensionToWebviewCommand) {
     switch (data.command) {
       case "extension/semgrep/results": {
-        this.sendMessageToExtension({
-          command: "webview/semgrep/print",
-          message: "Received results from extension",
-        });
+        // this.sendMessageToExtension({
+        //   command: "webview/semgrep/print",
+        //   message: "Received results from extension",
+        // });
         // update the state of the webview component!
-        if (this.onChange) {
-          this.onChange({ results: data.results });
+        if (this.onUpdate) {
+          this.onUpdate(data.results);
         }
       }
     }
