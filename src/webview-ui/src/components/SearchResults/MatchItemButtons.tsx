@@ -20,7 +20,7 @@ export const MatchItemButtons: React.FC<MatchItemButtonsProps> = ({
   }
 
   return (
-    <div className={styles["match-buttons"]}>
+    <div className={styles.matchButtons}>
       {match.searchMatch.fix ? (
         <div onClick={() => onFix(match)}>
           <VscReplace role="button" title="Replace" tabIndex={0} />
