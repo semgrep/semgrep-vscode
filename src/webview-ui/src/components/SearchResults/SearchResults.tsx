@@ -33,7 +33,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
     <div>
       <div className={styles.matchesSummary}>
         {`${numMatches} matches in ${numFiles} files`}
-        <div className={styles["replace-all-button"]} onClick={onFixAll}>
+        <div className={styles.replaceAllButton} onClick={onFixAll}>
           <VscReplaceAll role="button" title="Replace All" tabIndex={0} />
         </div>
       </div>
