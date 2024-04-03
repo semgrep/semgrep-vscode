@@ -286,8 +286,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "build-webview": "./build-webview.mjs",
-    "esbuild-base": "npm run build-webview && npm run setup-lspjs && esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-base": "npm run setup-lspjs && ./build.mjs",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./ && npm run esbuild",
