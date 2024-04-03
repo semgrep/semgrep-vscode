@@ -66,7 +66,7 @@ export const PatternList: React.FC<PatternListProps> = ({
 
   function mkPattern(p: simplePattern, index: number | null) {
     return (
-      <div className={styles["search-row"]}>
+      <div className={styles.searchRow}>
         <PatternBadge
           positive={p.positive}
           onPositivityToggle={() =>
@@ -95,7 +95,7 @@ export const PatternList: React.FC<PatternListProps> = ({
           <LangChooser keyName="language" />
         ) : (
           <div
-            className={styles["delete-pattern-button"]}
+            className={styles.deletePatternButton}
             onClick={() => deletePatternAtIndex(index)}
           >
             <VscClose />
@@ -105,7 +105,7 @@ export const PatternList: React.FC<PatternListProps> = ({
     );
   }
   return (
-    <div className={styles["pattern-list"]}>
+    <div className={styles.patternList}>
       {mkPattern({ positive: true, pattern: pattern }, null)}
       {patterns.map((p: simplePattern, index: number) => mkPattern(p, index))}
     </div>

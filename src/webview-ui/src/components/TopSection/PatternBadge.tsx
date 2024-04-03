@@ -36,14 +36,14 @@ export const PatternBadge: React.FC<PatternBadgeProps> = ({
     <div>
       <div
         style={{ backgroundColor: color, height: heightOfAdd }}
-        className={styles["positivity-button"]}
+        className={styles.positivityButton}
         onClick={onPositivityToggle}
       >
         {positive ? <VscAdd /> : <VscCircleSlash />}
       </div>
       {last && (
         <div
-          className={styles["add-pattern-button"]}
+          className={styles.addPatternButton}
           style={{ height: heightOfChevron, marginTop: "4px" }}
           onClick={onNewPattern}
         >
