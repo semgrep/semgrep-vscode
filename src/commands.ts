@@ -22,6 +22,7 @@ import {
 } from "./searchResultsTree";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as path from "path";
+import { applyFixAndSave } from "./utils";
 
 /*****************************************************************************/
 /* Prelude */
@@ -260,8 +261,18 @@ export function registerCommands(env: Environment): void {
 
   vscode.commands.registerCommand(
     "semgrep.search.replace",
-    async (node: FileItem | MatchItem) => {
-      await env.searchView.replaceItem(node);
+    async ({
+      uri,
+      fix,
+      range,
+    }: {
+      uri: string;
+      fix: string;
+      range: vscode.Range;
+    }) => {
+      const edit = new vscode.WorkspaceEdit();
+      edit.replace(vscode.Uri.parse(uri), range, fix);
+      await applyFixAndSave(edit);
     }
   );
 

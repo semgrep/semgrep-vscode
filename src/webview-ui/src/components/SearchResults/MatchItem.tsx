@@ -2,6 +2,8 @@ import { ViewMatch } from "../../types/results";
 
 import styles from "./SearchResults.module.css";
 import { vscode } from "../../../utilities/vscode";
+import { useHover } from "react-use";
+import { MatchItemButtons } from "./MatchItemButtons";
 
 export interface MatchItemProps {
   uri: string;
@@ -32,13 +34,18 @@ export const MatchItem: React.FC<MatchItemProps> = ({ uri, match }) => {
     });
   }
 
-  return (
-    <li className={styles.matchItem} onClick={onClick}>
-      <div className={styles.matchTextBox} onClick={onClick}>
-        {before}
-        {matchText}
-        {after}
-      </div>
-    </li>
-  );
+  const [hoveredElem] = useHover((hovered) => {
+    return (
+      <li className={styles.matchItem} onClick={onClick}>
+        <div className={styles.matchTextBox}>
+          {before}
+          {matchText}
+          {after}
+        </div>
+        <MatchItemButtons isHovered={hovered} uri={uri} match={match} />
+      </li>
+    );
+  });
+
+  return hoveredElem;
 };
