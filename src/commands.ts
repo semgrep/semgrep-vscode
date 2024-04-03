@@ -152,28 +152,31 @@ export function registerCommands(env: Environment): void {
     }
   );
 
-  vscode.commands.registerCommand(
-    "semgrep.search.replaceAll",
-    (matches: ViewResults) => {
-      vscode.commands.executeCommand(
-        "semgrep.search.reallyDoReplaceAllNotification",
-        matches
-      );
-    }
-  );
+  vscode.commands.registerCommand("semgrep.search.refresh", async () => {
+    // TODO?
+    // if (env.searchView.lastSearch) {
+    //   vscode.commands.executeCommand(
+    //     "semgrep.search",
+    //     env.searchView.lastSearch
+    //   );
+    // }
+  });
+
+  /* TODO: port to webview */
+  vscode.commands.registerCommand("semgrep.search.clear", () => {
+    // env.searchView.clearSearch();
+  });
 
   vscode.commands.registerCommand(
-    "semgrep.search.reallyDoReplaceAllNotification",
+    "semgrep.search.replaceAll",
     async (matches: ViewResults) => {
       const selection = await vscode.window.showWarningMessage(
         `Really apply fix to ${matches.locations.length} files?`,
         "Yes",
         "No"
       );
-
       if (selection === "Yes") {
-        await replaceAll(matches);
-        vscode.commands.executeCommand("semgrep.search.refresh");
+        replaceAll(matches);
       }
     }
   );

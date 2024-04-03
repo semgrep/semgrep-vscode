@@ -3,8 +3,10 @@ import { SearchParams } from "../lspExtensions";
 import { randomUUID } from "crypto";
 import {
   extensionToWebviewCommand,
+  SearchLanguage,
   webviewToExtensionCommand,
 } from "../interface/interface";
+import { SUPPORTED_LANGS } from "../constants";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -61,6 +63,25 @@ export class SemgrepSearchWebviewProvider
         >{
           selection: data.range,
         });
+        break;
+      }
+      case "webview/semgrep/getActiveLang": {
+        const activeLang = vscode.window.activeTextEditor?.document.languageId;
+        // we'll only send the language to the webview if we can determine it maps to a semgrep language
+        if (
+          activeLang &&
+          SUPPORTED_LANGS.includes(activeLang as SearchLanguage)
+        ) {
+          this.sendMessageToWebview({
+            command: "extension/semgrep/activeLang",
+            lang: activeLang as SearchLanguage,
+          });
+        } else {
+          this.sendMessageToWebview({
+            command: "extension/semgrep/activeLang",
+            lang: null,
+          });
+        }
       }
     }
   }

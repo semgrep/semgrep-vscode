@@ -35,6 +35,13 @@ class VSCodeAPIWrapper {
         const message = event.data; // The json data that the extension sent
         this.handleMessageFromExtension(message);
       });
+
+      // We send `getActiveLang` here, because now we are ready to accept messages.
+      // Note that since this is run only when the webview is loaded, we will not send
+      // this more than once per session.
+      this.sendMessageToExtension({
+        command: "webview/semgrep/getActiveLang",
+      });
     }
   }
 

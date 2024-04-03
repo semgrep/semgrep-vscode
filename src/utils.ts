@@ -50,7 +50,7 @@ export async function replaceAll(matches: ViewResults): Promise<void> {
   matches.locations.map((result) =>
     /* We don't want to fix anything which was already fixed. */
     result.matches.forEach((match) => {
-      if (match.searchMatch.fix) {
+      if (match.searchMatch.fix && !match.isFixed) {
         edit.replace(
           vscode.Uri.parse(result.uri),
           match.searchMatch.range,
