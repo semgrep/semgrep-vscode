@@ -23,14 +23,19 @@ const localStorageKeys: Record<keyof Store, string> = {
   simplePatterns: "semgrep-search-simple-patterns",
 };
 
-const store: Store = {
-  pattern: "",
-  fix: "",
-  includes: "",
-  excludes: "",
-  language: "",
-  simplePatterns: [],
-};
+function defaultStore() {
+  return {
+    pattern: "",
+    fix: "",
+    includes: "",
+    excludes: "",
+    language: "",
+    simplePatterns: [],
+  };
+}
+
+const store: Store = defaultStore();
+
 export function generateUniqueID(): string {
   return Math.random().toString(36).substring(7);
 }
@@ -79,4 +84,53 @@ export function useStore(key: keyof Store): [any, (value: any) => void] {
     }, [field, key]);
     return [field, setField];
   }
+}
+
+export function clearStore() {
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/print",
+    message: "in cleastore",
+  });
+  const newStore = defaultStore();
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/print",
+    message: "in cleastore 2",
+  });
+  // for (const k in store) {
+  // vscode.sendMessageToExtension({
+  //   command: "webview/semgrep/print",
+  //   message: `key ${k}`
+  // })
+  //   const key: keyof Store = k as keyof Store;
+  //   if (key === "simplePatterns") {
+  //     const [field = [], setField] = useLocalStorage(localStorageKeys[key], []);
+  //     store[key] = newStore[key];
+  //     setField(newStore[key]);
+  //   } else {
+  //     const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
+  //     store[key] = newStore[key];
+  //     setField(newStore[key])
+  //   }
+  // }
+  const [field = "", setField] = useLocalStorage(
+    localStorageKeys["pattern"],
+    ""
+  );
+  setField("'");
+  localStorage.clear();
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/print",
+    message: `store is ${JSON.stringify(store)}`,
+  });
+}
+
+export function exportRule() {
+  vscode.sendMessageToExtension({
+    command: "webview/semgrep/exportRule",
+    patterns: [
+      { positive: true, pattern: store.pattern },
+      ...store.simplePatterns,
+    ],
+    language: store.language,
+  });
 }

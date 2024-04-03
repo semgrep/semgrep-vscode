@@ -15,6 +15,7 @@ import { encodeUri } from "./showAstDocument";
 import { ViewResults } from "./webview-ui/src/types/results";
 import { applyFixAndSave, replaceAll } from "./utils";
 import { handleSearch } from "./search";
+import { useStore } from "./webview-ui/src/hooks/useStore";
 
 /*****************************************************************************/
 /* Prelude */
@@ -164,6 +165,9 @@ export function registerCommands(env: Environment): void {
 
   /* TODO: port to webview */
   vscode.commands.registerCommand("semgrep.search.clear", () => {
+    env.provider?.sendMessageToWebview({
+      command: "extension/semgrep/clear",
+    });
     // env.searchView.clearSearch();
   });
 
@@ -201,6 +205,12 @@ export function registerCommands(env: Environment): void {
   /********/
   /* MISC */
   /********/
+
+  vscode.commands.registerCommand("semgrep.search.exportRule", () => {
+    env.provider?.sendMessageToWebview({
+      command: "extension/semgrep/exportRuleRequest",
+    });
+  });
 
   vscode.commands.registerCommand("semgrep.restartLanguageServer", () => {
     vscode.window.showInformationMessage("Restarting Semgrep Language Server");

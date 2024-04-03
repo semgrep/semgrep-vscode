@@ -43,6 +43,7 @@ export const select = "webview/semgrep/select";
 export const replace = "webview/semgrep/replace";
 export const replaceAll = "webview/semgrep/replaceAll";
 export const getLanguage = "webview/semgrep/getActiveLang";
+export const exportRule = "webview/semgrep/exportRule";
 
 export type webviewToExtensionCommand =
   | {
@@ -58,7 +59,12 @@ export type webviewToExtensionCommand =
   | { command: typeof select; uri: string; range: vscode.Range }
   | { command: typeof replace; uri: string; range: vscode.Range; fix: string }
   | { command: typeof replaceAll; matches: ViewResults }
-  | { command: typeof getLanguage };
+  | { command: typeof getLanguage }
+  | {
+      command: typeof exportRule;
+      patterns: { positive: boolean; pattern: string }[];
+      language: string;
+    };
 
 /*****************************************************************************/
 /* Extension to webview commands */
@@ -66,6 +72,8 @@ export type webviewToExtensionCommand =
 
 export const results = "extension/semgrep/results";
 export const activeLang = "extension/semgrep/activeLang";
+export const clear = "extension/semgrep/clear";
+export const exportRuleRequest = "extension/semgrep/exportRuleRequest";
 
 export type SearchLanguage = typeof SUPPORTED_LANGS[number];
 
@@ -77,4 +85,6 @@ export type extensionToWebviewCommand =
   | {
       command: typeof activeLang;
       lang: SearchLanguage | null;
-    };
+    }
+  | { command: typeof clear }
+  | { command: typeof exportRuleRequest };
