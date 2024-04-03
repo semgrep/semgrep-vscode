@@ -5,6 +5,7 @@ import styles from "./TopSection.module.css";
 import { VscEllipsis } from "react-icons/vsc";
 import { TextBox } from "../utils/TextBox";
 import { State } from "../../types/state";
+import { MatchesSummary } from "./MatchesSummary";
 
 export interface TopSectionProps {
   onNewSearch: (scanID: string) => void;
@@ -44,6 +45,7 @@ export const TopSection: React.FC<TopSectionProps> = ({
           />
         )}
       </div>
+      <MatchesSummary state={state} />
     </div>
   );
 };
