@@ -5,6 +5,7 @@ import styles from "./MainInputs.module.css";
 import { VscClose } from "react-icons/vsc";
 import { useStore } from "../../hooks/useStore";
 import { PatternBadge } from "./PatternBadge";
+import { vscode } from "../../../utilities/vscode";
 
 export type simplePattern = { positive: boolean; pattern: string };
 

@@ -162,12 +162,10 @@ export function registerCommands(env: Environment): void {
     // }
   });
 
-  /* TODO: port to webview */
   vscode.commands.registerCommand("semgrep.search.clear", () => {
     env.provider?.sendMessageToWebview({
       command: "extension/semgrep/clear",
     });
-    // env.searchView.clearSearch();
   });
 
   vscode.commands.registerCommand(

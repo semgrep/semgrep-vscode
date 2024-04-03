@@ -6,7 +6,7 @@ import { SearchResults } from "./src/components/SearchResults/SearchResults";
 import { State } from "./src/types/state";
 import { ViewResults } from "./src/types/results";
 import { InfoBlurb } from "./src/components/utils/InfoBlurb";
-import { clearStore, exportRule } from "./src/hooks/useStore";
+import { exportRule, useStore } from "./src/hooks/useStore";
 
 const App: React.FC = () => {
   /* The states are as follows:
@@ -17,11 +17,8 @@ const App: React.FC = () => {
        have saved results in `results`. This scan had ID scanID.
    */
   const [state, setState] = useState<State | null>(null);
-
-  vscode.sendMessageToExtension({
-    command: "webview/semgrep/print",
-    message: "app loaded",
-  });
+  const [_simplePatterns = [], setSimplePatterns] = useStore("simplePatterns");
+  const [_pattern = "", setPattern] = useStore("pattern");
 
   // This code registers a handler with the VSCode interfacing infrastrucure,
   // outside of this component.
@@ -62,7 +59,8 @@ const App: React.FC = () => {
   };
 
   vscode.onClear = () => {
-    clearStore();
+    setPattern("");
+    setSimplePatterns([]);
     setState(null);
   };
   vscode.onExportRule = () => {

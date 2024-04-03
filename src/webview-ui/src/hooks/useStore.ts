@@ -88,16 +88,6 @@ export function useStore(key: keyof Store): [any, (value: any) => void] {
   }
 }
 
-export function clearStore() {
-  const [_ = "", setField] = useLocalStorage(localStorageKeys["pattern"], "");
-  setField("");
-  try {
-    localStorage.clear();
-  } catch (e) {
-    console.error("error clearing store", e);
-  }
-}
-
 export function exportRule() {
   vscode.sendMessageToExtension({
     command: "webview/semgrep/exportRule",
