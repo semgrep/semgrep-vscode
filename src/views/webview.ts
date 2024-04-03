@@ -31,8 +31,8 @@ export class SemgrepSearchWebviewProvider
       case "webview/semgrep/search": {
         const searchParams: SearchParams = {
           lspParams: {
-            pattern: data.pattern,
-            language: null,
+            patterns: data.patterns,
+            language: data.lang,
             fix: data.fix,
             includes: data.includes,
             excludes: data.excludes,

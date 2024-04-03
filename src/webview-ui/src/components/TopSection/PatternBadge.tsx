@@ -17,7 +17,7 @@ import { VscCircleSlash } from "react-icons/vsc";
 export interface PatternBadgeProps {
   index: number | null;
   patterns: simplePattern[];
-  isPositive: boolean;
+  positive: boolean;
   onNewPattern: () => void;
   onPositivityToggle: () => void;
 }
@@ -25,11 +25,11 @@ export const PatternBadge: React.FC<PatternBadgeProps> = ({
   onNewPattern,
   index,
   patterns,
-  isPositive,
+  positive,
   onPositivityToggle,
 }) => {
   const last = isLast(index, patterns);
-  const color = isPositive ? "#458c4c" : "#a23636";
+  const color = positive ? "#458c4c" : "#a23636";
   const heightOfAdd = last ? "15px" : "27px";
   const heightOfChevron = last ? "7px" : "0px";
   return (
@@ -39,7 +39,7 @@ export const PatternBadge: React.FC<PatternBadgeProps> = ({
         className={styles["positivity-button"]}
         onClick={onPositivityToggle}
       >
-        {isPositive ? <VscAdd /> : <VscCircleSlash />}
+        {positive ? <VscAdd /> : <VscCircleSlash />}
       </div>
       {last && (
         <div

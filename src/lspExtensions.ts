@@ -38,7 +38,7 @@ export interface SearchParams {
 }
 
 export interface LspSearchParams {
-  pattern: string;
+  patterns: { positive: boolean; pattern: string }[];
   language: string | null;
   fix: string | null;
   includes: string[];
