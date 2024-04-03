@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { SUPPORTED_LANGS, VSCODE_CONFIG_KEY } from "./constants";
+import { VSCODE_CONFIG_KEY } from "./constants";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { Environment } from "./env";
 import { registerCommands } from "./commands";
@@ -8,7 +8,6 @@ import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
-import { SearchLanguage } from "./interface/interface";
 
 export let global_env: Environment | null = null;
 
