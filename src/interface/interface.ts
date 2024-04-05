@@ -52,7 +52,7 @@ export type webviewToExtensionCommand =
   | { command: typeof print; message: string }
   | { command: typeof select; uri: string; range: vscode.Range }
   | { command: typeof replace; uri: string; range: vscode.Range; fix: string }
-  | { command: typeof replaceAll; matches: ViewResults };
+  | { command: typeof replaceAll; matches: ViewResults[] };
 
 /*****************************************************************************/
 /* Extension to webview commands */
@@ -62,5 +62,6 @@ export const results = "extension/semgrep/results";
 
 export type extensionToWebviewCommand = {
   command: typeof results;
-  results: ViewResults;
+  scanID: string;
+  results: ViewResults | null;
 };

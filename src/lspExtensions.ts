@@ -37,15 +37,12 @@ export interface SearchParams {
   lspParams: LspSearchParams;
 }
 
-export interface LspSearchParams {
+export interface LspSearchParams extends lc.PartialResultParams {
   pattern: string;
   language: string | null;
   fix: string | null;
 }
 
-export interface SearchResults {
-  locations: SearchResult[];
-}
 export const login = new lc.RequestType0<LoginParams | null, void>(
   "semgrep/login"
 );
@@ -66,13 +63,18 @@ export const loginStatus = new lc.RequestType0<LoginStatusParams | null, void>(
   "semgrep/loginStatus"
 );
 
-export const search = new lc.RequestType<LspSearchParams, SearchResults, void>(
-  "semgrep/search"
-);
-
-export const searchOngoing = new lc.RequestType0<SearchResults, void>(
-  "semgrep/searchOngoing"
-);
+/* This means a request with parameters LspSearchParams, returning SearchResults, and with a `void`
+   for the fourth and fifth parameters ("E" and "RO").
+   The third parameter seems to be input to ProgressType, and decides the input type of the
+   handler we pass to onProgress, to handle partial results.
+ */
+export const search = new lc.ProtocolRequestType<
+  LspSearchParams,
+  null,
+  SearchResult | null,
+  void,
+  void
+>("semgrep/search");
 
 export const showAst = new lc.RequestType<ShowAstParams, string, void>(
   "semgrep/showAst"

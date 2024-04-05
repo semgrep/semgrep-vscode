@@ -18,7 +18,9 @@ import { ViewResults } from "../src/types/results";
 class VSCodeAPIWrapper {
   private readonly vsCodeApi: WebviewApi<State> | undefined;
   // This is set by the webview App.tsx!
-  public onUpdate: ((results: ViewResults) => void) | null = null;
+  public onUpdate:
+    | ((scanID: string, results: ViewResults | null) => void)
+    | null = null;
 
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
@@ -59,7 +61,7 @@ class VSCodeAPIWrapper {
         // });
         // update the state of the webview component!
         if (this.onUpdate) {
-          this.onUpdate(data.results);
+          this.onUpdate(data.scanID, data.results);
         }
       }
     }

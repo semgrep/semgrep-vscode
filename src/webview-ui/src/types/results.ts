@@ -13,15 +13,10 @@ export type ViewMatch = {
   searchMatch: SearchMatch;
 };
 
-export type ViewResult = {
+export type ViewResults = {
   uri: string;
   // This path has already been processed to be relative to the workspace
   // path.
   path: string;
   matches: ViewMatch[];
-};
-
-export type ViewResults = {
-  scanID: string;
-  locations: ViewResult[];
 };

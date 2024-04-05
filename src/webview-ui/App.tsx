@@ -22,7 +22,7 @@ const App: React.FC = () => {
   // receive results from the extension. To make sure that the component
   // knows to re-render, we will allow `vscode.ts` to call this callback,
   // which will update the state of the component.
-  vscode.onUpdate = (results: ViewResults) => {
+  vscode.onUpdate = (scanID: string, results: ViewResults | null) => {
     if (state === null) {
       vscode.sendMessageToExtension({
         command: "webview/semgrep/print",
@@ -30,27 +30,21 @@ const App: React.FC = () => {
       });
       return;
     }
+
     /* This means that this update is not for the current ongoing search!
        We probably raced, and future results are coming in.
        Just ignore it until relevant results come in.
      */
-    if (state.results.scanID !== results.scanID) {
+    if (state.scanID !== scanID) {
       return;
     }
 
     /* The search is done! */
-    if (results.locations.length === 0) {
+    if (results === null) {
       setState({ ...state, searchConcluded: true });
     } else {
-      /* Combine the new results with the saved results! */
-      const newState: State = {
-        searchConcluded: false,
-        results: {
-          locations: state.results.locations.concat(results.locations),
-          scanID: results.scanID,
-        },
-      };
-      setState(newState);
+      state.results_by_file.push(results);
+      setState(state);
     }
   };
 
@@ -59,7 +53,8 @@ const App: React.FC = () => {
   function onNewSearch(scanID: string) {
     setState({
       searchConcluded: false,
-      results: { scanID: scanID, locations: [] },
+      scanID,
+      results_by_file: [],
     });
   }
 

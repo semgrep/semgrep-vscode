@@ -8,6 +8,7 @@ import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { Trace } from "vscode-jsonrpc";
 
 export let global_env: Environment | null = null;
 
@@ -34,6 +35,8 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   const statusBar = createStatusBar();
   registerCommands(env);
   statusBar.show();
+
+  await env.client?.setTrace(2);
 
   // register stuff for search webview
   const provider = new SemgrepSearchWebviewProvider(context.extensionUri);

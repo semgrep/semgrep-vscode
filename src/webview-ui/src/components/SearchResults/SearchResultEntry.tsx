@@ -1,5 +1,5 @@
 import { MatchItem } from "./MatchItem";
-import { ViewMatch, ViewResult } from "../../types/results";
+import { ViewMatch, ViewResults } from "../../types/results";
 
 import styles from "./SearchResults.module.css";
 import { EntryHeader } from "./EntryHeader";
@@ -7,7 +7,7 @@ import { useState } from "react";
 import { vscode } from "../../../utilities/vscode";
 
 export interface SearchResultEntryProps {
-  result: ViewResult;
+  result: ViewResults;
 }
 export const SearchResultEntry: React.FC<SearchResultEntryProps> = ({
   result,

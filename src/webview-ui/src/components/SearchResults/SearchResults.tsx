@@ -10,11 +10,11 @@ export interface SearchResultsProps {
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
-  const numMatches = state?.results.locations.reduce(
+  const numMatches = state?.results_by_file.reduce(
     (acc, result) => acc + result.matches.length,
     0
   );
-  const numFiles = state?.results.locations.length;
+  const numFiles = state?.results_by_file.length;
 
   if (state === undefined) {
     return null;
@@ -24,7 +24,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
     if (state !== undefined) {
       vscode.sendMessageToExtension({
         command: "webview/semgrep/replaceAll",
-        matches: state.results,
+        matches: state.results_by_file,
       });
     }
   }
@@ -39,7 +39,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ state }) => {
           <VscReplaceAll role="button" title="Replace All" tabIndex={0} />
         </div>
       </div>
-      {state.results.locations.map((result) => (
+      {state.results_by_file.map((result) => (
         <SearchResultEntry result={result} />
       ))}
     </div>

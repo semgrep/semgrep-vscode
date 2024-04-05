@@ -4,5 +4,6 @@ import { ViewResults } from "./results";
 // We fill up the `results` field as we receive match information!
 export type State = {
   searchConcluded: boolean;
-  results: ViewResults;
+  scanID: string;
+  results_by_file: ViewResults[];
 };
