@@ -41,6 +41,8 @@ export interface LspSearchParams {
   pattern: string;
   language: string | null;
   fix: string | null;
+  includes: string[];
+  excludes: string[];
 }
 
 export interface SearchResults {

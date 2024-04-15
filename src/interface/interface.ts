@@ -47,6 +47,8 @@ export type webviewToExtensionCommand =
       command: typeof search;
       pattern: string;
       fix: string | null;
+      includes: string[];
+      excludes: string[];
       scanID: string;
     }
   | { command: typeof print; message: string }
