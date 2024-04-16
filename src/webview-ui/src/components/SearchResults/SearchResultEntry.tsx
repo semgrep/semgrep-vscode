@@ -16,24 +16,6 @@ export const SearchResultEntry: React.FC<SearchResultEntryProps> = ({
   // This is really only so that we can re-render.
   const [numRerenders, setNumRerenders] = useState(0);
 
-  function onFix(match: ViewMatch) {
-    if (match.searchMatch.fix) {
-      vscode.sendMessageToExtension({
-        command: "webview/semgrep/replace",
-        uri: result.uri,
-        range: match.searchMatch.range,
-        fix: match.searchMatch.fix,
-      });
-      match.isFixed = true;
-      setNumRerenders(numRerenders + 1);
-    }
-  }
-
-  function onDismiss(match: ViewMatch) {
-    match.isDismissed = true;
-    setNumRerenders(numRerenders + 1);
-  }
-
   const matches = result.matches.filter(
     (match) => !(match.isFixed || match.isDismissed)
   );
@@ -51,8 +33,22 @@ export const SearchResultEntry: React.FC<SearchResultEntryProps> = ({
             <MatchItem
               uri={result.uri}
               match={match}
-              onFix={onFix}
-              onDismiss={onDismiss}
+              onFix={() => {
+                if (match.searchMatch.fix) {
+                  vscode.sendMessageToExtension({
+                    command: "webview/semgrep/replace",
+                    uri: result.uri,
+                    range: match.searchMatch.range,
+                    fix: match.searchMatch.fix,
+                  });
+                  match.isFixed = true;
+                  setNumRerenders(numRerenders + 1);
+                }
+              }}
+              onDismiss={() => {
+                match.isDismissed = true;
+                setNumRerenders(numRerenders + 1);
+              }}
             />
           ))}
         </ul>

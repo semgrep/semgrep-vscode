@@ -7,6 +7,11 @@
   left: 0;
   right: 0;
   background-color: var(--vscode-sideBar-background);
+  --positive-pattern-badge: #458c4c;
+  --negative-pattern-badge: #a23636;
+  --add-pattern-chevron-height: 7px;
+  --add-pattern-badge-height-short: 15px;
+  --add-pattern-badge-height-tall: 27px;
 }
 
 .main-input {

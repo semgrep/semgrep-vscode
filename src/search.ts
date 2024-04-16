@@ -77,47 +77,48 @@ async function searchLoop(
   env: Environment,
   results: SearchResults | undefined
 ): Promise<void> {
-  if (results === undefined) {
-    return;
-  }
+  for (;;) {
+    if (results === undefined) {
+      return;
+    }
 
-  /* This could only be true if another asynchronous handleSearch occurred,
-     meaning that the search this loop is for has terminated.
-     We need to stop this loop, and send no more results to the webview.
-   */
-  // THINK: This could have a race condition... if a separate searchLoop
-  // changes the scanID after we pass this check, then we might hit the
-  // LSP with a /semgrep/searchOngoing request, _after_ the new
-  // /semgrep/search.
-  // This means that we will get results for the new search, but not send
-  // it to the webview.
-  // INFO: Javascript async functions only yield at `await` points, which
-  // means we could be safe, if not for the fact that `viewResultsOfSearchResults`
-  // is in fact called via `await`.
-  if (env.scanID !== null && scanID !== env.scanID) {
-    return;
-  }
+    /* This could only be true if another asynchronous handleSearch occurred,
+      meaning that the search this loop is for has terminated.
+      We need to stop this loop, and send no more results to the webview.
+    */
+    // THINK: This could have a race condition... if a separate searchLoop
+    // changes the scanID after we pass this check, then we might hit the
+    // LSP with a /semgrep/searchOngoing request, _after_ the new
+    // /semgrep/search.
+    // This means that we will get results for the new search, but not send
+    // it to the webview.
+    // INFO: Javascript async functions only yield at `await` points, which
+    // means we could be safe, if not for the fact that `viewResultsOfSearchResults`
+    // is in fact called via `await`.
+    if (env.scanID !== null && scanID !== env.scanID) {
+      return;
+    }
 
-  /* Communicate with the webview! */
-  // console.log(results.locations);
-  const viewResults = await viewResultsOfSearchResults(scanID, results);
-  env.provider?.sendMessageToWebview({
-    command: "extension/semgrep/results",
-    results: viewResults,
-  });
+    /* Communicate with the webview! */
+    // console.log(results.locations);
+    const viewResults = await viewResultsOfSearchResults(scanID, results);
+    env.provider?.sendMessageToWebview({
+      command: "extension/semgrep/results",
+      results: viewResults,
+    });
 
-  if (results.locations.length === 0) {
-    /* This means we got no results at all.
-       Time to stop the loop.
-     */
-    env.scanID = null;
-    return;
-  } else {
-    /* Otherwise, the streaming is not done. There are more results coming.
-       Time to loop!
-     */
-    const results = await env.client?.sendRequest(searchOngoing);
-    await searchLoop(scanID, env, results);
+    if (results.locations.length === 0) {
+      /* This means we got no results at all.
+        Time to stop the loop.
+      */
+      env.scanID = null;
+      return;
+    } else {
+      /* Otherwise, the streaming is not done. There are more results coming.
+        Time to loop!
+      */
+      results = await env.client?.sendRequest(searchOngoing);
+    }
   }
 }
 

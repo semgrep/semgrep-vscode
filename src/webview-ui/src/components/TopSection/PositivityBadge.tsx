@@ -3,14 +3,14 @@ import { VscAdd, VscChevronDown } from "react-icons/vsc";
 import { isLast, simplePattern } from "./PatternList";
 import { VscCircleSlash } from "react-icons/vsc";
 
-export interface PatternBadgeProps {
+export interface PositivityBadgeProps {
   index: number | null;
   patterns: simplePattern[];
   positive: boolean;
   onNewPattern: () => void;
   onPositivityToggle: () => void;
 }
-export const PatternBadge: React.FC<PatternBadgeProps> = ({
+export const PositivityBadge: React.FC<PositivityBadgeProps> = ({
   onNewPattern,
   index,
   patterns,
@@ -18,9 +18,13 @@ export const PatternBadge: React.FC<PatternBadgeProps> = ({
   onPositivityToggle,
 }) => {
   const last = isLast(index, patterns);
-  const color = positive ? "#458c4c" : "#a23636";
-  const heightOfAdd = last ? "15px" : "27px";
-  const heightOfChevron = last ? "7px" : "0px";
+  const color = positive
+    ? "var(--positive-pattern-badge)"
+    : "var(--negative-pattern-badge)";
+  const heightOfAdd = last
+    ? "var(--add-pattern-badge-height-short)"
+    : "var(--add-pattern-badge-height-tall)";
+  const heightOfChevron = last ? "var(--add-pattern-chevron-height)" : "0px";
   return (
     <div>
       <div

@@ -19,19 +19,14 @@ export const MatchItem: React.FC<MatchItemProps> = ({
 }) => {
   const { before, inside, after } = match.searchMatch;
 
-  let matchText: JSX.Element;
-  if (match.searchMatch.fix) {
-    matchText = (
-      <>
-        <span className={styles.matchTextDeleted}>{inside}</span>
-        <span className={styles.matchTextInserted}>
-          {match.searchMatch.fix}
-        </span>
-      </>
-    );
-  } else {
-    matchText = <span className={styles.matchTextNormal}>{inside}</span>;
-  }
+  const matchText = match.searchMatch.fix ? (
+    <>
+      <span className={styles.matchTextDeleted}>{inside}</span>
+      <span className={styles.matchTextInserted}>{match.searchMatch.fix}</span>
+    </>
+  ) : (
+    <span className={styles.matchTextNormal}>{inside}</span>
+  );
 
   function onClick() {
     vscode.sendMessageToExtension({

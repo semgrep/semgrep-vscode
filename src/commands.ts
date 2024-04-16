@@ -152,16 +152,6 @@ export function registerCommands(env: Environment): void {
     }
   );
 
-  vscode.commands.registerCommand("semgrep.search.refresh", async () => {
-    // TODO?
-    // if (env.searchView.lastSearch) {
-    //   vscode.commands.executeCommand(
-    //     "semgrep.search",
-    //     env.searchView.lastSearch
-    //   );
-    // }
-  });
-
   vscode.commands.registerCommand("semgrep.search.clear", () => {
     env.provider?.sendMessageToWebview({
       command: "extension/semgrep/clear",

@@ -4,7 +4,7 @@ import { LangChooser } from "../utils/LangChooser";
 import styles from "./MainInputs.module.css";
 import { VscClose } from "react-icons/vsc";
 import { useStore } from "../../hooks/useStore";
-import { PatternBadge } from "./PatternBadge";
+import { PositivityBadge } from "./PositivityBadge";
 import { vscode } from "../../../utilities/vscode";
 
 export type simplePattern = { positive: boolean; pattern: string };
@@ -55,7 +55,7 @@ export const PatternList: React.FC<PatternListProps> = ({ onNewSearch }) => {
   function mkPattern(p: simplePattern, index: number | null) {
     return (
       <div className={styles.searchRow}>
-        <PatternBadge
+        <PositivityBadge
           positive={p.positive}
           onPositivityToggle={() =>
             setPatternAtIndex(index, {

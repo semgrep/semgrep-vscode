@@ -120,10 +120,9 @@ export class SemgrepSearchWebviewProvider
   }
 
   public resolveWebviewView(
-    webviewView: vscode.WebviewView
-    // these are unused, so commented out
-    // context: vscode.WebviewViewResolveContext,
-    // _token: vscode.CancellationToken
+    webviewView: vscode.WebviewView,
+    _context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken
   ): void {
     this._view = webviewView;
 
@@ -160,7 +159,6 @@ export class SemgrepSearchWebviewProvider
 
     const nonce = randomUUID();
 
-    // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
     return /*html*/ `
       <!DOCTYPE html>
       <html lang="en">
@@ -181,21 +179,4 @@ export class SemgrepSearchWebviewProvider
       </html>
     `;
   }
-
-  // private _setWebviewMessageListener(webview: vscode.Webview) {
-  //   webview.onDidReceiveMessage(
-  //     (message: any) => {
-  //       const command = message.command;
-  //       const text = message.text;
-
-  //       switch (command) {
-  //         case "hello":
-  //           vscode.window.showInformationMessage(text);
-  //           return;
-  //       }
-  //     },
-  //     undefined,
-  //     this._disposables
-  //   );
-  // }
 }

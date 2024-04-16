@@ -72,31 +72,25 @@
         "command": "semgrep.search",
         "title": "Semgrep: Search by pattern",
         "icon": "$(search-view-icon)",
-        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
-      },
-      {
-        "command": "semgrep.search.refresh",
-        "title": "Semgrep Search: Refresh",
-        "icon": "$(search-refresh)",
-        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+        "when": "semgrep.cli.minor >= 70 || config.semgrep.ignoreCliVersion"
       },
       {
         "command": "semgrep.search.clear",
         "title": "Semgrep Search: Clear",
         "icon": "$(search-remove)",
-        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+        "when": "semgrep.cli.minor >= 70 || config.semgrep.ignoreCliVersion"
       },
       {
         "command": "semgrep.search.exportRule",
         "title": "Semgrep Search: Export Rule",
         "icon": "$(search-remove)",
-        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+        "when": "semgrep.cli.minor >= 70 || config.semgrep.ignoreCliVersion"
       },
       {
         "command": "semgrep.search.replace",
         "title": "Semgrep Search: Semantic Replace",
         "icon": "$(replace)",
-        "when": "semgrep.cli.minor >= 25 || config.semgrep.ignoreCliVersion"
+        "when": "semgrep.cli.minor >= 70 || config.semgrep.ignoreCliVersion"
       },
       {
         "command": "semgrep.restartLanguageServer",
