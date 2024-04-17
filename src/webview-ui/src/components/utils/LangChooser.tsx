@@ -2,25 +2,23 @@ import { VSCodeDropdown, VSCodeOption } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "../../../utilities/vscode";
 import { SearchLanguage } from "../../../../interface/interface";
 import { useState } from "react";
-import { Store, useStore } from "../../hooks/useStore";
+import { useSetStore } from "../../hooks/useStore";
 import { SUPPORTED_LANGS } from "../../../../constants";
 
-const style = {
-  "--corner-radius": "2",
-  padding: "0",
-  height: "27px",
-};
+import styles from "./Utils.module.css";
 
 export interface LangChooserProps {
-  keyName: keyof Store;
+  lang: string;
 }
 
-export const LangChooser: React.FC<LangChooserProps> = ({ keyName }) => {
-  const [content, setContent] = useStore(keyName);
-
-  const activeLang = SUPPORTED_LANGS.includes(content as SearchLanguage)
-    ? (content as SearchLanguage)
+export const LangChooser: React.FC<LangChooserProps> = ({ lang }) => {
+  const activeLang = SUPPORTED_LANGS.includes(lang as SearchLanguage)
+    ? (lang as SearchLanguage)
     : null;
+
+  const setLang = (lang: SearchLanguage) => {
+    useSetStore("language", lang);
+  };
 
   const [userHasSelectedLang, setUserHasSelectedLang] =
     useState<boolean>(false);
@@ -34,16 +32,16 @@ export const LangChooser: React.FC<LangChooserProps> = ({ keyName }) => {
       return;
     }
 
-    setContent(activeLang ?? "");
+    setLang(activeLang ?? "");
   };
 
   const handleUpdateLang = (lang: string) => {
     setUserHasSelectedLang(true);
     if (lang == "all") {
-      setContent("");
+      setLang("");
     }
     if (SUPPORTED_LANGS.includes(lang as SearchLanguage)) {
-      setContent(lang);
+      setLang(lang);
     } else {
       throw new Error("Invalid language");
     }
@@ -53,7 +51,7 @@ export const LangChooser: React.FC<LangChooserProps> = ({ keyName }) => {
     <VSCodeDropdown
       value={activeLang ?? "all"}
       onChange={(e: any) => handleUpdateLang(e.currentTarget.value)}
-      style={style}
+      className={styles["lang-chooser"]}
     >
       <VSCodeOption>all</VSCodeOption>
       {SUPPORTED_LANGS.map((l) => (

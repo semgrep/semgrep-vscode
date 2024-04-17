@@ -1,9 +1,8 @@
-import { useEffect } from "react";
-import useLocalStorage from "react-use/lib/useLocalStorage";
 import { vscode } from "../../utilities/vscode";
 import { SUPPORTED_LANGS } from "../../../constants";
 import { SearchLanguage } from "../../../interface/interface";
 import { simplePattern } from "../components/TopSection/PatternList";
+import { useSyncExternalStore } from "react";
 
 export interface Store {
   pattern: string;
@@ -14,6 +13,11 @@ export interface Store {
   simplePatterns: simplePattern[];
 }
 
+/* TODO: We are no longer using  local storage due to version issues with
+   React 18 and useSyncExternalStore, but we can bring this back later once
+   we do.
+*/
+/*
 const localStorageKeys: Record<keyof Store, string> = {
   pattern: "semgrep-search-pattern",
   fix: "semgrep-search-fix",
@@ -22,6 +26,7 @@ const localStorageKeys: Record<keyof Store, string> = {
   language: "semgrep-search-language",
   simplePatterns: "semgrep-search-simple-patterns",
 };
+*/
 
 function defaultStore() {
   return {
@@ -35,6 +40,26 @@ function defaultStore() {
 }
 
 const store: Store = defaultStore();
+let version = 114514;
+let subscribeFunction: (() => void) | null = null;
+
+function onStoreChange() {
+  version = version + 1;
+  if (subscribeFunction) {
+    subscribeFunction();
+  }
+}
+
+export function subscribe(onChange: () => void): () => void {
+  subscribeFunction = onChange;
+  return () => {
+    subscribeFunction = null;
+  };
+}
+
+export function getSnapshot() {
+  return version;
+}
 
 export function generateUniqueID(): string {
   return Math.random().toString(36).substring(7);
@@ -70,22 +95,27 @@ export function useSearch(onNewSearch: (scanID: string) => void): void {
   });
 }
 
-export function useStore(key: keyof Store): [any, (value: any) => void] {
+export function useStore() {
+  useSyncExternalStore(subscribe, getSnapshot);
+  return store;
+}
+
+// This function sets the store to have a certain value.
+// Ideally, we could use local storage to persist this across sessions,
+// but useSyncExternalStore is from React 18, which from experimentation
+// seems to be messing with `react-use` at 17.5.
+// So for now, we'll eschew the local storage, as it shouldn't matter too much.
+export function useSetStore(key: keyof Store, value: any): void {
   if (key === "simplePatterns") {
-    const [field = [], setField] = useLocalStorage(localStorageKeys[key], []);
-    useEffect(() => {
-      store[key] = field;
-    }, [field, key]);
-    return [field, setField];
+    // const [field = [], setField] = useLocalStorage(localStorageKeys[key], []);
+    store[key] = value;
     // annoying code duplication here because simplePatterns has a different type of
     // data that it is storing, vs the other keys
   } else {
-    const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
-    useEffect(() => {
-      store[key] = field;
-    }, [field, key]);
-    return [field, setField];
+    // const [field = "", setField] = useLocalStorage(localStorageKeys[key], "");
+    store[key] = value;
   }
+  onStoreChange();
 }
 
 export function exportRule() {

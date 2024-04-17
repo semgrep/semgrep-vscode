@@ -1,14 +1,20 @@
 import { vscode } from "./utilities/vscode";
 import "./App.css";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { TopSection } from "./src/components/TopSection/TopSection";
 import { SearchResults } from "./src/components/SearchResults/SearchResults";
 import { State } from "./src/types/state";
 import { ViewResults } from "./src/types/results";
 import { InfoBlurb } from "./src/components/utils/InfoBlurb";
-import { exportRule, useStore } from "./src/hooks/useStore";
+import { exportRule, useSetStore, useStore } from "./src/hooks/useStore";
 
 const App: React.FC = () => {
+  // This store is all of the non-search-result related state that the
+  // webview needs to maintain.
+  // This includes stuff like the things that the user writes into boxes, like the
+  // patterns, autofix, etc.
+  const store = useStore();
+
   /* The states are as follows:
      - null: No search has ever been requested yet.
      - { searchConcluded: false, { scanID, ...} }: a search is ongoing, for the scan
@@ -17,8 +23,6 @@ const App: React.FC = () => {
        have saved results in `results`. This scan had ID scanID.
    */
   const [state, setState] = useState<State | null>(null);
-  const [_simplePatterns = [], setSimplePatterns] = useStore("simplePatterns");
-  const [_pattern = "", setPattern] = useStore("pattern");
 
   // This code registers a handler with the VSCode interfacing infrastrucure,
   // outside of this component.
@@ -59,8 +63,8 @@ const App: React.FC = () => {
   };
 
   vscode.onClear = () => {
-    setPattern("");
-    setSimplePatterns([]);
+    useSetStore("pattern", "");
+    useSetStore("simplePatterns", []);
     setState(null);
   };
   vscode.onExportRule = () => {
@@ -78,7 +82,7 @@ const App: React.FC = () => {
 
   return (
     <main>
-      <TopSection onNewSearch={onNewSearch} state={state} />
+      <TopSection store={store} onNewSearch={onNewSearch} state={state} />
       {state ? <SearchResults state={state} /> : <InfoBlurb />}
     </main>
   );

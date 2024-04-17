@@ -3,19 +3,19 @@ import { vscode } from "../../../utilities/vscode";
 import { State } from "../../types/state";
 import { VscReplaceAll } from "react-icons/vsc";
 import styles from "./MainInputs.module.css";
-import { useStore } from "../../hooks/useStore";
+import { Store, useSetStore } from "../../hooks/useStore";
 import { PatternList } from "./PatternList";
 
 export interface MainInputsProps {
   onNewSearch: (scanID: string) => void;
   state: State | null;
+  store: Store;
 }
 export const MainInputs: React.FC<MainInputsProps> = ({
   onNewSearch,
   state,
+  store,
 }) => {
-  const [fix, setFix] = useStore("fix");
-
   function onFixAll() {
     if (state) {
       vscode.sendMessageToExtension({
@@ -32,14 +32,14 @@ export const MainInputs: React.FC<MainInputsProps> = ({
 
   return (
     <>
-      <PatternList onNewSearch={onNewSearch} />
+      <PatternList store={store} onNewSearch={onNewSearch} />
       <div className={styles.searchRow}>
         <TextBox
           onNewSearch={onNewSearch}
           placeholder="Fix"
           isMultiline={true}
-          value={fix}
-          onChange={setFix}
+          value={store.fix}
+          onChange={(fix: string) => useSetStore("fix", fix)}
         />
         <div
           className={`${styles.replaceAllButton} ${

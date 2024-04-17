@@ -3,9 +3,8 @@ import { TextBox } from "../utils/TextBox";
 import { LangChooser } from "../utils/LangChooser";
 import styles from "./MainInputs.module.css";
 import { VscClose } from "react-icons/vsc";
-import { useStore } from "../../hooks/useStore";
+import { useSetStore, Store } from "../../hooks/useStore";
 import { PositivityBadge } from "./PositivityBadge";
-import { vscode } from "../../../utilities/vscode";
 
 export type simplePattern = { positive: boolean; pattern: string };
 
@@ -20,19 +19,27 @@ export function isLast(
 
 export interface PatternListProps {
   onNewSearch: (scanID: string) => void;
+  store: Store;
 }
-export const PatternList: React.FC<PatternListProps> = ({ onNewSearch }) => {
-  const [pattern, setPattern] = useStore("pattern");
-  const [patterns, setPatterns] = useStore("simplePatterns");
-
+export const PatternList: React.FC<PatternListProps> = ({
+  onNewSearch,
+  store,
+}) => {
   const [numRerenders, setNumRerenders] = useState(0);
+
+  function setPattern(pattern: string) {
+    useSetStore("pattern", pattern);
+  }
+  function setPatterns(simplePatterns: simplePattern[]) {
+    useSetStore("simplePatterns", simplePatterns);
+  }
 
   function setPatternAtIndex(index: number | null, p: simplePattern) {
     if (index === null) {
       setPattern(p.pattern);
     } else {
-      patterns[index] = p;
-      setPatterns(patterns);
+      store.simplePatterns[index] = p;
+      setPatterns(store.simplePatterns);
       setNumRerenders(numRerenders + 1);
     }
   }
@@ -41,13 +48,16 @@ export const PatternList: React.FC<PatternListProps> = ({ onNewSearch }) => {
     if (index === null) {
       return;
     }
-    patterns.splice(index, 1);
-    setPatterns(patterns);
+    store.simplePatterns.splice(index, 1);
+    setPatterns(store.simplePatterns);
     setNumRerenders(numRerenders + 1);
   }
 
   function onNewPattern() {
-    const newPatterns = patterns.concat({ positive: true, pattern: "" });
+    const newPatterns = store.simplePatterns.concat({
+      positive: true,
+      pattern: "",
+    });
     setPatterns(newPatterns);
     setNumRerenders(numRerenders + 1);
   }
@@ -64,7 +74,7 @@ export const PatternList: React.FC<PatternListProps> = ({ onNewSearch }) => {
             })
           }
           onNewPattern={onNewPattern}
-          patterns={patterns}
+          patterns={store.simplePatterns}
           index={index}
         />
         <TextBox
@@ -80,7 +90,7 @@ export const PatternList: React.FC<PatternListProps> = ({ onNewSearch }) => {
           }
         />
         {index === null ? (
-          <LangChooser keyName="language" />
+          <LangChooser lang={store.language} />
         ) : (
           <div
             className={styles.deletePatternButton}
@@ -94,8 +104,10 @@ export const PatternList: React.FC<PatternListProps> = ({ onNewSearch }) => {
   }
   return (
     <div className={styles.patternList}>
-      {mkPattern({ positive: true, pattern: pattern }, null)}
-      {patterns.map((p: simplePattern, index: number) => mkPattern(p, index))}
+      {mkPattern({ positive: true, pattern: store.pattern }, null)}
+      {store.simplePatterns.map((p: simplePattern, index: number) =>
+        mkPattern(p, index)
+      )}
     </div>
   );
 };

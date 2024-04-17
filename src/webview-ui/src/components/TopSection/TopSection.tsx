@@ -6,23 +6,23 @@ import { VscEllipsis } from "react-icons/vsc";
 import { TextBox } from "../utils/TextBox";
 import { State } from "../../types/state";
 import { MatchesSummary } from "./MatchesSummary";
-import { useStore } from "../../hooks/useStore";
+import { useSetStore, Store } from "../../hooks/useStore";
 
 export interface TopSectionProps {
   onNewSearch: (scanID: string) => void;
   state: State | null;
+  store: Store;
 }
 export const TopSection: React.FC<TopSectionProps> = ({
   onNewSearch,
   state,
+  store,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
-  const [includes, setIncludes] = useStore("includes");
-  const [excludes, setExcludes] = useStore("excludes");
 
   return (
     <div className={styles.topSection}>
-      <MainInputs onNewSearch={onNewSearch} state={state} />
+      <MainInputs store={store} onNewSearch={onNewSearch} state={state} />
       <div>
         <div
           role="button"
@@ -36,8 +36,8 @@ export const TopSection: React.FC<TopSectionProps> = ({
             description="files to include"
             onNewSearch={onNewSearch}
             isMultiline={false}
-            value={includes}
-            onChange={setIncludes}
+            value={store.includes}
+            onChange={(value: string) => useSetStore("includes", value)}
           />
         )}
         {showOptions && (
@@ -45,8 +45,8 @@ export const TopSection: React.FC<TopSectionProps> = ({
             description="files to exclude"
             onNewSearch={onNewSearch}
             isMultiline={false}
-            value={excludes}
-            onChange={setExcludes}
+            value={store.excludes}
+            onChange={(value: string) => useSetStore("excludes", value)}
           />
         )}
       </div>
