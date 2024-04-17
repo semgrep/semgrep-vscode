@@ -25,8 +25,6 @@ export const PatternList: React.FC<PatternListProps> = ({
   onNewSearch,
   store,
 }) => {
-  const [numRerenders, setNumRerenders] = useState(0);
-
   function setPattern(pattern: string) {
     useSetStore("pattern", pattern);
   }
@@ -40,7 +38,6 @@ export const PatternList: React.FC<PatternListProps> = ({
     } else {
       store.simplePatterns[index] = p;
       setPatterns(store.simplePatterns);
-      setNumRerenders(numRerenders + 1);
     }
   }
 
@@ -50,7 +47,6 @@ export const PatternList: React.FC<PatternListProps> = ({
     }
     store.simplePatterns.splice(index, 1);
     setPatterns(store.simplePatterns);
-    setNumRerenders(numRerenders + 1);
   }
 
   function onNewPattern() {
@@ -59,7 +55,6 @@ export const PatternList: React.FC<PatternListProps> = ({
       pattern: "",
     });
     setPatterns(newPatterns);
-    setNumRerenders(numRerenders + 1);
   }
 
   function mkPattern(p: simplePattern, index: number | null) {

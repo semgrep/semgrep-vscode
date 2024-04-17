@@ -43,7 +43,7 @@ const store: Store = defaultStore();
 let version = 114514;
 let subscribeFunction: (() => void) | null = null;
 
-function onStoreChange() {
+export function onStoreChange() {
   version = version + 1;
   if (subscribeFunction) {
     subscribeFunction();
