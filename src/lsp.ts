@@ -257,12 +257,21 @@ async function start(env: Environment): Promise<void> {
         resolve();
       }, 30000);
     }
-    c.onNotification("$/progress", (params) => {
-      if (params?.value?.kind == "end") {
-        env.logger.log("Rules loaded");
-        resolve();
-      }
-    });
+    if (process.env["NODE_ENV"] === "test") {
+      // this is a bit hacky but we do this so we know if the rules have loaded
+      // in the tests before we start running them. We should find a better way,
+      // like a custom notificaiton or something.
+
+      // This overrides the default behavior of the client
+      // to display the status of the rules loading so we
+      // only do this in tests
+      c.onNotification("$/progress", (params) => {
+        if (params?.value?.kind == "end") {
+          env.logger.log("Rules loaded");
+          resolve();
+        }
+      });
+    }
   });
 
   env.client = c;
