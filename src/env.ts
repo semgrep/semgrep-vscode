@@ -77,13 +77,6 @@ export class Environment {
   set newInstall(val: boolean) {
     this.context.globalState.update("newInstall", val);
   }
-  get testing(): boolean {
-    return this.context.globalState.get("testing", false);
-  }
-
-  set testing(val: boolean) {
-    this.context.globalState.update("testing", val);
-  }
 
   set client(client: LanguageClient | null) {
     this._client = client;

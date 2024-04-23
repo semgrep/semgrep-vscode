@@ -77,6 +77,7 @@ async function main() {
     extensionTestsEnv = {
       ...extensionTestsEnv,
       CWD: cwd,
+      NODE_ENV: "test",
     };
     for (const repo of REPOS) {
       const repoName = repo[0];

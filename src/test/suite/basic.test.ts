@@ -78,9 +78,6 @@ function makeFileUntracked(cwd: string, path: string) {
 async function getEnv() {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const extension = vscode.extensions.getExtension("Semgrep.semgrep")!;
-  vscode.workspace
-    .getConfiguration("semgrep")
-    .update("testing", true, vscode.ConfigurationTarget.Global);
   // set semgrep to use javascript
   if (USE_JS) {
     vscode.workspace

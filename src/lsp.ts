@@ -257,7 +257,7 @@ async function start(env: Environment): Promise<void> {
         resolve();
       }, 30000);
     }
-    if (env.testing) {
+    if (process.env["NODE_ENV"] === "test") {
       // this is a bit hacky but we do this so we know if the rules have loaded
       // in the tests before we start running them. We should find a better way,
       // like a custom notificaiton or something.
