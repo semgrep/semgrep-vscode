@@ -38,6 +38,7 @@ export const TopSection: React.FC<TopSectionProps> = ({
             isMultiline={false}
             value={store.includes}
             onChange={(value: string) => useSetStore("includes", value)}
+            store={store}
           />
         )}
         {showOptions && (
@@ -47,6 +48,7 @@ export const TopSection: React.FC<TopSectionProps> = ({
             isMultiline={false}
             value={store.excludes}
             onChange={(value: string) => useSetStore("excludes", value)}
+            store={store}
           />
         )}
       </div>

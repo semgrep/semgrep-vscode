@@ -65,7 +65,10 @@ export function generateUniqueID(): string {
   return Math.random().toString(36).substring(7);
 }
 
-export function useSearch(onNewSearch: (scanID: string) => void): void {
+export function useSearch(
+  store: Store,
+  onNewSearch: (scanID: string) => void
+): void {
   function splitAndTrim(value: string): string[] {
     return value
       .split(",")

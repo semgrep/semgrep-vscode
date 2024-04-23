@@ -40,6 +40,7 @@ export const MainInputs: React.FC<MainInputsProps> = ({
           isMultiline={true}
           value={store.fix}
           onChange={(fix: string) => useSetStore("fix", fix)}
+          store={store}
         />
         <div
           className={`${styles.replaceAllButton} ${

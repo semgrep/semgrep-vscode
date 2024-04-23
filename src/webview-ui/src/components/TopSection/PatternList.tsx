@@ -83,6 +83,7 @@ export const PatternList: React.FC<PatternListProps> = ({
               pattern: value,
             })
           }
+          store={store}
         />
         {index === null ? (
           <LangChooser lang={store.language} />

@@ -1,5 +1,5 @@
 import { VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
-import { useSearch } from "../../hooks/useStore";
+import { Store, useSearch } from "../../hooks/useStore";
 
 const style = {
   // this makes it not quite as weirdly tall
@@ -18,6 +18,7 @@ export interface TextBoxProps {
   onChange: (value: string) => void;
   placeholder?: string;
   description?: string;
+  store: Store;
 }
 export const TextBox: React.FC<TextBoxProps> = ({
   onNewSearch,
@@ -26,6 +27,7 @@ export const TextBox: React.FC<TextBoxProps> = ({
   value,
   onChange,
   description,
+  store,
 }) => {
   const numRows = isMultiline ? value.split("\n").length : 1;
 
@@ -41,7 +43,7 @@ export const TextBox: React.FC<TextBoxProps> = ({
         onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key == "Enter" && !e.shiftKey) {
             e.preventDefault();
-            useSearch(onNewSearch);
+            useSearch(store, onNewSearch);
           }
         }}
         value={value}

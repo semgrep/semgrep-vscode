@@ -51,7 +51,12 @@ export const LangChooser: React.FC<LangChooserProps> = ({ lang }) => {
     <VSCodeDropdown
       value={activeLang ?? "all"}
       onChange={(e: any) => handleUpdateLang(e.currentTarget.value)}
-      className={styles["lang-chooser"]}
+      // Despite my valiant efforts to not do so, it seems that putting this into
+      // a CSS module (as a property on the class, or even as a variable to be
+      // referenced here) does not cause the drop down to be styled as the correct
+      // height.
+      // I don't know why that is.
+      style={{ height: "27px" }}
     >
       <VSCodeOption>all</VSCodeOption>
       {SUPPORTED_LANGS.map((l) => (
