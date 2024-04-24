@@ -17,7 +17,7 @@ export type ShowAstParams = {
 };
 
 export const scanWorkspace = new lc.NotificationType<ScanWorkspaceParams>(
-  "semgrep/scanWorkspace"
+  "semgrep/scanWorkspace",
 );
 
 export interface LoginParams {
@@ -39,11 +39,11 @@ export interface SearchResults {
   locations: SearchResult[];
 }
 export const login = new lc.RequestType0<LoginParams | null, void>(
-  "semgrep/login"
+  "semgrep/login",
 );
 
 export const loginFinish = new lc.NotificationType<LoginParams>(
-  "semgrep/loginFinish"
+  "semgrep/loginFinish",
 );
 
 export const logout = new lc.NotificationType("semgrep/logout");
@@ -51,17 +51,17 @@ export const logout = new lc.NotificationType("semgrep/logout");
 export const refreshRules = new lc.NotificationType("semgrep/refreshRules");
 
 export const workspaceRules = new lc.RequestType0<any[], void>(
-  "semgrep/workspaceRules"
+  "semgrep/workspaceRules",
 );
 
 export const loginStatus = new lc.RequestType0<LoginStatusParams | null, void>(
-  "semgrep/loginStatus"
+  "semgrep/loginStatus",
 );
 
 export const search = new lc.RequestType<SearchParams, SearchResults, void>(
-  "semgrep/search"
+  "semgrep/search",
 );
 
 export const showAst = new lc.RequestType<ShowAstParams, string, void>(
-  "semgrep/showAst"
+  "semgrep/showAst",
 );

@@ -60,7 +60,7 @@ if (USE_JS || process.platform === "win32") {
 function clientNotification(
   client: LanguageClient,
   type: ProtocolNotificationType<any, any>,
-  checkParams: (params: any) => boolean = () => true
+  checkParams: (params: any) => boolean = () => true,
 ) {
   return new Promise((resolve) => {
     client.onNotification(type, (params) => {
@@ -144,7 +144,7 @@ suite("Extension Features", function () {
     const previousResult = resultsHashMap.get(result.path);
     resultsHashMap.set(
       result.path,
-      previousResult ? previousResult.concat(result) : [result]
+      previousResult ? previousResult.concat(result) : [result],
     );
   });
 
@@ -179,7 +179,7 @@ suite("Extension Features", function () {
       const diagnosticsPromise = clientNotification(
         client,
         PublishDiagnosticsNotification.type,
-        (params: PublishDiagnosticsParams) => params.uri === uri.toString()
+        (params: PublishDiagnosticsParams) => params.uri === uri.toString(),
       );
       doc = await vscode.workspace.openTextDocument(uri);
       const diagnostics =
@@ -187,7 +187,7 @@ suite("Extension Features", function () {
       assert.strictEqual(
         diagnostics.diagnostics.length,
         result.length,
-        "No diagnostics on open"
+        "No diagnostics on open",
       );
     }).timeout(SCAN_TIMEOUT);
     // Test that we can edit the file and the diagnostics update
@@ -198,11 +198,11 @@ suite("Extension Features", function () {
       const diagnosticsPromise = clientNotification(
         client,
         PublishDiagnosticsNotification.type,
-        (params: PublishDiagnosticsParams) => params.uri === uri.toString()
+        (params: PublishDiagnosticsParams) => params.uri === uri.toString(),
       );
       // delete all content
       await editor.edit((editBuilder) =>
-        editBuilder.delete(new vscode.Range(0, 0, doc.lineCount, 0))
+        editBuilder.delete(new vscode.Range(0, 0, doc.lineCount, 0)),
       );
       await doc.save();
       const diagnostics =
@@ -210,17 +210,17 @@ suite("Extension Features", function () {
       assert.strictEqual(
         diagnostics.diagnostics.length,
         0,
-        "Diagnostics after delete"
+        "Diagnostics after delete",
       );
 
       // restore content
       const restoreDiagnosticsPromise = clientNotification(
         client,
         PublishDiagnosticsNotification.type,
-        (params: PublishDiagnosticsParams) => params.uri === uri.toString()
+        (params: PublishDiagnosticsParams) => params.uri === uri.toString(),
       );
       await editor.edit((editBuilder) =>
-        editBuilder.insert(new vscode.Position(0, 0), content)
+        editBuilder.insert(new vscode.Position(0, 0), content),
       );
       await doc.save();
       const restoreDiagnostics =
@@ -228,7 +228,7 @@ suite("Extension Features", function () {
       assert.strictEqual(
         restoreDiagnostics.diagnostics.length,
         result.length,
-        "No diagnostics after change"
+        "No diagnostics after change",
       );
     }).timeout(SCAN_TIMEOUT);
   });

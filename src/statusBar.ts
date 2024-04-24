@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 export function createStatusBar(): vscode.StatusBarItem {
   const statusBar = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right
+    vscode.StatusBarAlignment.Right,
   );
   const statusBarCommand: vscode.Command = {
     title: "",

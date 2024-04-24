@@ -41,7 +41,7 @@ export class Environment {
     readonly channel: OutputChannel,
     readonly logger: Logger,
     public version: string = "",
-    public startupPromise?: Promise<void>
+    public startupPromise?: Promise<void>,
   ) {
     this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
@@ -101,7 +101,7 @@ export class Environment {
       searchView,
       documentView,
       channel,
-      logger
+      logger,
     );
   }
 
