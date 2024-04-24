@@ -16,7 +16,7 @@ export const SearchResultEntry: React.FC<SearchResultEntryProps> = ({
   const [isExpanded, setIsExpanded] = useState(true);
 
   const matches = result.matches.filter(
-    (match) => !(match.isFixed || match.isDismissed)
+    (match) => !(match.isFixed || match.isDismissed),
   );
 
   return (

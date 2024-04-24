@@ -49,7 +49,7 @@ export class SemgrepSearchWebviewProvider
       case "webview/semgrep/replaceAll": {
         vscode.commands.executeCommand(
           "semgrep.search.replaceAll",
-          data.matches
+          data.matches,
         );
         break;
       }
@@ -89,7 +89,7 @@ export class SemgrepSearchWebviewProvider
           .map((pat) =>
             pat.positive
               ? `    - pattern: '${pat.pattern}'`
-              : `    - pattern-not: '${pat.pattern}'`
+              : `    - pattern-not: '${pat.pattern}'`,
           )
           .join("\n");
         vscode.workspace
@@ -122,7 +122,7 @@ export class SemgrepSearchWebviewProvider
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     _context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): void {
     this._view = webviewView;
 
@@ -146,15 +146,15 @@ export class SemgrepSearchWebviewProvider
 
     // The CSS file from the React build output
     const stylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "webview.css")
+      vscode.Uri.joinPath(assetsPath, "webview.css"),
     );
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "webview.js")
+      vscode.Uri.joinPath(assetsPath, "webview.js"),
     );
     // The global CSS file
     const globalStylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "global.css")
+      vscode.Uri.joinPath(this._extensionUri, "media", "global.css"),
     );
 
     const nonce = randomUUID();

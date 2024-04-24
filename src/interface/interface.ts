@@ -75,7 +75,7 @@ export const activeLang = "extension/semgrep/activeLang";
 export const clear = "extension/semgrep/clear";
 export const exportRuleRequest = "extension/semgrep/exportRuleRequest";
 
-export type SearchLanguage = typeof SUPPORTED_LANGS[number];
+export type SearchLanguage = (typeof SUPPORTED_LANGS)[number];
 
 export type extensionToWebviewCommand =
   | {
