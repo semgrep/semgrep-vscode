@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+## v1.7.0 - 2024-04-24
+
+### Added
+
 - Reworked the Semgrep Search UI to be more modern, performant, and expressive!
   Features include:
   - ability to specify multiple patterns to match / not match
@@ -19,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - streaming search
 
 ### Changed
+
+- Scan workspace commands will now toggle "Only Git Dirty" before scanning
 
 ## v1.6.3 - 2024-02-02
 
