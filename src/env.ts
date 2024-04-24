@@ -10,6 +10,7 @@ import { LSP_LOG_FILE, VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { LanguageClient } from "vscode-languageclient/node";
+import { EventEmitter } from "stream";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export class Config {
@@ -26,6 +27,13 @@ export class Config {
 
   get path(): string {
     return this.cfg.get<string>("path") ?? "semgrep";
+  }
+
+  get onlyGitDirty(): boolean {
+    return this.cfg.get<boolean>("scan.onlyGitDirty") ?? false;
+  }
+  set onlyGitDirty(val: boolean) {
+    this.cfg.update("scan.onlyGitDirty", val);
   }
 }
 
@@ -50,7 +58,8 @@ export class Environment {
     readonly channel: OutputChannel,
     readonly logger: Logger,
     public version: string = "",
-    public startupPromise?: Promise<void>
+    // rulesRefreshedEmitter is used to notify if rules are refreshed, i.e. after startup, a login, or a manual refresh
+    private rulesRefreshedEmitter: EventEmitter = new EventEmitter(),
   ) {
     this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
@@ -96,6 +105,18 @@ export class Environment {
       window.showWarningMessage("Semgrep Language Server not active");
     }
     return this._client;
+  }
+
+  emitRulesRefreshedEvent(): void {
+    this.rulesRefreshedEmitter.emit("refresh");
+  }
+
+  onRulesRefreshed(cb: () => void, once = false): void {
+    if (once) {
+      this.rulesRefreshedEmitter.once("refresh", cb);
+    } else {
+      this.rulesRefreshedEmitter.on("refresh", cb);
+    }
   }
 
   set provider(provider: SemgrepSearchWebviewProvider | null) {
