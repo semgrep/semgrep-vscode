@@ -7,14 +7,14 @@ function getPreviewChunks(
   doc: vscode.TextDocument,
   range: vscode.Range,
   beforeLen = 8,
-  trim = false,
+  trim = false
 ) {
   const previewStart = range.start.with({
     character: Math.max(0, range.start.character - beforeLen),
   });
   const wordRange = doc.getWordRangeAtPosition(previewStart);
   let before = doc.getText(
-    new vscode.Range(wordRange ? wordRange.start : previewStart, range.start),
+    new vscode.Range(wordRange ? wordRange.start : previewStart, range.start)
   );
   const inside = doc.getText(range);
   const previewEnd = range.end.translate(0, 331);
@@ -27,10 +27,7 @@ function getPreviewChunks(
 }
 
 export class FileItem extends vscode.TreeItem {
-  constructor(
-    readonly uri: vscode.Uri,
-    public matches: MatchItem[],
-  ) {
+  constructor(readonly uri: vscode.Uri, public matches: MatchItem[]) {
     super(uri, vscode.TreeItemCollapsibleState.Expanded);
     this.iconPath = vscode.ThemeIcon.File;
     this.description = true;
@@ -41,7 +38,7 @@ export class MatchItem extends vscode.TreeItem {
   constructor(
     readonly range: vscode.Range,
     readonly file: FileItem,
-    readonly fix: string | null,
+    readonly fix: string | null
   ) {
     super("child", vscode.TreeItemCollapsibleState.None);
     this.contextValue = "match-item";
@@ -61,10 +58,7 @@ export type SearchMatch = {
 };
 
 export class SearchResult {
-  constructor(
-    readonly uri: string,
-    readonly matches: SearchMatch[],
-  ) {}
+  constructor(readonly uri: string, readonly matches: SearchMatch[]) {}
 }
 
 export class SemgrepSearchProvider
@@ -133,11 +127,7 @@ export class SemgrepSearchProvider
       const fi = new FileItem(uri, []);
       const matches = r.matches.map(
         (m) =>
-          new MatchItem(
-            new vscode.Range(m.range.start, m.range.end),
-            fi,
-            m.fix,
-          ),
+          new MatchItem(new vscode.Range(m.range.start, m.range.end), fi, m.fix)
       );
       fi.matches = matches;
       return fi;
@@ -174,7 +164,7 @@ export class SemgrepSearchProvider
     return element;
   }
   getChildren(
-    element?: FileItem | MatchItem | TextItem | undefined,
+    element?: FileItem | MatchItem | TextItem | undefined
   ): vscode.ProviderResult<(FileItem | MatchItem | TextItem)[]> {
     if (!element) {
       return this.items;
@@ -185,7 +175,7 @@ export class SemgrepSearchProvider
     return undefined;
   }
   getParent(
-    element: FileItem | MatchItem | TextItem,
+    element: FileItem | MatchItem | TextItem
   ): vscode.ProviderResult<FileItem | MatchItem> {
     return element instanceof MatchItem ? element.file : undefined;
   }
