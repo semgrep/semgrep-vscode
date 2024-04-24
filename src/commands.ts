@@ -97,11 +97,33 @@ export function registerCommands(env: Environment): void {
   /************/
 
   vscode.commands.registerCommand("semgrep.scanWorkspace", async () => {
-    await env.client?.sendNotification(scanWorkspace, { full: false });
+    const onlyGitDirty = env.config.onlyGitDirty;
+    if (!onlyGitDirty) {
+      vscode.window.showInformationMessage(
+        'Semgrep is now only scanning files and lines that have been changed since the last commit. You can disable this in settings by unchecking "Only Git Dirty", or by running "Scan all files in workspace"'
+      );
+      env.config.onlyGitDirty = true;
+      env.onRulesRefreshed(() =>
+        env.client?.sendNotification(scanWorkspace, { full: false })
+      );
+    } else {
+      env.client?.sendNotification(scanWorkspace, { full: false });
+    }
   });
 
   vscode.commands.registerCommand("semgrep.scanWorkspaceFull", async () => {
-    await env.client?.sendNotification(scanWorkspace, { full: true });
+    const onlyGitDirty = env.config.onlyGitDirty;
+    if (onlyGitDirty) {
+      env.config.onlyGitDirty = false;
+      vscode.window.showInformationMessage(
+        'Semgrep is now always scanning all files and lines regardless of if they have been changed since the last commit. You can disable this in settings by checking "Only Git Dirty", or by running "Scan changed files in workspace"'
+      );
+      env.onRulesRefreshed(() =>
+        env.client?.sendNotification(scanWorkspace, { full: true })
+      );
+    } else {
+      env.client?.sendNotification(scanWorkspace, { full: true });
+    }
   });
 
   vscode.commands.registerCommand("semgrep.refreshRules", async () => {

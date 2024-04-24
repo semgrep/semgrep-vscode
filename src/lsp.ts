@@ -33,6 +33,8 @@ import {
   LATEST_VERSION,
 } from "./constants";
 import { Environment } from "./env";
+import { rulesRefreshed } from "./lspExtensions";
+import { NotificationHandler0 } from "vscode-languageserver";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let server_path = which.sync(SEMGREP_BINARY, { nothrow: true });
@@ -248,34 +250,15 @@ async function start(env: Environment): Promise<void> {
   // register commands
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
-  await c.start();
-  const startupPromise = new Promise<void>((resolve) => {
-    // set 30s timeout for rules loading
-    if (process.platform === "win32") {
-      setTimeout(() => {
-        console.warn("Rules loading timeout, starting anyway");
-        resolve();
-      }, 30000);
-    }
-    if (process.env["NODE_ENV"] === "test") {
-      // this is a bit hacky but we do this so we know if the rules have loaded
-      // in the tests before we start running them. We should find a better way,
-      // like a custom notificaiton or something.
 
-      // This overrides the default behavior of the client
-      // to display the status of the rules loading so we
-      // only do this in tests
-      c.onNotification("$/progress", (params) => {
-        if (params?.value?.kind == "end") {
-          env.logger.log("Rules loaded");
-          resolve();
-        }
-      });
-    }
-  });
+  const notificationHandler: NotificationHandler0 = () => {
+    env.logger.log("Rules loaded");
+    env.emitStartupEvent();
+  };
+  c.onNotification(rulesRefreshed, notificationHandler);
 
   env.client = c;
-  env.startupPromise = startupPromise;
+  await c.start();
 }
 
 async function stop(env: Environment | null): Promise<void> {

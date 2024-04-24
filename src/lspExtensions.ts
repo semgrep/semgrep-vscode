@@ -1,4 +1,5 @@
 import * as lc from "vscode-languageclient";
+
 import { SearchResult } from "./searchResultsTree";
 
 // https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts
@@ -49,6 +50,10 @@ export const loginFinish = new lc.NotificationType<LoginParams>(
 export const logout = new lc.NotificationType("semgrep/logout");
 
 export const refreshRules = new lc.NotificationType("semgrep/refreshRules");
+
+export const rulesRefreshed = new lc.NotificationType0(
+  "semgrep/rulesRefreshed"
+);
 
 export const workspaceRules = new lc.RequestType0<any[], void>(
   "semgrep/workspaceRules"

@@ -10,6 +10,7 @@ import {
   PublishDiagnosticsParams,
 } from "vscode-languageclient/node";
 import path = require("path");
+import { restartLsp } from "../../lsp";
 
 const SCAN_TIMEOUT = 180000;
 const USE_JS = process.env["USE_JS"];
@@ -158,7 +159,12 @@ suite("Extension Features", function () {
     console.log("Starting extension");
     const env = await getEnv();
     console.log("Waiting for extension to start");
-    await env.startupPromise;
+    const startupPromise = new Promise<void>((resolve) => {
+      env.onRulesRefreshed(() => {
+        resolve();
+      });
+    });
+    await startupPromise;
     console.log("Extension started");
     client = env.client;
     console.log("Starting tests");

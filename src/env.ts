@@ -1,4 +1,5 @@
 import {
+  EventEmitter,
   ExtensionContext,
   OutputChannel,
   Uri,
@@ -27,6 +28,13 @@ export class Config {
   get path(): string {
     return this.cfg.get<string>("path") ?? "semgrep";
   }
+
+  get onlyGitDirty(): boolean {
+    return this.cfg.get<boolean>("scan.onlyGitDirty") ?? false;
+  }
+  set onlyGitDirty(val: boolean) {
+    this.cfg.update("scan.onlyGitDirty", val);
+  }
 }
 
 export class Environment {
@@ -41,7 +49,8 @@ export class Environment {
     readonly channel: OutputChannel,
     readonly logger: Logger,
     public version: string = "",
-    public startupPromise?: Promise<void>
+    private _rulesRefreshedEmitter: EventEmitter<void> = new EventEmitter<void>(),
+    public onRulesRefreshed = _rulesRefreshedEmitter.event
   ) {
     this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
@@ -87,6 +96,11 @@ export class Environment {
       window.showWarningMessage("Semgrep Language Server not active");
     }
     return this._client;
+  }
+
+  emitStartupEvent(): void {
+    console.log("FIRE!");
+    this._rulesRefreshedEmitter.fire();
   }
 
   static async create(context: ExtensionContext): Promise<Environment> {
