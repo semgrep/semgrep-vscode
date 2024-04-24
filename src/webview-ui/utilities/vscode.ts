@@ -1,4 +1,11 @@
 import type { WebviewApi } from "vscode-webview";
+import {
+  SearchLanguage,
+  extensionToWebviewCommand,
+  webviewToExtensionCommand,
+} from "../../interface/interface";
+import { State } from "../src/types/state";
+import { ViewResults } from "../src/types/results";
 
 /**
  * A utility wrapper around the acquireVsCodeApi() function, which enables
@@ -10,13 +17,33 @@ import type { WebviewApi } from "vscode-webview";
  * enabled by acquireVsCodeApi.
  */
 class VSCodeAPIWrapper {
-  private readonly vsCodeApi: WebviewApi<unknown> | undefined;
+  private readonly vsCodeApi: WebviewApi<State> | undefined;
+  // This is set by the webview App.tsx!
+  public onUpdate: ((results: ViewResults) => void) | null = null;
+  public onUpdateActiveLang:
+    | ((activeLang: SearchLanguage | null) => void)
+    | null = null;
+  public onClear: (() => void) | null = null;
+  public onExportRule: (() => void) | null = null;
 
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
     // context (i.e. VS Code development window or web browser)
     if (typeof acquireVsCodeApi === "function") {
       this.vsCodeApi = acquireVsCodeApi();
+
+      // Handle messages sent from the extension to the webview
+      window.addEventListener("message", (event) => {
+        const message = event.data; // The json data that the extension sent
+        this.handleMessageFromExtension(message);
+      });
+
+      // We send `getActiveLang` here, because now we are ready to accept messages.
+      // Note that since this is run only when the webview is loaded, we will not send
+      // this more than once per session.
+      this.sendMessageToExtension({
+        command: "webview/semgrep/getActiveLang",
+      });
     }
   }
 
@@ -28,57 +55,48 @@ class VSCodeAPIWrapper {
    *
    * @param message Abitrary data (must be JSON serializable) to send to the extension context.
    */
-  public postMessage(message: unknown) {
+  public sendMessageToExtension(message: webviewToExtensionCommand) {
     if (this.vsCodeApi) {
       this.vsCodeApi.postMessage(message);
     } else {
-      console.debug("no vscode api detected:", message);
+      console.debug(message);
     }
   }
 
-  /**
-   * Get the persistent state stored for this webview.
-   *
-   * @remarks When running webview source code inside a web browser, getState will retrieve state
-   * from local storage (https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
-   *
-   * @return The current state or `undefined` if no state has been set.
-   */
-  public getState(): unknown | undefined {
-    if (this.vsCodeApi) {
-      return this.vsCodeApi.getState();
-    } else {
-      try {
-        const state = localStorage.getItem("vscodeState");
-        return state ? JSON.parse(state) : undefined;
-      } catch (e) {
-        console.error("error getting local storage:", e);
-        return undefined;
+  handleMessageFromExtension(data: extensionToWebviewCommand) {
+    switch (data.command) {
+      case "extension/semgrep/results":
+        {
+          // this.sendMessageToExtension({
+          //   command: "webview/semgrep/print",
+          //   message: "Received results from extension",
+          // });
+          // update the state of the webview component!
+          if (this.onUpdate) {
+            this.onUpdate(data.results);
+          }
+        }
+        break;
+      case "extension/semgrep/activeLang": {
+        this.sendMessageToExtension({
+          command: "webview/semgrep/print",
+          message: `Received language! ${data.lang}`,
+        });
+        if (this.onUpdateActiveLang) {
+          this.onUpdateActiveLang(data.lang);
+        }
+        break;
       }
-    }
-  }
-
-  /**
-   * Set the persistent state stored for this webview.
-   *
-   * @remarks When running webview source code inside a web browser, setState will set the given
-   * state using local storage (https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
-   *
-   * @param newState New persisted state. This must be a JSON serializable object. Can be retrieved
-   * using {@link getState}.
-   *
-   * @return The new state.
-   */
-  public setState<T extends unknown | undefined>(newState: T): T | undefined {
-    if (this.vsCodeApi) {
-      return this.vsCodeApi.setState(newState);
-    } else {
-      try {
-        localStorage.setItem("vscodeState", JSON.stringify(newState));
-        return newState;
-      } catch (e) {
-        console.error("error getting local storage:", e);
-        return undefined;
+      case "extension/semgrep/clear": {
+        if (this.onClear) {
+          this.onClear();
+        }
+        break;
+      }
+      case "extension/semgrep/exportRuleRequest": {
+        if (this.onExportRule) {
+          this.onExportRule();
+        }
       }
     }
   }

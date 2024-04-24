@@ -1,5 +1,5 @@
 import * as lc from "vscode-languageclient";
-import { SearchResult } from "./searchResultsTree";
+import { SearchResult } from "./search";
 
 // https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts
 
@@ -29,10 +29,20 @@ export interface LoginStatusParams {
   loggedIn: boolean;
 }
 
+// These are the parameters sent from the webview to the extnesion, which
+// is a superset of the parameters sent to the LSP.
+// Hence, the two different types `SearchParams` and `LspSearchParams` here.
 export interface SearchParams {
-  pattern: string;
+  scanID: string;
+  lspParams: LspSearchParams;
+}
+
+export interface LspSearchParams {
+  patterns: { positive: boolean; pattern: string }[];
   language: string | null;
   fix: string | null;
+  includes: string[];
+  excludes: string[];
 }
 
 export interface SearchResults {
@@ -58,8 +68,12 @@ export const loginStatus = new lc.RequestType0<LoginStatusParams | null, void>(
   "semgrep/loginStatus"
 );
 
-export const search = new lc.RequestType<SearchParams, SearchResults, void>(
+export const search = new lc.RequestType<LspSearchParams, SearchResults, void>(
   "semgrep/search"
+);
+
+export const searchOngoing = new lc.RequestType0<SearchResults, void>(
+  "semgrep/searchOngoing"
 );
 
 export const showAst = new lc.RequestType<ShowAstParams, string, void>(

@@ -1,0 +1,56 @@
+.search-row {
+  display: flex;
+  column-gap: 2px;
+  padding: 2px 0;
+}
+
+.replace-all-button {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vscode-icon-foreground);
+  /* hack to get it to line up with the textarea */
+  margin-bottom: 2px;
+  /* make a little more room for the icon */
+  padding: 0px 3px;
+}
+
+.disabled {
+  color: var(--vscode-disabledForeground);
+}
+
+.pattern-list {
+  margin-bottom: 5px;
+}
+.add-pattern-button {
+  cursor: pointer;
+  margin-right: 2px;
+  width: 12px;
+  height: 27px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.positivity-button {
+  cursor: pointer;
+  margin-right: 2px;
+  width: 12px;
+  height: 27px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  font-size: 10px;
+  border-radius: 2px;
+}
+
+.delete-pattern-button {
+  cursor: pointer;
+  margin-left: 2px;
+  width: 12px;
+  height: 27px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}

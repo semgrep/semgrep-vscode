@@ -1,52 +1,89 @@
 import { vscode } from "./utilities/vscode";
-import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
-import { webkitCommand } from "../interface/commands";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
+import { TopSection } from "./src/components/TopSection/TopSection";
+import { SearchResults } from "./src/components/SearchResults/SearchResults";
+import { State } from "./src/types/state";
+import { ViewResults } from "./src/types/results";
+import { InfoBlurb } from "./src/components/utils/InfoBlurb";
+import { exportRule, useSetStore, useStore } from "./src/hooks/useStore";
 
 const App: React.FC = () => {
-  const [pattern, setPattern] = useState("");
-  const [fix, setFix] = useState("");
+  // This store is all of the non-search-result related state that the
+  // webview needs to maintain.
+  // This includes stuff like the things that the user writes into boxes, like the
+  // patterns, autofix, etc.
+  const store = useStore();
 
-  function searchQuery(pattern: string, fix: string) {
-    const fixValue = fix === "" ? null : fix;
-    vscode.postMessage({
-      command: "webkit/semgrep/search",
-      pattern: pattern,
-      fix: fixValue,
-    } as webkitCommand);
+  /* The states are as follows:
+     - null: No search has ever been requested yet.
+     - { searchConcluded: false, { scanID, ...} }: a search is ongoing, for the scan
+       ID scanID. We are waiting for results.
+     - { searchConcluded: true, { scanID, results} }: a search has concluded, and we
+       have saved results in `results`. This scan had ID scanID.
+   */
+  const [state, setState] = useState<State | null>(null);
+
+  // This code registers a handler with the VSCode interfacing infrastrucure,
+  // outside of this component.
+  // This is because we need this webview to re-render every time that we
+  // receive results from the extension. To make sure that the component
+  // knows to re-render, we will allow `vscode.ts` to call this callback,
+  // which will update the state of the component.
+  vscode.onUpdate = (results: ViewResults) => {
+    if (state === null) {
+      vscode.sendMessageToExtension({
+        command: "webview/semgrep/print",
+        message: "Impossible? Webview got results while state was null.",
+      });
+      return;
+    }
+    /* This means that this update is not for the current ongoing search!
+       We probably raced, and future results are coming in.
+       Just ignore it until relevant results come in.
+     */
+    if (state.results.scanID !== results.scanID) {
+      return;
+    }
+
+    /* The search is done! */
+    if (results.locations.length === 0) {
+      setState({ ...state, searchConcluded: true });
+    } else {
+      /* Combine the new results with the saved results! */
+      const newState: State = {
+        searchConcluded: false,
+        results: {
+          locations: state.results.locations.concat(results.locations),
+          scanID: results.scanID,
+        },
+      };
+      setState(newState);
+    }
+  };
+
+  vscode.onClear = () => {
+    useSetStore("pattern", "");
+    useSetStore("simplePatterns", []);
+    setState(null);
+  };
+  vscode.onExportRule = () => {
+    exportRule();
+  };
+
+  // On a new search, we will generate a new (hopefully) unique scan ID, and wait
+  // to receive results.
+  function onNewSearch(scanID: string) {
+    setState({
+      searchConcluded: false,
+      results: { scanID: scanID, locations: [] },
+    });
   }
 
   return (
     <main>
-      <VSCodeTextField
-        autofocus
-        placeholder="Pattern"
-        style={{ padding: "4px 0", width: "100%" }}
-        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-          if (e.key == "Enter") {
-            searchQuery(e.currentTarget.value, fix);
-          }
-        }}
-        // I literally have no idea what the type of this or the below handler should be
-        // We use the onChange here because there's a delta between when the onKeyPress
-        // is fired and when the value is updated
-        onChange={(e: any) => {
-          setPattern(e.target.value);
-        }}
-      />
-      <VSCodeTextField
-        placeholder="Autofix"
-        style={{ padding: "4px 0", width: "100%" }}
-        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-          if (e.key == "Enter") {
-            searchQuery(pattern, e.currentTarget.value);
-          }
-        }}
-        onChange={(e: any) => {
-          setFix(e.target.value);
-        }}
-      />
+      <TopSection store={store} onNewSearch={onNewSearch} state={state} />
+      {state ? <SearchResults state={state} /> : <InfoBlurb />}
     </main>
   );
 };

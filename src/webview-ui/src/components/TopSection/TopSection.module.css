@@ -1,0 +1,44 @@
+/* TOP SECTION */
+
+.top-section {
+  padding: 0px 12px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--vscode-sideBar-background);
+  --positive-pattern-badge: #458c4c;
+  --negative-pattern-badge: #a23636;
+  --add-pattern-chevron-height: 7px;
+  --add-pattern-badge-height-short: 15px;
+  --add-pattern-badge-height-tall: 27px;
+}
+
+.main-input {
+  padding: 4px 0px;
+}
+
+.option-button {
+  background: transparent;
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  width: fit-content;
+  border: none;
+  position: absolute;
+  /* silly hack to get it enough to the right */
+  right: 12px;
+  font-size: 16px;
+}
+
+/* MATCH SUMMARY */
+
+.matches-summary {
+  color: var(--vscode-search-resultsInfoForeground);
+  /* asymmetric hacks because the spacing of the above
+     bar encroaches on us a bit
+   */
+  padding-top: 5px;
+  padding-bottom: 8px;
+  line-height: 1.4em;
+  display: flex;
+}
