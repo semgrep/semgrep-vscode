@@ -29,7 +29,7 @@ export class SemgrepSearchWebviewProvider
   }
 
   public resolveWebviewView(
-    webviewView: vscode.WebviewView,
+    webviewView: vscode.WebviewView
     // these are unused, so commented out
     // context: vscode.WebviewViewResolveContext,
     // _token: vscode.CancellationToken
@@ -56,11 +56,11 @@ export class SemgrepSearchWebviewProvider
 
     // The CSS file from the React build output
     const stylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "webview.css"),
+      vscode.Uri.joinPath(assetsPath, "webview.css")
     );
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "webview.js"),
+      vscode.Uri.joinPath(assetsPath, "webview.js")
     );
 
     const nonce = randomUUID();

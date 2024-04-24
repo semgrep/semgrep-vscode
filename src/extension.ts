@@ -12,14 +12,14 @@ import { SemgrepSearchWebviewProvider } from "./views/search";
 export let global_env: Environment | null = null;
 
 async function initEnvironment(
-  context: ExtensionContext,
+  context: ExtensionContext
 ): Promise<Environment> {
   global_env = await Environment.create(context);
   return global_env;
 }
 
 async function createOrUpdateEnvironment(
-  context: ExtensionContext,
+  context: ExtensionContext
 ): Promise<Environment> {
   return global_env ? global_env.reloadConfig() : initEnvironment(context);
 }
@@ -27,7 +27,7 @@ async function createOrUpdateEnvironment(
 async function afterClientStart(context: ExtensionContext, env: Environment) {
   if (!env.client) {
     vscode.window.showErrorMessage(
-      "Semgrep Extension failed to activate, please check output",
+      "Semgrep Extension failed to activate, please check output"
     );
     return;
   }
@@ -36,7 +36,7 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   statusBar.show();
   vscode.window.registerTreeDataProvider(
     "semgrep-search-results",
-    env.searchView,
+    env.searchView
   );
 
   // register stuff for calico colors webview demo (from activate of the demo)
@@ -44,14 +44,14 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       SemgrepSearchWebviewProvider.viewType,
-      provider,
-    ),
+      provider
+    )
   );
 
   // register content provider for the AST showing document
   vscode.workspace.registerTextDocumentContentProvider(
     SemgrepDocumentProvider.scheme,
-    env.documentView,
+    env.documentView
   );
   // Handle configuration changes
   context.subscriptions.push(
@@ -61,8 +61,8 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
           await env.reloadConfig();
           restartLsp(env);
         }
-      },
-    ),
+      }
+    )
   );
   vscode.commands.executeCommand("semgrep.loginStatus").then(async () => {
     vscode.commands.executeCommand("semgrep.loginNudge");
@@ -71,7 +71,7 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
       const selection = await vscode.window.showInformationMessage(
         "Semgrep Extension succesfully installed. Would you like to try performing a full workspace scan (may take longer on bigger workspaces)?",
         "Scan Full Workspace",
-        "Dismiss",
+        "Dismiss"
       );
       if (selection == "Scan Full Workspace") {
         vscode.commands.executeCommand("semgrep.scanWorkspaceFull");
@@ -81,7 +81,7 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
 }
 
 export async function activate(
-  context: ExtensionContext,
+  context: ExtensionContext
 ): Promise<Environment | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
   await activateLsp(env);

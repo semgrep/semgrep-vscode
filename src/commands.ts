@@ -37,7 +37,7 @@ import { FileItem, MatchItem } from "./searchResultsTree";
 async function replaceAndOpenUriContent(
   uri: vscode.Uri,
   content: string,
-  active_editor: vscode.TextEditor,
+  active_editor: vscode.TextEditor
 ): Promise<void> {
   const doc = await vscode.workspace.openTextDocument(uri);
   const edit = new vscode.WorkspaceEdit();
@@ -82,7 +82,7 @@ export function registerCommands(env: Environment): void {
       const resp = await vscode.window.showInformationMessage(
         "Sign in to use your team's shared Semgrep rule configuration",
         "Sign in",
-        "Do not show again",
+        "Do not show again"
       );
       if (resp == "Sign in") {
         vscode.commands.executeCommand("semgrep.login");
@@ -152,13 +152,13 @@ export function registerCommands(env: Environment): void {
         vscode.commands.executeCommand(
           "setContext",
           "semgrep.searchHasResults",
-          true,
+          true
         );
         if (searchParams.fix) {
           vscode.commands.executeCommand(
             "setContext",
             "semgrep.searchHasFix",
-            true,
+            true
           );
         }
         if (!result) {
@@ -167,14 +167,14 @@ export function registerCommands(env: Environment): void {
         env.searchView.setSearchItems(result.locations, searchParams);
         vscode.commands.executeCommand("semgrep-search-results.focus");
       }
-    },
+    }
   );
 
   vscode.commands.registerCommand("semgrep.search.refresh", async () => {
     if (env.searchView.lastSearch) {
       vscode.commands.executeCommand(
         "semgrep.search",
-        env.searchView.lastSearch,
+        env.searchView.lastSearch
       );
     }
   });
@@ -183,7 +183,7 @@ export function registerCommands(env: Environment): void {
     vscode.commands.executeCommand(
       "setContext",
       "semgrep.searchHasResults",
-      false,
+      false
     );
     vscode.commands.executeCommand("setContext", "semgrep.searchHasFix", false);
     env.searchView.clearSearch();
@@ -191,7 +191,7 @@ export function registerCommands(env: Environment): void {
 
   vscode.commands.registerCommand("semgrep.search.replaceAll", () => {
     vscode.commands.executeCommand(
-      "semgrep.search.reallyDoReplaceAllNotification",
+      "semgrep.search.reallyDoReplaceAllNotification"
     );
   });
 
@@ -203,21 +203,21 @@ export function registerCommands(env: Environment): void {
           env.searchView.getFilesWithFixes().length
         } files?`,
         "Yes",
-        "No",
+        "No"
       );
 
       if (selection === "Yes") {
         await env.searchView.replaceAll();
         vscode.commands.executeCommand("semgrep.search.refresh");
       }
-    },
+    }
   );
 
   vscode.commands.registerCommand(
     "semgrep.search.replace",
     async (node: FileItem | MatchItem) => {
       await env.searchView.replaceItem(node);
-    },
+    }
   );
 
   /********/
@@ -228,18 +228,18 @@ export function registerCommands(env: Environment): void {
     vscode.window.showInformationMessage("Restarting Semgrep Language Server");
     restartLsp(env);
     vscode.window.showInformationMessage(
-      "Semgrep Language Server has finished restarting",
+      "Semgrep Language Server has finished restarting"
     );
   });
 
   vscode.commands.registerCommand("semgrep.showDemoFile", async () => {
     const path = env.context.asAbsolutePath(
-      "walkthrough/semgrep-extension.demo.py",
+      "walkthrough/semgrep-extension.demo.py"
     );
     const content = await vscode.workspace.fs.readFile(vscode.Uri.parse(path));
     let dir = vscode.Uri.joinPath(
       env.context.globalStorageUri,
-      "demo-workspace",
+      "demo-workspace"
     );
     dir = vscode.Uri.parse(dir.fsPath); // So dumb
     await vscode.workspace.fs.createDirectory(dir);

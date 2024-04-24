@@ -6,7 +6,7 @@ import { LSP_LOG_FILE } from "./constants";
 
 export const DEFAULT_LSP_LOG_URI = Uri.joinPath(
   Uri.file(tmpdir()),
-  LSP_LOG_FILE,
+  LSP_LOG_FILE
 );
 
 export class Logger {
@@ -30,7 +30,7 @@ export class Logger {
 }
 
 export async function applyFixAndSave(
-  edit: vscode.WorkspaceEdit,
+  edit: vscode.WorkspaceEdit
 ): Promise<void> {
   const uris = edit.entries().map(([uri]) => uri);
   // According to https://github.com/microsoft/vscode/issues/112109,
@@ -39,7 +39,7 @@ export async function applyFixAndSave(
   await vscode.workspace.applyEdit(edit);
   await Promise.all(
     uris.map((uri) =>
-      vscode.workspace.openTextDocument(uri).then((doc) => doc.save()),
-    ),
+      vscode.workspace.openTextDocument(uri).then((doc) => doc.save())
+    )
   );
 }

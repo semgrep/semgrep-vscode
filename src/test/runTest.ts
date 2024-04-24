@@ -31,7 +31,7 @@ async function main() {
     {
       encoding: "utf-8",
       stdio: "inherit",
-    },
+    }
   );
   // Setup temp dir for all repos
   const tmpDir = tmp.dirSync({ unsafeCleanup: true });

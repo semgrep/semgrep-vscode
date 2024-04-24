@@ -47,7 +47,7 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
     }
     if (!pip) {
       vscode.window.showErrorMessage(
-        "Python 3.7+ required for the Semgrep Extension",
+        "Python 3.7+ required for the Semgrep Extension"
       );
       return null;
     }
@@ -58,7 +58,7 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
       await execShell(cmd);
     } catch {
       vscode.window.showErrorMessage(
-        "Semgrep binary could not be installed, please see https://semgrep.dev/docs/getting-started/ for instructions",
+        "Semgrep binary could not be installed, please see https://semgrep.dev/docs/getting-started/ for instructions"
       );
       return null;
     }
@@ -99,7 +99,7 @@ function semgrepCmdLineOpts(env: Environment): string[] {
 }
 
 async function serverOptionsCli(
-  env: Environment,
+  env: Environment
 ): Promise<ServerOptions | null> {
   const server = await findSemgrep(env);
   if (!server) {
@@ -126,20 +126,20 @@ async function serverOptionsCli(
     vscode.commands.executeCommand("setContext", "semgrep.cli.major", major);
     if (!semver.satisfies(version, MIN_VERSION)) {
       vscode.window.showErrorMessage(
-        `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`,
+        `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`
       );
       return null;
     }
     if (!semver.satisfies(version, LATEST_VERSION)) {
       vscode.window.showWarningMessage(
-        `Some features of the Semgrep Extension require a Semgrep CLI version ${LATEST_VERSION}, but the current installed version is ${version}, some features may be disabled, please upgrade.`,
+        `Some features of the Semgrep Extension require a Semgrep CLI version ${LATEST_VERSION}, but the current installed version is ${version}, some features may be disabled, please upgrade.`
       );
     }
   }
 
   const serverOptions: ServerOptions = server;
   env.logger.log(
-    `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`,
+    `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`
   );
   return serverOptions;
 }
@@ -173,13 +173,13 @@ function serverOptionsJs(env: Environment) {
     },
   };
   vscode.window.showWarningMessage(
-    "Semgrep Extension is using the experimental JS LSP server, this is due to the current platform being Windows, or the setting 'semgrep.useJS' being set to true. There may be bugs or performance issues!",
+    "Semgrep Extension is using the experimental JS LSP server, this is due to the current platform being Windows, or the setting 'semgrep.useJS' being set to true. There may be bugs or performance issues!"
   );
   return serverOptionsJs;
 }
 
 async function lspOptions(
-  env: Environment,
+  env: Environment
 ): Promise<[ServerOptions, LanguageClientOptions] | [null, null]> {
   const metrics = {
     machineId: vscode.env.machineId,
@@ -198,8 +198,8 @@ async function lspOptions(
     `Semgrep Initialization Options := ${JSON.stringify(
       initializationOptions,
       null,
-      2,
-    )}`,
+      2
+    )}`
   );
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
@@ -221,7 +221,7 @@ async function lspOptions(
     serverOptions = await serverOptionsCli(env);
     if (!serverOptions) {
       vscode.window.showErrorMessage(
-        "Semgrep Extension failed to activate, please check output",
+        "Semgrep Extension failed to activate, please check output"
       );
       return [null, null];
     }
@@ -243,7 +243,7 @@ async function start(env: Environment): Promise<void> {
     CLIENT_ID,
     CLIENT_NAME,
     serverOptions,
-    clientOptions,
+    clientOptions
   );
   // register commands
   // Start the client. This will also launch the server
