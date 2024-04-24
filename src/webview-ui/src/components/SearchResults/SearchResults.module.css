@@ -1,0 +1,106 @@
+/* MATCHES SECTION */
+
+.matches-section {
+  padding-left: 5px;
+}
+
+/* ENTRY HEADERS */
+
+.entry-header {
+  display: flex;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.match-num-badge {
+  margin-left: auto;
+}
+
+.collapse-button {
+  padding-right: 5px;
+}
+
+/* PATH HEADERS */
+
+.path-header {
+  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-name {
+  white-space: pre;
+}
+
+.prefix-path {
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: gray;
+  margin-left: 0.5em;
+  font-size: 0.9em;
+  /* this little margin-top pushes the smaller font text down a bit, which
+     aligns it with the larger file-name to its left
+   */
+  margin-top: 1px;
+}
+
+/* MATCHES */
+
+.matches-list {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.match-buttons {
+  display: flex;
+  margin-left: auto;
+}
+
+.match-button {
+  border-radius: 5px;
+  :hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+  }
+}
+
+.match-item {
+  list-style: none;
+  display: flex;
+  cursor: pointer;
+}
+
+.match-text-box {
+  /* flex: 1; */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: pre;
+  /* font-size: 13px;
+  line-height: 22px;
+  height: 22px; */
+  /* I also couldn't figure out how to make the text gray, so I just
+     set it here. This is probably a proble on different themes.
+   */
+  color: gray;
+  /* This isn't normally here, but I kept having the tops of my
+     boxes cut off for some reason. This fixes it.
+   */
+  padding-top: 1px;
+  font-size: 13px;
+  height: 20px;
+}
+.match-text-deleted {
+  text-decoration: line-through;
+  background-color: var(--vscode-diffEditor-removedTextBackground);
+  border: 1px solid var(--vscode-diffEditor-removedTextBackground);
+}
+.match-text-inserted {
+  background-color: var(--vscode-diffEditor-insertedTextBackground);
+  /* :not(:empty): {
+    border: 1px solid var(--vscode-diffEditor-insertedLineBackground);
+  } */
+}
+.match-text-normal {
+  background-color: var(--vscode-editor-findMatchHighlightBackground);
+  border: 1px solid var(--vscode-editor-findMatchHighlightBorder);
+}

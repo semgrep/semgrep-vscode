@@ -8,12 +8,13 @@ import {
   refreshRules,
   scanWorkspace,
   showAst,
-  search,
   SearchParams,
 } from "./lspExtensions";
 import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
-import { FileItem, MatchItem } from "./searchResultsTree";
+import { ViewResults } from "./webview-ui/src/types/results";
+import { applyFixAndSave, replaceAll } from "./utils";
+import { handleSearch } from "./search";
 
 /*****************************************************************************/
 /* Prelude */
@@ -173,83 +174,57 @@ export function registerCommands(env: Environment): void {
 
   vscode.commands.registerCommand(
     "semgrep.search",
-    async (searchParams: SearchParams | null) => {
-      if (searchParams != null) {
-        const result = await env.client?.sendRequest(search, searchParams);
-        vscode.commands.executeCommand(
-          "setContext",
-          "semgrep.searchHasResults",
-          true
-        );
-        if (searchParams.fix) {
-          vscode.commands.executeCommand(
-            "setContext",
-            "semgrep.searchHasFix",
-            true
-          );
-        }
-        if (!result) {
-          return;
-        }
-        env.searchView.setSearchItems(result.locations, searchParams);
-        vscode.commands.executeCommand("semgrep-search-results.focus");
-      }
+    async (searchParams: SearchParams) => {
+      await handleSearch(env, searchParams);
     }
   );
 
-  vscode.commands.registerCommand("semgrep.search.refresh", async () => {
-    if (env.searchView.lastSearch) {
-      vscode.commands.executeCommand(
-        "semgrep.search",
-        env.searchView.lastSearch
-      );
-    }
-  });
-
   vscode.commands.registerCommand("semgrep.search.clear", () => {
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.searchHasResults",
-      false
-    );
-    vscode.commands.executeCommand("setContext", "semgrep.searchHasFix", false);
-    env.searchView.clearSearch();
-  });
-
-  vscode.commands.registerCommand("semgrep.search.replaceAll", () => {
-    vscode.commands.executeCommand(
-      "semgrep.search.reallyDoReplaceAllNotification"
-    );
+    env.provider?.sendMessageToWebview({
+      command: "extension/semgrep/clear",
+    });
   });
 
   vscode.commands.registerCommand(
-    "semgrep.search.reallyDoReplaceAllNotification",
-    async () => {
+    "semgrep.search.replaceAll",
+    async (matches: ViewResults) => {
       const selection = await vscode.window.showWarningMessage(
-        `Really apply fix to ${
-          env.searchView.getFilesWithFixes().length
-        } files?`,
+        `Really apply fix to ${matches.locations.length} files?`,
         "Yes",
         "No"
       );
-
       if (selection === "Yes") {
-        await env.searchView.replaceAll();
-        vscode.commands.executeCommand("semgrep.search.refresh");
+        replaceAll(matches);
       }
     }
   );
 
   vscode.commands.registerCommand(
     "semgrep.search.replace",
-    async (node: FileItem | MatchItem) => {
-      await env.searchView.replaceItem(node);
+    async ({
+      uri,
+      fix,
+      range,
+    }: {
+      uri: string;
+      fix: string;
+      range: vscode.Range;
+    }) => {
+      const edit = new vscode.WorkspaceEdit();
+      edit.replace(vscode.Uri.parse(uri), range, fix);
+      await applyFixAndSave(edit);
     }
   );
 
   /********/
   /* MISC */
   /********/
+
+  vscode.commands.registerCommand("semgrep.search.exportRule", () => {
+    env.provider?.sendMessageToWebview({
+      command: "extension/semgrep/exportRuleRequest",
+    });
+  });
 
   vscode.commands.registerCommand("semgrep.restartLanguageServer", () => {
     vscode.window.showInformationMessage("Restarting Semgrep Language Server");

@@ -7,7 +7,7 @@ import { registerCommands } from "./commands";
 import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
-import { SemgrepSearchWebviewProvider } from "./views/search";
+import { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export let global_env: Environment | null = null;
 
@@ -34,19 +34,18 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   const statusBar = createStatusBar();
   registerCommands(env);
   statusBar.show();
-  vscode.window.registerTreeDataProvider(
-    "semgrep-search-results",
-    env.searchView
-  );
 
-  // register stuff for calico colors webview demo (from activate of the demo)
+  // register stuff for search webview
   const provider = new SemgrepSearchWebviewProvider(context.extensionUri);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       SemgrepSearchWebviewProvider.viewType,
-      provider
+      provider,
+      // This makes it so that we don't lose matches hwen we close the sidebar!
+      { webviewOptions: { retainContextWhenHidden: true } }
     )
   );
+  env.provider = provider;
 
   // register content provider for the AST showing document
   vscode.workspace.registerTextDocumentContentProvider(

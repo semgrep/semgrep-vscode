@@ -3,6 +3,7 @@ import { OutputChannel, Uri } from "vscode";
 import * as vscode from "vscode";
 
 import { LSP_LOG_FILE } from "./constants";
+import { ViewResults } from "./webview-ui/src/types/results";
 
 export const DEFAULT_LSP_LOG_URI = Uri.joinPath(
   Uri.file(tmpdir()),
@@ -42,4 +43,21 @@ export async function applyFixAndSave(
       vscode.workspace.openTextDocument(uri).then((doc) => doc.save())
     )
   );
+}
+
+export async function replaceAll(matches: ViewResults): Promise<void> {
+  const edit = new vscode.WorkspaceEdit();
+  matches.locations.map((result) =>
+    /* We don't want to fix anything which was already fixed. */
+    result.matches.forEach((match) => {
+      if (match.searchMatch.fix && !match.isFixed) {
+        edit.replace(
+          vscode.Uri.parse(result.uri),
+          match.searchMatch.range,
+          match.searchMatch.fix
+        );
+      }
+    })
+  );
+  await applyFixAndSave(edit);
 }

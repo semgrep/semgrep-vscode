@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Reworked the Semgrep Search UI to be more modern, performant, and expressive!
+  Features include:
+  - ability to specify multiple patterns to match / not match
+  - file-path includes/excluding
+  - semantic autofix (individual and mass)
+  - match previews
+  - language-specific and language-agnostic search
+  - streaming search
+
 ### Changed
 
 ## v1.6.3 - 2024-02-02

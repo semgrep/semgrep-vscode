@@ -1,0 +1,9 @@
+.lang-chooser {
+  /* I tried setting the borderRadius directly and it doesn't work.
+     For some reason it just doesn't show up in the styles.
+     This does, though.
+  */
+  /* hard-coded hacks to get the lang chooser to be center with the
+     pattern box
+  */
+}
