@@ -1,5 +1,4 @@
 import {
-  EventEmitter,
   ExtensionContext,
   OutputChannel,
   Uri,
@@ -12,6 +11,7 @@ import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
 import { SemgrepSearchProvider } from "./searchResultsTree";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { LanguageClient } from "vscode-languageclient/node";
+import { EventEmitter } from "stream";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -49,8 +49,8 @@ export class Environment {
     readonly channel: OutputChannel,
     readonly logger: Logger,
     public version: string = "",
-    private _rulesRefreshedEmitter: EventEmitter<void> = new EventEmitter<void>(),
-    public onRulesRefreshed = _rulesRefreshedEmitter.event
+    // rulesRefreshedEmitter is used to notify if rules are refreshed, i.e. after startup, a login, or a manual refresh
+    private rulesRefreshedEmitter: EventEmitter = new EventEmitter(),
   ) {
     this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
@@ -98,9 +98,16 @@ export class Environment {
     return this._client;
   }
 
-  emitStartupEvent(): void {
-    console.log("FIRE!");
-    this._rulesRefreshedEmitter.fire();
+  emitRulesRefreshedEvent(): void {
+    this.rulesRefreshedEmitter.emit("refresh");
+  }
+
+  onRulesRefreshed(cb: () => void, once = false): void {
+    if (once) {
+      this.rulesRefreshedEmitter.once("refresh", cb);
+    } else {
+      this.rulesRefreshedEmitter.on("refresh", cb);
+    }
   }
 
   static async create(context: ExtensionContext): Promise<Environment> {

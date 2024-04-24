@@ -253,7 +253,7 @@ async function start(env: Environment): Promise<void> {
 
   const notificationHandler: NotificationHandler0 = () => {
     env.logger.log("Rules loaded");
-    env.emitStartupEvent();
+    env.emitRulesRefreshedEvent();
   };
   c.onNotification(rulesRefreshed, notificationHandler);
 
