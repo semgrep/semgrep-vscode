@@ -10,7 +10,7 @@ export type simplePattern = { positive: boolean; pattern: string };
 
 export function isLast(
   index: number | null,
-  patterns: simplePattern[]
+  patterns: simplePattern[],
 ): boolean {
   return (
     (index === null && patterns.length === 0) || index === patterns.length - 1
@@ -102,7 +102,7 @@ export const PatternList: React.FC<PatternListProps> = ({
     <div className={styles.patternList}>
       {mkPattern({ positive: true, pattern: store.pattern }, null)}
       {store.simplePatterns.map((p: simplePattern, index: number) =>
-        mkPattern(p, index)
+        mkPattern(p, index),
       )}
     </div>
   );

@@ -22,7 +22,10 @@ export type SearchMatch = {
 };
 
 export class SearchResult {
-  constructor(readonly uri: string, readonly matches: SearchMatch[]) {}
+  constructor(
+    readonly uri: string,
+    readonly matches: SearchMatch[],
+  ) {}
 }
 
 /*****************************************************************************/
@@ -31,7 +34,7 @@ export class SearchResult {
 
 async function viewResultsOfSearchResults(
   scanID: string,
-  results: SearchResults
+  results: SearchResults,
 ): Promise<ViewResults> {
   async function viewResultofSearchResult(result: SearchResult) {
     const uri = vscode.Uri.parse(result.uri);
@@ -48,14 +51,14 @@ async function viewResultsOfSearchResults(
             isDismissed: false,
             searchMatch: match,
           };
-        })
+        }),
       ),
     };
   }
   return {
     scanID: scanID,
     locations: await Promise.all(
-      results.locations.map(viewResultofSearchResult)
+      results.locations.map(viewResultofSearchResult),
     ),
   };
 }
@@ -75,7 +78,7 @@ async function viewResultsOfSearchResults(
 async function searchLoop(
   scanID: string,
   env: Environment,
-  results: SearchResults | undefined
+  results: SearchResults | undefined,
 ): Promise<void> {
   for (;;) {
     if (results === undefined) {
@@ -124,13 +127,13 @@ async function searchLoop(
 
 export async function handleSearch(
   env: Environment,
-  searchParams: SearchParams
+  searchParams: SearchParams,
 ): Promise<void> {
   env.scanID = searchParams.scanID;
   if (searchParams != null) {
     const results = await env.client?.sendRequest(
       search,
-      searchParams.lspParams
+      searchParams.lspParams,
     );
     searchLoop(searchParams.scanID, env, results);
   }

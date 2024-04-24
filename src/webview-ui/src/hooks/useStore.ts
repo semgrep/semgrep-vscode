@@ -67,7 +67,7 @@ export function generateUniqueID(): string {
 
 export function useSearch(
   store: Store,
-  onNewSearch: (scanID: string) => void
+  onNewSearch: (scanID: string) => void,
 ): void {
   function splitAndTrim(value: string): string[] {
     return value

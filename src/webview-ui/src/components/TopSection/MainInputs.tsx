@@ -27,7 +27,7 @@ export const MainInputs: React.FC<MainInputsProps> = ({
 
   // enable fix button iff there is at least one match with a pending fix
   const fixExists = state?.results.locations.some((l) =>
-    l.matches.some((m) => m.searchMatch.fix && !m.isFixed)
+    l.matches.some((m) => m.searchMatch.fix && !m.isFixed),
   );
 
   return (

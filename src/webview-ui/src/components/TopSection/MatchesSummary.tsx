@@ -11,7 +11,7 @@ export const MatchesSummary: React.FC<MatchesSummaryProps> = ({ state }) => {
 
   const numMatches = state.results.locations.reduce(
     (acc, result) => acc + result.matches.length,
-    0
+    0,
   );
   const numFiles = state.results.locations.length;
 
