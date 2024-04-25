@@ -4,7 +4,7 @@
   "description": "Security scans in a snap. Speedy SAST with a powerful rule registry for seamless detection and remediation of code vulnerabilities with each save.",
   "version": "1.7.0",
   "engines": {
-    "vscode": "^1.66.0"
+    "vscode": "^1.86.0"
   },
   "categories": [
     "Linters"
