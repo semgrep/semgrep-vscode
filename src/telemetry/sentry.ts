@@ -45,6 +45,13 @@ export function initSentry(environment: string): void {
     id: vscode.env.machineId,
   });
 }
+const skipFields = [
+  // if it's a file path let's just skip it
+  "scan.include",
+  "scan.exclude",
+  "scan.configuration",
+  "path",
+];
 export function setSentryContext(env: Environment): void {
   if (!sentryEnabled) {
     return;
@@ -56,6 +63,9 @@ export function setSentryContext(env: Environment): void {
   ).map((key) => key.replace(/^semgrep\./, ""));
   const allSettings = settingKeys
     .map((key: string) => {
+      if (skipFields.includes(key)) {
+        return {};
+      }
       let value = env.config.get(key);
       // if it's an object/array something let's just stringify it
       if (typeof value === "object") {
