@@ -126,13 +126,12 @@ export class Environment {
     return this._provider;
   }
 
-
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);
     const logger = new Logger(config.trace, channel);
     const documentView = new SemgrepDocumentProvider();
-    return new Environment(context,  documentView, channel, logger, config);
+    return new Environment(context, documentView, channel, logger, config);
   }
 
   static async loadConfig(context: ExtensionContext): Promise<Config> {

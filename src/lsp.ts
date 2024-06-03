@@ -35,7 +35,11 @@ import {
 import { Environment } from "./env";
 import { rulesRefreshed } from "./lspExtensions";
 import { NotificationHandler0 } from "vscode-languageserver";
-import { SentryErrorHandler, ProxyOutputChannel, withSentryAsync } from "./telemetry/sentry";
+import {
+  SentryErrorHandler,
+  ProxyOutputChannel,
+  withSentryAsync,
+} from "./telemetry/sentry";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let server_path = which.sync(SEMGREP_BINARY, { nothrow: true });
@@ -207,7 +211,9 @@ async function lspOptions(
     )}`,
   );
   const outputChannel = new ProxyOutputChannel(env.channel);
-  const errorHandler = new SentryErrorHandler(5, () => [outputChannel.logAsAttachment()]);
+  const errorHandler = new SentryErrorHandler(5, () => [
+    outputChannel.logAsAttachment(),
+  ]);
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
@@ -283,7 +289,7 @@ async function stop(env: Environment | null): Promise<void> {
 }
 
 export async function activateLsp(env: Environment): Promise<void> {
-    return withSentryAsync(() => start(env));
+  return withSentryAsync(() => start(env));
 }
 
 export async function deactivateLsp(env: Environment | null): Promise<void> {

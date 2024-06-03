@@ -31,7 +31,7 @@ export function initSentry(environment: string): void {
       const filteredDefaultIntegrations = defaultIntegrations.filter(
         (integration) => {
           return !skipIntegrations.includes(integration.name);
-        }
+        },
       );
       // TODO: Profiling, but to do so requires shipping a native module which is super non-trivial
       return [...filteredDefaultIntegrations];
@@ -52,7 +52,7 @@ export function setSentryContext(env: Environment): void {
 
   const packageJSON = env.context.extension.packageJSON;
   const settingKeys = Object.keys(
-    packageJSON.contributes.configuration.properties
+    packageJSON.contributes.configuration.properties,
   ).map((key) => key.replace(/^semgrep\./, ""));
   const allSettings = settingKeys
     .map((key: string) => {
@@ -97,7 +97,7 @@ export function withSentry(callback: () => any): any {
   }
 }
 export async function withSentryAsync(
-  callback: () => Promise<any>
+  callback: () => Promise<any>,
 ): Promise<any> {
   if (!sentryEnabled) {
     return await callback();
@@ -116,12 +116,12 @@ export class SentryErrorHandler implements ErrorHandler {
   constructor(
     public readonly maxRestartCount: number = 5,
     // Allow for additional attachments to be added on crash
-    private attachOnCrash: () => Attachment[] = () => []
+    private attachOnCrash: () => Attachment[] = () => [],
   ) {}
   error(
     error: Error,
     message: Message | undefined,
-    count: number | undefined
+    count: number | undefined,
   ): ErrorHandlerResult | Promise<ErrorHandlerResult> {
     if (!sentryEnabled) {
       return { action: ErrorAction.Continue, handled: false };
@@ -144,14 +144,14 @@ export class SentryErrorHandler implements ErrorHandler {
       return { action: CloseAction.Restart, handled: false };
     } else {
       vscode.window.showErrorMessage(
-        "The language server crashed 5 times, not restarting. Please check the output for more information."
+        "The language server crashed 5 times, not restarting. Please check the output for more information.",
       );
       return { action: CloseAction.DoNotRestart, handled: false };
     }
   }
 }
 
-// SentryOutputChannel is just a proxy to a normal output channel
+// ProxyOutputChannel is just a proxy to a normal output channel
 // This is needed as outputChannels have no way of grabbing their full log
 // There's a Github issue that confirms this is impossible that I can no longer find
 export class ProxyOutputChannel implements vscode.OutputChannel {
@@ -165,7 +165,10 @@ export class ProxyOutputChannel implements vscode.OutputChannel {
   logAsAttachment(): Attachment {
     const timestamp = new Date().toISOString();
     // format string for data so that it copies and doesn't get reset
-    const attachment = { filename: `lsp-output-${timestamp}.log`, data: `${this.fullLog}` };
+    const attachment = {
+      filename: `lsp-output-${timestamp}.log`,
+      data: `${this.fullLog}`,
+    };
     // clear full log
     this.fullLog = "";
     return attachment;
