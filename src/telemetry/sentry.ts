@@ -177,6 +177,8 @@ export class ProxyOutputChannel implements vscode.OutputChannel {
     this.baseOutputChannel = baseOutputChannel;
     this.name = baseOutputChannel.name;
     this.logFile = `${logPath}/lsp-output.log`;
+    // ensure parent directory exists
+    fs.mkdirSync(logPath, { recursive: true });
     // create/clear log file
     fs.writeFileSync(this.logFile, "");
   }
