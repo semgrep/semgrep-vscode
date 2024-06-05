@@ -1,3 +1,5 @@
+import { SemVer } from "semver";
+
 export const SEMGREP_BINARY = "semgrep";
 export const DIAGNOSTIC_COLLECTION_NAME = "semgrep-findings";
 export const CLIENT_ID = "semgrep";
@@ -6,8 +8,18 @@ export const DEFAULT_RULESET = "p/r2c";
 export const LSP_LOG_FILE = "semgrep_lsp.log";
 export const VSCODE_CONFIG_KEY = "semgrep";
 export const VSCODE_EXT_NAME = CLIENT_NAME;
-export const MIN_VERSION = ">=1.21.0"; // Minimum semgrep version required for this extension
-export const LATEST_VERSION = ">=1.25.0"; // Minimum semgrep version required for all extension features
+export type VersionInfo = {
+  latest: SemVer;
+  min: SemVer;
+};
+export async function getVersionInfo(): Promise<VersionInfo> {
+  const url = "https://semgrep.dev/api/check-version";
+  const response = await fetch(url).then((response) => response.json());
+  return {
+    latest: new SemVer(response.latest),
+    min: new SemVer(response.versions.minimum),
+  };
+}
 export const SUPPORTED_LANGS = [
   "bash",
   "sh",

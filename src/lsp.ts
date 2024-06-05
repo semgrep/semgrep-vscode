@@ -29,8 +29,7 @@ import {
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
-  MIN_VERSION,
-  LATEST_VERSION,
+  getVersionInfo,
 } from "./constants";
 import { Environment } from "./env";
 import { rulesRefreshed } from "./lspExtensions";
@@ -122,19 +121,27 @@ async function serverOptionsCli(
   if (!env.config.cfg.get("ignoreCliVersion")) {
     const cmd = `"${server.command}" --version`;
     const version = await execShell(cmd, server.options?.env);
-    const minor = semver.minor(version);
-    const major = semver.major(version);
-    vscode.commands.executeCommand("setContext", "semgrep.cli.minor", minor);
-    vscode.commands.executeCommand("setContext", "semgrep.cli.major", major);
-    if (!semver.satisfies(version, MIN_VERSION)) {
+    const semVersion = new semver.SemVer(version);
+    const versionInfo = await getVersionInfo();
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.cli.minor",
+      semVersion.minor,
+    );
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.cli.major",
+      semVersion.major,
+    );
+    if (semver.compare(semVersion, versionInfo.min) === -1) {
       vscode.window.showErrorMessage(
-        `The Semgrep Extension requires a Semgrep CLI version ${MIN_VERSION}, the current installed version is ${version}, please upgrade.`,
+        `The Semgrep Extension requires a Semgrep CLI version ${versionInfo.min}, the current installed version is ${version}, please upgrade.`,
       );
       return null;
     }
-    if (!semver.satisfies(version, LATEST_VERSION)) {
+    if (semver.compare(semVersion, versionInfo.latest) === -1) {
       vscode.window.showWarningMessage(
-        `Some features of the Semgrep Extension require a Semgrep CLI version ${LATEST_VERSION}, but the current installed version is ${version}, some features may be disabled, please upgrade.`,
+        `Some features of the Semgrep Extension require a Semgrep CLI version ${versionInfo.latest}, but the current installed version is ${version}, some features may be disabled, please upgrade.`,
       );
     }
   }
