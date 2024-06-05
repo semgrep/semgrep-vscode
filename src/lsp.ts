@@ -58,9 +58,8 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
       );
       return null;
     }
-    fs.mkdir(env.context.globalStorageUri.fsPath, () => undefined);
-    const globalstorage_path = env.context.globalStorageUri.fsPath;
-    const cmd = `PYTHONUSERBASE="${globalstorage_path}" pip install --user --upgrade --ignore-installed semgrep`;
+    const globalStoragePath = env.globalStoragePath;
+    const cmd = `PYTHONUSERBASE="${globalStoragePath}" pip install --user --upgrade --ignore-installed semgrep`;
     try {
       await execShell(cmd);
     } catch {
@@ -69,10 +68,10 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
       );
       return null;
     }
-    server_path = `${globalstorage_path}/bin/semgrep`;
+    server_path = `${globalStoragePath}/bin/semgrep`;
     env_vars = {
       ...process.env,
-      PYTHONUSERBASE: globalstorage_path,
+      PYTHONUSERBASE: globalStoragePath,
     };
   }
 
@@ -210,7 +209,10 @@ async function lspOptions(
       2,
     )}`,
   );
-  const outputChannel = new ProxyOutputChannel(env.channel);
+  const outputChannel = new ProxyOutputChannel(
+    env.channel,
+    env.globalStoragePath,
+  );
   const errorHandler = new SentryErrorHandler(5, () => [
     outputChannel.logAsAttachment(),
   ]);

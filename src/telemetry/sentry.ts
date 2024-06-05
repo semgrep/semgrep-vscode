@@ -10,6 +10,8 @@ import {
   Message,
 } from "vscode-languageclient";
 import { Environment } from "../env";
+import * as fs from "fs";
+import path from "path";
 
 // global here so if user opts out the functions below don't do anything
 let sentryEnabled = false;
@@ -153,10 +155,12 @@ export class SentryErrorHandler implements ErrorHandler {
     if (this.restartCount < this.maxRestartCount) {
       return { action: CloseAction.Restart, handled: false };
     } else {
-      vscode.window.showErrorMessage(
-        "The language server crashed 5 times, not restarting. Please check the output for more information.",
-      );
-      return { action: CloseAction.DoNotRestart, handled: false };
+      return {
+        action: CloseAction.DoNotRestart,
+        handled: false,
+        message:
+          "The language server crashed 5 times, not restarting. Please check the output for more information.",
+      };
     }
   }
 }
@@ -166,32 +170,42 @@ export class SentryErrorHandler implements ErrorHandler {
 // There's a Github issue that confirms this is impossible that I can no longer find
 export class ProxyOutputChannel implements vscode.OutputChannel {
   readonly name: string;
-  private fullLog = "";
-  constructor(public readonly baseOutputChannel: vscode.OutputChannel) {
+  private logFile: string;
+  constructor(
+    public readonly baseOutputChannel: vscode.OutputChannel,
+    private readonly logPath: string,
+  ) {
     this.baseOutputChannel = baseOutputChannel;
     this.name = baseOutputChannel.name;
+    this.logFile = `${logPath}/lsp-output.log`;
+    // create/clear log file
+    fs.writeFileSync(this.logFile, "");
   }
 
   logAsAttachment(): Attachment {
     const timestamp = new Date().toISOString();
-    // format string for data so that it copies and doesn't get reset
+    const filename = `lsp-output-${timestamp}.log`;
+    const data = fs.readFileSync(this.logFile, "utf8");
     const attachment = {
-      filename: `lsp-output-${timestamp}.log`,
-      data: `${this.fullLog}`,
+      filename,
+      data,
+      contentType: "text/plain",
     };
-    // clear full log
-    this.fullLog = "";
+    // clear log file
+    fs.writeFileSync(this.logFile, "");
     return attachment;
   }
 
   append(value: string): void {
     this.baseOutputChannel.append(value);
-    this.fullLog += value;
+    // write to log file
+    fs.appendFileSync(this.logFile, value);
   }
 
   appendLine(value: string): void {
     this.baseOutputChannel.appendLine(value);
-    this.fullLog += value + "\n";
+    // write to log file
+    fs.appendFileSync(this.logFile, `${value}\n`);
   }
 
   clear = this.baseOutputChannel.clear;

@@ -5,6 +5,7 @@ import {
   WorkspaceConfiguration,
 } from "vscode";
 import { window, workspace } from "vscode";
+import * as fs from "fs";
 
 import { LSP_LOG_FILE, VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
@@ -99,6 +100,13 @@ export class Environment {
       window.showWarningMessage("Semgrep Language Server not active");
     }
     return this._client;
+  }
+
+  get globalStoragePath(): string {
+    const path = this.context.globalStorageUri.fsPath;
+    // check if path exists, if not create it
+    fs.mkdir(path, () => undefined);
+    return path;
   }
 
   emitRulesRefreshedEvent(): void {
