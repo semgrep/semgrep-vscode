@@ -11,7 +11,7 @@ import {
 } from "vscode-languageclient";
 import { Environment } from "../env";
 import * as fs from "fs";
-import { DEFAULT_LSP_LOG_FOLDER } from "../constants";
+import { DEFAULT_LSP_LOG_FOLDER } from "../utils";
 
 // global here so if user opts out the functions below don't do anything
 let sentryEnabled = false;

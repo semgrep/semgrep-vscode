@@ -1,3 +1,8 @@
+import { tmpdir } from "os";
+import { Uri } from "vscode";
+// Can't put this in constants for some reason??
+export const DEFAULT_LSP_LOG_FOLDER = Uri.file(tmpdir());
+
 import { OutputChannel } from "vscode";
 import * as vscode from "vscode";
 
