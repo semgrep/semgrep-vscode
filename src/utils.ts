@@ -2,8 +2,9 @@ import { tmpdir } from "os";
 import { OutputChannel, Uri } from "vscode";
 import * as vscode from "vscode";
 
-import { LSP_LOG_FILE } from "./constants";
+import { getVersionInfo, LSP_LOG_FILE } from "./constants";
 import { ViewResults } from "./webview-ui/src/types/results";
+import * as semver from "semver";
 
 export const DEFAULT_LSP_LOG_URI = Uri.joinPath(
   Uri.file(tmpdir()),
@@ -29,7 +30,35 @@ export class Logger {
     }
   }
 }
-
+export async function checkCliVersion(
+  currentVersion: semver.SemVer,
+): Promise<void> {
+  const versionInfo = await getVersionInfo();
+  if (!versionInfo) {
+    return;
+  }
+  // Set context for the current version so we can gate vscode UI based on it
+  vscode.commands.executeCommand(
+    "setContext",
+    "semgrep.cli.minor",
+    currentVersion.minor,
+  );
+  vscode.commands.executeCommand(
+    "setContext",
+    "semgrep.cli.major",
+    currentVersion.major,
+  );
+  if (semver.compare(currentVersion, versionInfo.min) === -1) {
+    vscode.window.showErrorMessage(
+      `The Semgrep Extension requires a Semgrep CLI version ${versionInfo.min}, the current installed version is ${currentVersion}, please upgrade.`,
+    );
+  }
+  if (semver.compare(currentVersion, versionInfo.latest) === -1) {
+    vscode.window.showWarningMessage(
+      `Some features of the Semgrep Extension require a Semgrep CLI version ${versionInfo.latest}, but the current installed version is ${currentVersion}, some features may be disabled, please upgrade.`,
+    );
+  }
+}
 export async function applyFixAndSave(
   edit: vscode.WorkspaceEdit,
 ): Promise<void> {
