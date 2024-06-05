@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- If telemetry is enabled, the extension will now send crash reports of the Semgrep process, along with errors in the extension
+
 ### Changed
 
 - The extension now pings semgrep.dev to check the latest CLI version

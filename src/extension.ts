@@ -8,6 +8,7 @@ import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
 
 export let global_env: Environment | null = null;
 
@@ -82,6 +83,7 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
+  initTelemetry(context.extensionMode);
   const env: Environment = await createOrUpdateEnvironment(context);
   await activateLsp(env);
   await afterClientStart(context, env);
@@ -92,6 +94,7 @@ export async function deactivate(): Promise<void> {
   if (global_env?.client) {
     await deactivateLsp(global_env);
   }
+  await stopTelemetry();
   global_env?.dispose();
   global_env = null;
 }
