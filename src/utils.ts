@@ -1,15 +1,9 @@
-import { tmpdir } from "os";
-import { OutputChannel, Uri } from "vscode";
+import { OutputChannel } from "vscode";
 import * as vscode from "vscode";
 
-import { getVersionInfo, LSP_LOG_FILE } from "./constants";
 import { ViewResults } from "./webview-ui/src/types/results";
 import * as semver from "semver";
-
-export const DEFAULT_LSP_LOG_URI = Uri.joinPath(
-  Uri.file(tmpdir()),
-  LSP_LOG_FILE,
-);
+import { getVersionInfo } from "./constants";
 
 export class Logger {
   enabled: boolean;

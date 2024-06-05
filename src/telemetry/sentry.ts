@@ -11,6 +11,7 @@ import {
 } from "vscode-languageclient";
 import { Environment } from "../env";
 import * as fs from "fs";
+import { DEFAULT_LSP_LOG_FOLDER } from "../constants";
 
 // global here so if user opts out the functions below don't do anything
 let sentryEnabled = false;
@@ -170,22 +171,41 @@ export class SentryErrorHandler implements ErrorHandler {
 export class ProxyOutputChannel implements vscode.OutputChannel {
   readonly name: string;
   private logFile: string;
+  private writeLog = true;
   constructor(
     public readonly baseOutputChannel: vscode.OutputChannel,
-    private readonly logPath: string,
+    logPath: string,
   ) {
     this.baseOutputChannel = baseOutputChannel;
     this.name = baseOutputChannel.name;
+    // Check if logPath exists, if not create a random one
+    if (!fs.existsSync(logPath)) {
+      logPath = DEFAULT_LSP_LOG_FOLDER.fsPath;
+      // ensure logPath exists
+      if (!fs.existsSync(logPath)) {
+        fs.mkdirSync(logPath);
+      }
+    }
     this.logFile = `${logPath}/lsp-output.log`;
-    // ensure parent directory exists
-    fs.mkdirSync(logPath, { recursive: true });
     // create/clear log file
-    fs.writeFileSync(this.logFile, "");
+    try {
+      fs.writeFileSync(this.logFile, "");
+    } catch (e) {
+      if (sentryEnabled) {
+        Sentry.captureException(e);
+      }
+      console.error(`Failed to write to log file: ${e}`);
+      this.writeLog = false;
+    }
   }
 
-  logAsAttachment(): Attachment {
+  logAsAttachment(): Attachment | null {
+    if (!this.writeLog) {
+      return null;
+    }
     const timestamp = new Date().toISOString();
     const filename = `lsp-output-${timestamp}.log`;
+
     const data = fs.readFileSync(this.logFile, "utf8");
     const attachment = {
       filename,
@@ -200,13 +220,17 @@ export class ProxyOutputChannel implements vscode.OutputChannel {
   append(value: string): void {
     this.baseOutputChannel.append(value);
     // write to log file
-    fs.appendFileSync(this.logFile, value);
+    if (this.writeLog) {
+      fs.appendFileSync(this.logFile, value);
+    }
   }
 
   appendLine(value: string): void {
     this.baseOutputChannel.appendLine(value);
     // write to log file
-    fs.appendFileSync(this.logFile, `${value}\n`);
+    if (this.writeLog) {
+      fs.appendFileSync(this.logFile, `${value}\n`);
+    }
   }
 
   clear = this.baseOutputChannel.clear;
