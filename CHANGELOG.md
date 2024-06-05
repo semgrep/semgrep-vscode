@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The extension now pings semgre.dev to check the latest CLI version
+
 ## v1.7.1 - 2024-05-03
 
 ### Added
