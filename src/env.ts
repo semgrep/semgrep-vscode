@@ -5,6 +5,7 @@ import {
   WorkspaceConfiguration,
 } from "vscode";
 import { window, workspace } from "vscode";
+import * as fs from "fs";
 
 import { LSP_LOG_FILE, VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
@@ -12,6 +13,7 @@ import { SemgrepDocumentProvider } from "./showAstDocument";
 import { LanguageClient } from "vscode-languageclient/node";
 import { EventEmitter } from "stream";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { setSentryContext } from "./telemetry/sentry";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -38,10 +40,9 @@ export class Config {
 }
 
 export class Environment {
-  private _config: Config = new Config();
   semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
-  private _client: LanguageClient | null = null;
-  private _provider: SemgrepSearchWebviewProvider | null = null;
+  public semgrepVersion: string | undefined;
+
   /* The scan ID is the (hopefully) unique identifier associated to each
      /semgrep/search request.
      The reason why we need it is for synchronization, in the event that
@@ -50,27 +51,21 @@ export class Environment {
      (which is asynchronous) and telling it to stop, so we change this
      mutable variable so that it knows to stop on its own.
    */
-  private _scanID: string | null = null;
+  public scanID: string | null = null;
+
+  private _client: LanguageClient | null = null;
+  private _provider: SemgrepSearchWebviewProvider | null = null;
   private constructor(
     readonly context: ExtensionContext,
-    config: Config,
     readonly documentView: SemgrepDocumentProvider,
     readonly channel: OutputChannel,
     readonly logger: Logger,
-    public version: string = "",
+    public config: Config,
     // rulesRefreshedEmitter is used to notify if rules are refreshed, i.e. after startup, a login, or a manual refresh
     private rulesRefreshedEmitter: EventEmitter = new EventEmitter(),
   ) {
-    this._config = config;
     this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
-  }
-
-  get config(): Config {
-    return this._config;
-  }
-
-  set config(config: Config) {
-    this._config = config;
+    setSentryContext(this);
   }
 
   get loggedIn(): boolean {
@@ -107,6 +102,13 @@ export class Environment {
     return this._client;
   }
 
+  get globalStoragePath(): string {
+    const path = this.context.globalStorageUri.fsPath;
+    // check if path exists, if not create it
+    fs.mkdir(path, () => undefined);
+    return path;
+  }
+
   emitRulesRefreshedEvent(): void {
     this.rulesRefreshedEmitter.emit("refresh");
   }
@@ -132,20 +134,12 @@ export class Environment {
     return this._provider;
   }
 
-  get scanID(): string | null {
-    return this._scanID;
-  }
-
-  set scanID(val: string | null) {
-    this._scanID = val;
-  }
-
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);
     const logger = new Logger(config.trace, channel);
     const documentView = new SemgrepDocumentProvider();
-    return new Environment(context, config, documentView, channel, logger);
+    return new Environment(context, documentView, channel, logger, config);
   }
 
   static async loadConfig(context: ExtensionContext): Promise<Config> {
@@ -165,6 +159,7 @@ export class Environment {
     // Reload configuration
     this.config = await Environment.loadConfig(this.context);
     this.logger.enableLogger(this.config.trace);
+    setSentryContext(this);
     return this;
   }
 

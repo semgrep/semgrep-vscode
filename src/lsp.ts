@@ -35,6 +35,11 @@ import {
 import { Environment } from "./env";
 import { rulesRefreshed } from "./lspExtensions";
 import { NotificationHandler0 } from "vscode-languageserver";
+import {
+  SentryErrorHandler,
+  ProxyOutputChannel,
+  withSentryAsync,
+} from "./telemetry/sentry";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let server_path = which.sync(SEMGREP_BINARY, { nothrow: true });
@@ -53,9 +58,8 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
       );
       return null;
     }
-    fs.mkdir(env.context.globalStorageUri.fsPath, () => undefined);
-    const globalstorage_path = env.context.globalStorageUri.fsPath;
-    const cmd = `PYTHONUSERBASE="${globalstorage_path}" pip install --user --upgrade --ignore-installed semgrep`;
+    const globalStoragePath = env.globalStoragePath;
+    const cmd = `PYTHONUSERBASE="${globalStoragePath}" pip install --user --upgrade --ignore-installed semgrep`;
     try {
       await execShell(cmd);
     } catch {
@@ -64,10 +68,10 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
       );
       return null;
     }
-    server_path = `${globalstorage_path}/bin/semgrep`;
+    server_path = `${globalStoragePath}/bin/semgrep`;
     env_vars = {
       ...process.env,
-      PYTHONUSERBASE: globalstorage_path,
+      PYTHONUSERBASE: globalStoragePath,
     };
   }
 
@@ -137,6 +141,8 @@ async function serverOptionsCli(
         `Some features of the Semgrep Extension require a Semgrep CLI version ${LATEST_VERSION}, but the current installed version is ${version}, some features may be disabled, please upgrade.`,
       );
     }
+    env.semgrepVersion = version;
+    await env.reloadConfig();
   }
 
   const serverOptions: ServerOptions = server;
@@ -146,7 +152,7 @@ async function serverOptionsCli(
   return serverOptions;
 }
 
-function serverOptionsJs(env: Environment) {
+function serverOptionsJs(env: Environment): ServerOptions {
   const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
   const stackSize = env.config.get("stackSizeJS");
   const heapSize = env.config.get("heapSizeJS");
@@ -203,12 +209,21 @@ async function lspOptions(
       2,
     )}`,
   );
+  const outputChannel = new ProxyOutputChannel(
+    env.channel,
+    env.globalStoragePath,
+  );
+  const errorHandler = new SentryErrorHandler(5, () => [
+    outputChannel.logAsAttachment(),
+  ]);
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
     documentSelector: [{ language: "*", scheme: "file" }],
-    outputChannel: env.channel,
+    outputChannel,
+    traceOutputChannel: env.channel,
     initializationOptions: initializationOptions,
+    errorHandler,
     markdown: {
       isTrusted: true,
       supportHtml: false,
@@ -276,7 +291,7 @@ async function stop(env: Environment | null): Promise<void> {
 }
 
 export async function activateLsp(env: Environment): Promise<void> {
-  return start(env);
+  return withSentryAsync(() => start(env));
 }
 
 export async function deactivateLsp(env: Environment | null): Promise<void> {
@@ -286,6 +301,6 @@ export async function deactivateLsp(env: Environment | null): Promise<void> {
 export async function restartLsp(env: Environment | null): Promise<void> {
   await stop(env);
   if (env) {
-    return start(env);
+    return withSentryAsync(() => start(env));
   }
 }
