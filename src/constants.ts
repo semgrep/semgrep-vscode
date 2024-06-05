@@ -12,13 +12,17 @@ export type VersionInfo = {
   latest: SemVer;
   min: SemVer;
 };
-export async function getVersionInfo(): Promise<VersionInfo> {
+export async function getVersionInfo(): Promise<VersionInfo | undefined> {
   const url = "https://semgrep.dev/api/check-version";
-  const response = await fetch(url).then((response) => response.json());
-  return {
-    latest: new SemVer(response.latest),
-    min: new SemVer(response.versions.minimum),
-  };
+  try {
+    const response = await fetch(url).then((response) => response.json());
+    return {
+      latest: new SemVer(response.latest),
+      min: new SemVer(response.versions.minimum),
+    };
+  } catch (e) {
+    return undefined;
+  }
 }
 export const SUPPORTED_LANGS = [
   "bash",

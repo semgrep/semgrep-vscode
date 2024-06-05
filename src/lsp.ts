@@ -29,11 +29,11 @@ import {
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
-  getVersionInfo,
 } from "./constants";
 import { Environment } from "./env";
 import { rulesRefreshed } from "./lspExtensions";
 import { NotificationHandler0 } from "vscode-languageserver";
+import { checkCliVersion } from "./utils";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let server_path = which.sync(SEMGREP_BINARY, { nothrow: true });
@@ -122,28 +122,7 @@ async function serverOptionsCli(
     const cmd = `"${server.command}" --version`;
     const version = await execShell(cmd, server.options?.env);
     const semVersion = new semver.SemVer(version);
-    const versionInfo = await getVersionInfo();
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.cli.minor",
-      semVersion.minor,
-    );
-    vscode.commands.executeCommand(
-      "setContext",
-      "semgrep.cli.major",
-      semVersion.major,
-    );
-    if (semver.compare(semVersion, versionInfo.min) === -1) {
-      vscode.window.showErrorMessage(
-        `The Semgrep Extension requires a Semgrep CLI version ${versionInfo.min}, the current installed version is ${version}, please upgrade.`,
-      );
-      return null;
-    }
-    if (semver.compare(semVersion, versionInfo.latest) === -1) {
-      vscode.window.showWarningMessage(
-        `Some features of the Semgrep Extension require a Semgrep CLI version ${versionInfo.latest}, but the current installed version is ${version}, some features may be disabled, please upgrade.`,
-      );
-    }
+    checkCliVersion(semVersion);
   }
 
   const serverOptions: ServerOptions = server;
