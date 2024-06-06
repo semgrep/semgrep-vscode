@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## v1.8.1 - 2024-06-06
+
+### Added
+
+### Changed
+
 - Extension no longer errors out if a log can't be written
 
 ## v1.8.0 - 2024-06-05
