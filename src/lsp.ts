@@ -199,9 +199,11 @@ async function lspOptions(
     env.channel,
     env.globalStoragePath,
   );
-  const errorHandler = new SentryErrorHandler(5, () => [
-    outputChannel.logAsAttachment(),
-  ]);
+  const errorHandler = new SentryErrorHandler(5, () => {
+    const attachment = outputChannel.logAsAttachment();
+
+    return attachment ? [attachment] : [];
+  });
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?

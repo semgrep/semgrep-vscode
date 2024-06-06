@@ -1,14 +1,13 @@
 import {
   ExtensionContext,
   OutputChannel,
-  Uri,
   WorkspaceConfiguration,
 } from "vscode";
 import { window, workspace } from "vscode";
 import * as fs from "fs";
 
-import { LSP_LOG_FILE, VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
-import { DEFAULT_LSP_LOG_URI, Logger } from "./utils";
+import { VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
+import { Logger } from "./utils";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { LanguageClient } from "vscode-languageclient/node";
 import { EventEmitter } from "stream";
@@ -40,7 +39,6 @@ export class Config {
 }
 
 export class Environment {
-  semgrep_log: Uri = DEFAULT_LSP_LOG_URI;
   public semgrepVersion: string | undefined;
 
   /* The scan ID is the (hopefully) unique identifier associated to each
@@ -64,7 +62,6 @@ export class Environment {
     // rulesRefreshedEmitter is used to notify if rules are refreshed, i.e. after startup, a login, or a manual refresh
     private rulesRefreshedEmitter: EventEmitter = new EventEmitter(),
   ) {
-    this.semgrep_log = Uri.joinPath(context.logUri, LSP_LOG_FILE);
     setSentryContext(this);
   }
 
