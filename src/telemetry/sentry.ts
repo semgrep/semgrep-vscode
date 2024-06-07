@@ -18,7 +18,10 @@ import { LspErrorParams } from "../lspExtensions";
 let sentryEnabled = false;
 const SENTRY_DSN =
   "https://01c918981c1d900a22d02793e241de70@o77510.ingest.us.sentry.io/4507352931434496";
-export function initSentry(environment: string): void {
+export function initSentry(
+  extensionEnvironment: string,
+  env: Environment,
+): void {
   if (sentryEnabled) {
     return;
   }
@@ -39,13 +42,21 @@ export function initSentry(environment: string): void {
       // TODO: Profiling, but to do so requires shipping a native module which is super non-trivial
       return [...filteredDefaultIntegrations];
     },
+    release: env.context.extension.packageJSON.version,
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
     attachStacktrace: true,
-    environment,
+    environment: extensionEnvironment,
   });
   Sentry.setUser({
     id: vscode.env.machineId,
+  });
+  // Only need to set these tags once
+  Sentry.setTags({
+    semgrepVersion: env.semgrepVersion,
+    isNewAppInstall: env.newInstall,
+    sessionId: vscode.env.sessionId,
+    extensionVersion: env.context.extension.packageJSON.version,
   });
 }
 const skipFields = [
@@ -80,10 +91,6 @@ export function setSentryContext(env: Environment): void {
       return { ...acc, ...setting };
     });
   Sentry.setTags({
-    semgrepVersion: env.semgrepVersion,
-    isNewAppInstall: env.newInstall,
-    sessionId: vscode.env.sessionId,
-    extensionVersion: env.context.extension.packageJSON.version,
     loggedIn: env.loggedIn,
     ...allSettings,
   });

@@ -1,25 +1,29 @@
 import * as vscode from "vscode";
 import { initSentry, stopSentry } from "./sentry";
+import { Environment } from "../env";
 
 enum ExtensionEnvironment {
   Release = "release",
   Development = "development",
   Test = "test",
 }
-export function initTelemetry(extensionMode: vscode.ExtensionMode): void {
+export function initTelemetry(
+  extensionMode: vscode.ExtensionMode,
+  env: Environment,
+): void {
   if (!vscode.env.isTelemetryEnabled) {
     return;
   }
-  let environment = ExtensionEnvironment.Release;
+  let extensionEnvironment = ExtensionEnvironment.Release;
   switch (extensionMode) {
     case vscode.ExtensionMode.Development:
-      environment = ExtensionEnvironment.Development;
+      extensionEnvironment = ExtensionEnvironment.Development;
       break;
     case vscode.ExtensionMode.Test:
-      environment = ExtensionEnvironment.Test;
+      extensionEnvironment = ExtensionEnvironment.Test;
       break;
   }
-  initSentry(environment);
+  initSentry(extensionEnvironment, env);
 }
 
 export async function stopTelemetry(): Promise<void> {
