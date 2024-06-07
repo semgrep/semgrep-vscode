@@ -18,6 +18,7 @@ import {
   ServerOptions,
   Executable,
   TransportKind,
+  LogMessageParams,
 } from "vscode-languageclient/node";
 
 import * as which from "which";
@@ -31,12 +32,13 @@ import {
   DIAGNOSTIC_COLLECTION_NAME,
 } from "./constants";
 import { Environment } from "./env";
-import { rulesRefreshed } from "./lspExtensions";
+import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
 import { NotificationHandler0 } from "vscode-languageserver";
 import {
   SentryErrorHandler,
   ProxyOutputChannel,
   withSentryAsync,
+  captureLspError,
 } from "./telemetry/sentry";
 import { checkCliVersion } from "./utils";
 
@@ -250,7 +252,6 @@ async function start(env: Environment): Promise<void> {
     serverOptions,
     clientOptions,
   );
-  // register commands
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
 
@@ -258,7 +259,15 @@ async function start(env: Environment): Promise<void> {
     env.logger.log("Rules loaded");
     env.emitRulesRefreshedEvent();
   };
+
+  // Register handlers here
   c.onNotification(rulesRefreshed, notificationHandler);
+  c.onTelemetry((e) => {
+    // We only send errors, so we can safely cast this
+    // See RPC_server.ml for the definition of LspErrorParams
+    const event = e as LspErrorParams;
+    captureLspError(event);
+  });
 
   env.client = c;
   await c.start();

@@ -12,6 +12,7 @@ import {
 import { Environment } from "../env";
 import * as fs from "fs";
 import { DEFAULT_LSP_LOG_FOLDER } from "../utils";
+import { LspErrorParams } from "../lspExtensions";
 
 // global here so if user opts out the functions below don't do anything
 let sentryEnabled = false;
@@ -121,6 +122,33 @@ export async function withSentryAsync(
     //rethrow error
     throw error;
   }
+}
+
+export async function captureLspError(lspError: LspErrorParams): Promise<void> {
+  if (!sentryEnabled) {
+    return;
+  }
+  Sentry.captureEvent(
+    {
+      exception: {
+        values: [
+          {
+            type: lspError.name,
+            value: lspError.message,
+          },
+        ],
+      },
+    },
+    {
+      attachments: [
+        {
+          filename: "lsp-stacktrace.log",
+          data: lspError.stack,
+          contentType: "text/plain",
+        },
+      ],
+    },
+  );
 }
 
 export class SentryErrorHandler implements ErrorHandler {
