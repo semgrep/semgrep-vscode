@@ -173,11 +173,12 @@ export class SentryErrorHandler implements ErrorHandler {
   closed(): CloseHandlerResult | Promise<CloseHandlerResult> {
     if (!sentryEnabled) {
       return { action: CloseAction.Restart, handled: false };
+    } else {
+      Sentry.captureException("Language client connection closed", {
+        data: { restartCount: this.restartCount },
+        attachments: this.attachOnCrash(),
+      });
     }
-    Sentry.captureException("Language client connection closed", {
-      data: { restartCount: this.restartCount },
-      attachments: this.attachOnCrash(),
-    });
     this.restartCount++;
     // Again, just log the event and continue
     if (this.restartCount < this.maxRestartCount) {
@@ -200,19 +201,13 @@ export class ProxyOutputChannel implements vscode.OutputChannel {
   readonly name: string;
   private logFile: string;
   private writeLog = true;
-  constructor(
-    public readonly baseOutputChannel: vscode.OutputChannel,
-    logPath: string,
-  ) {
+  constructor(public readonly baseOutputChannel: vscode.OutputChannel) {
     this.baseOutputChannel = baseOutputChannel;
     this.name = baseOutputChannel.name;
-    // Check if logPath exists, if not create a random one
+    const logPath = DEFAULT_LSP_LOG_FOLDER.fsPath;
+    // ensure logPath exists
     if (!fs.existsSync(logPath)) {
-      logPath = DEFAULT_LSP_LOG_FOLDER.fsPath;
-      // ensure logPath exists
-      if (!fs.existsSync(logPath)) {
-        fs.mkdirSync(logPath);
-      }
+      fs.mkdirSync(logPath);
     }
     this.logFile = `${logPath}/lsp-output.log`;
     // create/clear log file

@@ -18,7 +18,6 @@ import {
   ServerOptions,
   Executable,
   TransportKind,
-  LogMessageParams,
 } from "vscode-languageclient/node";
 
 import * as which from "which";
@@ -197,10 +196,7 @@ async function lspOptions(
       2,
     )}`,
   );
-  const outputChannel = new ProxyOutputChannel(
-    env.channel,
-    env.globalStoragePath,
-  );
+  const outputChannel = new ProxyOutputChannel(env.channel);
   const errorHandler = new SentryErrorHandler(5, () => {
     const attachment = outputChannel.logAsAttachment();
 
