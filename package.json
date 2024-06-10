@@ -40,6 +40,11 @@
     },
     "commands": [
       {
+        "command": "semgrep.openChat",
+        "title": "Open Semgrep Chat",
+        "category": "Semgrep"
+      },
+      {
         "command": "semgrep.scanWorkspace",
         "title": "Semgrep: Scan changed files in workspace"
       },
@@ -208,6 +213,11 @@
           "id": "semgrep-sidebar",
           "title": "Semgrep Search",
           "icon": "semgrep-icon-basic.png"
+        },
+        {
+          "id": "semgrepChat",
+          "title": "Semgrep Chat",
+          "icon": "semgrep-icon-basic.svg"
         }
       ]
     },
@@ -217,6 +227,14 @@
           "type": "webview",
           "id": "semgrep.searchView",
           "name": "Code Search"
+        }
+      ],
+      "semgrepChat": [
+        {
+          "type": "webview",
+          "id": "semgrepChatView",
+          "name": "Semgrep Chat",
+          "icon": "semgrep-icon-basic.svg"
         }
       ]
     },
@@ -231,6 +249,12 @@
           "command": "semgrep.showAstNamed",
           "when": "editorTextFocus",
           "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "semgrep.openChat",
+          "when": "true"
         }
       ]
     },

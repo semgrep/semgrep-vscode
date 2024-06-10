@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semgrep Chat</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-container {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+        .message.user {
+            margin: 5px;
+            padding: 10px;
+            color: "white";
+            background-color: #adb5bd;
+            border-radius: 5px;
+        }
+        .message.ai {
+            margin: 5px;
+            padding: 10px;
+            background-color: #495057; 
+            border-radius: 5px;
+        }
+        .input-container {
+            display: flex;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #343a40;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container" id="chatContainer">
+        <!-- Chat messages will be appended here -->
+    </div>
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Type your rule description here...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script nonce="${nonce}">
+        const vscode = acquireVsCodeApi();
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            input.value = ''; // Clear the input field
+
+            // Display the user message in the chat container
+            const chatContainer = document.getElementById('chatContainer');
+            const userMessageElement = document.createElement('div');
+            userMessageElement.classList.add('message', 'user');
+            userMessageElement.textContent = message;
+            chatContainer.prepend(userMessageElement); // Add the message to the top of the container
+
+            // Simulate an AI response for demonstration
+            // In a real scenario, you would replace this with actual AI response handling
+            setTimeout(() => {
+                const aiMessageElement = document.createElement('div');
+                aiMessageElement.classList.add('message', 'ai');
+                aiMessageElement.textContent = "AI: This is a simulated response.";
+                chatContainer.prepend(aiMessageElement);
+            }, 1000);
+
+            // Here you would typically send the message to your backend or AI service
+            // For example:
+            // vscode.postMessage({ command: 'generateRule', text: message });
+        }
+    </script>
+</body>
+</html>
