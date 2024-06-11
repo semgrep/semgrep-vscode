@@ -37,7 +37,6 @@ import {
   AiChatPublishParams,
   rulesRefreshed,
 } from "./lspExtensions";
-import { NotificationHandler0 } from "vscode-languageserver";
 import {
   SentryErrorHandler,
   ProxyOutputChannel,

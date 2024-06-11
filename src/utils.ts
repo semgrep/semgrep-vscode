@@ -6,7 +6,7 @@ export const DEFAULT_LSP_LOG_FOLDER = Uri.file(tmpdir());
 import { OutputChannel } from "vscode";
 import * as vscode from "vscode";
 
-import { ViewResults } from "./webview-ui/src/types/results";
+import { ViewResults } from "./search-ui/src/types/results";
 import * as semver from "semver";
 import { getVersionInfo } from "./constants";
 

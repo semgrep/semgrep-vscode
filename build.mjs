@@ -21,11 +21,27 @@ async function buildExtension(watch) {
     await esbuild.build(options);
   }
 }
-async function buildWebview(watch) {
+async function buildSearchWebview(watch) {
   let options = {
     logLevel: "info",
-    entryPoints: ["./src/webview-ui/index.tsx"],
-    outfile: "./out/webview.js",
+    entryPoints: ["./src/search-ui/index.tsx"],
+    outfile: "./out/search-webview.js",
+    bundle: true,
+    plugins: [cssModulesPlugin()],
+    sourcemap: isSourcemap,
+  };
+  if (watch) {
+    let ctx = await esbuild.context(options);
+    await ctx.watch();
+  } else {
+    await esbuild.build(options);
+  }
+}
+async function buildAiChatWebview(watch) {
+  let options = {
+    logLevel: "info",
+    entryPoints: ["./src/ai-chat/index.tsx"],
+    outfile: "./out/ai-chat-webview.js",
     bundle: true,
     plugins: [cssModulesPlugin()],
     sourcemap: isSourcemap,
@@ -43,5 +59,6 @@ const isSourcemap = process.argv.includes("--sourcemap");
 
 await Promise.all([
   buildExtension(isWatch, isSourcemap),
-  buildWebview(isWatch, isSourcemap),
+  buildSearchWebview(isWatch, isSourcemap),
+  buildAiChatWebview(isWatch, isSourcemap),
 ]);

@@ -11,9 +11,9 @@ import { Logger } from "./utils";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { LanguageClient } from "vscode-languageclient/node";
 import { EventEmitter } from "stream";
-import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { SemgrepSearchWebviewProvider } from "./views/SearchProvider";
 import { setSentryContext } from "./telemetry/sentry";
-import { SemgrepChatViewProvider } from "./ai-chat/AiChatProvidert";
+import { SemgrepChatViewProvider } from "./views/AiChatProvidert";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {

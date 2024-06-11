@@ -7,9 +7,9 @@ import { registerCommands } from "./commands";
 import { createStatusBar } from "./statusBar";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
-import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { SemgrepSearchWebviewProvider } from "./views/SearchProvider";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import { SemgrepChatViewProvider } from "./ai-chat/AiChatProvidert";
+import { SemgrepChatViewProvider } from "./views/AiChatProvidert";
 
 export let global_env: Environment | null = null;
 
@@ -57,6 +57,7 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
     vscode.window.registerWebviewViewProvider(
       "semgrepChatView",
       semgrepChatViewProvider,
+      { webviewOptions: { retainContextWhenHidden: true } },
     ),
   );
   // register content provider for the AST showing document

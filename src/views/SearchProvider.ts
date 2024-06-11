@@ -146,11 +146,11 @@ export class SemgrepSearchWebviewProvider
 
     // The CSS file from the React build output
     const stylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "webview.css"),
+      vscode.Uri.joinPath(assetsPath, "search-webview.css"),
     );
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "webview.js"),
+      vscode.Uri.joinPath(assetsPath, "search-webview.js"),
     );
     // The global CSS file
     const globalStylesUri = webview.asWebviewUri(

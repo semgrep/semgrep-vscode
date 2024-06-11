@@ -14,7 +14,8 @@
  */
 
 import { SUPPORTED_LANGS } from "../constants";
-import { ViewResults } from "../webview-ui/src/types/results";
+import { AiChatMessage } from "../lspExtensions";
+import { ViewResults } from "../search-ui/src/types/results";
 import * as vscode from "vscode";
 
 /*****************************************************************************/
@@ -44,6 +45,8 @@ export const replace = "webview/semgrep/replace";
 export const replaceAll = "webview/semgrep/replaceAll";
 export const getLanguage = "webview/semgrep/getActiveLang";
 export const exportRule = "webview/semgrep/exportRule";
+export const webviewPostChat = "webview/semgrep/postChat";
+export const init = "webview/semgrep/init";
 
 export type webviewToExtensionCommand =
   | {
@@ -64,7 +67,9 @@ export type webviewToExtensionCommand =
       command: typeof exportRule;
       patterns: { positive: boolean; pattern: string }[];
       language: string;
-    };
+    }
+  | { command: typeof webviewPostChat; message: AiChatMessage }
+  | { command: typeof init; message: AiChatMessage };
 
 /*****************************************************************************/
 /* Extension to webview commands */
@@ -74,7 +79,8 @@ export const results = "extension/semgrep/results";
 export const activeLang = "extension/semgrep/activeLang";
 export const clear = "extension/semgrep/clear";
 export const exportRuleRequest = "extension/semgrep/exportRuleRequest";
-
+export const postChat = "extension/semgrep/postChat";
+export const setExample = "extension/semgrep/setExample";
 export type SearchLanguage = (typeof SUPPORTED_LANGS)[number];
 
 export type extensionToWebviewCommand =
@@ -87,4 +93,6 @@ export type extensionToWebviewCommand =
       lang: SearchLanguage | null;
     }
   | { command: typeof clear }
-  | { command: typeof exportRuleRequest };
+  | { command: typeof exportRuleRequest }
+  | { command: typeof postChat; message: AiChatMessage }
+  | { command: typeof setExample; example: string; language: string };

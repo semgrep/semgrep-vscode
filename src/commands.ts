@@ -12,7 +12,7 @@ import {
 } from "./lspExtensions";
 import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
-import { ViewResults } from "./webview-ui/src/types/results";
+import { ViewResults } from "./search-ui/src/types/results";
 import { applyFixAndSave, replaceAll } from "./utils";
 import { handleSearch } from "./search";
 
@@ -219,12 +219,12 @@ export function registerCommands(env: Environment): void {
 
   // chat
   // Register the command to open the chat
-  vscode.commands.registerCommand("semgrep.startChat", (args) => {
-    env.chatProvider!.example = args.example;
-    env.chatProvider!.language = args.language;
-
+  vscode.commands.registerCommand("semgrep.startChat", async (args) => {
     // Reveal the sidebar view programmatically
-    vscode.commands.executeCommand("workbench.view.extension.semgrepChat");
+    await vscode.commands.executeCommand(
+      "workbench.view.extension.semgrepChat",
+    );
+    env.chatProvider!.setExample(args.example, args.language);
   });
 
   /********/
