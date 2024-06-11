@@ -18,6 +18,7 @@ import {
   ServerOptions,
   Executable,
   TransportKind,
+  NotificationHandler,
 } from "vscode-languageclient/node";
 
 import * as which from "which";
@@ -31,7 +32,11 @@ import {
   DIAGNOSTIC_COLLECTION_NAME,
 } from "./constants";
 import { Environment } from "./env";
-import { rulesRefreshed } from "./lspExtensions";
+import {
+  aiChatMessage,
+  AiChatPublishParams,
+  rulesRefreshed,
+} from "./lspExtensions";
 import { NotificationHandler0 } from "vscode-languageserver";
 import {
   SentryErrorHandler,
@@ -254,12 +259,18 @@ async function start(env: Environment): Promise<void> {
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
 
-  const notificationHandler: NotificationHandler0 = () => {
+  const rulesRefreshHandler: NotificationHandler<void> = () => {
     env.logger.log("Rules loaded");
     env.emitRulesRefreshedEvent();
   };
-  c.onNotification(rulesRefreshed, notificationHandler);
-
+  const aiChatHandler: NotificationHandler<AiChatPublishParams> = ({
+    message,
+  }: AiChatPublishParams) => {
+    env.logger.log(`AI Chat: ${message}`);
+    env.chatProvider?.addMessage(message);
+  };
+  c.onNotification(rulesRefreshed, rulesRefreshHandler);
+  c.onNotification(aiChatMessage, aiChatHandler);
   env.client = c;
   await c.start();
 }

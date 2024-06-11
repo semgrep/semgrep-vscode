@@ -13,6 +13,7 @@ import { LanguageClient } from "vscode-languageclient/node";
 import { EventEmitter } from "stream";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
 import { setSentryContext } from "./telemetry/sentry";
+import { SemgrepChatViewProvider } from "./ai-chat/AiChatProvidert";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -52,7 +53,8 @@ export class Environment {
   public scanID: string | null = null;
 
   private _client: LanguageClient | null = null;
-  private _provider: SemgrepSearchWebviewProvider | null = null;
+  private _searchProvider: SemgrepSearchWebviewProvider | null = null;
+  private _chatProvider: SemgrepChatViewProvider | null = null;
   private constructor(
     readonly context: ExtensionContext,
     readonly documentView: SemgrepDocumentProvider,
@@ -118,17 +120,30 @@ export class Environment {
     }
   }
 
-  set provider(provider: SemgrepSearchWebviewProvider | null) {
+  set searchProvider(provider: SemgrepSearchWebviewProvider | null) {
     if (provider) {
-      this._provider = provider;
+      this._searchProvider = provider;
     }
   }
 
-  get provider(): SemgrepSearchWebviewProvider | null {
-    if (!this._provider) {
+  get searchProvider(): SemgrepSearchWebviewProvider | null {
+    if (!this._searchProvider) {
       window.showWarningMessage("Semgrep Search Webview not active");
     }
-    return this._provider;
+    return this._searchProvider;
+  }
+
+  get chatProvider(): SemgrepChatViewProvider | null {
+    if (!this._chatProvider) {
+      window.showWarningMessage("Semgrep Chat Webview not active");
+    }
+    return this._chatProvider;
+  }
+
+  set chatProvider(provider: SemgrepChatViewProvider | null) {
+    if (provider) {
+      this._chatProvider = provider;
+    }
   }
 
   static async create(context: ExtensionContext): Promise<Environment> {

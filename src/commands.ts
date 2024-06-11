@@ -181,7 +181,7 @@ export function registerCommands(env: Environment): void {
   );
 
   vscode.commands.registerCommand("semgrep.search.clear", () => {
-    env.provider?.sendMessageToWebview({
+    env.searchProvider?.sendMessageToWebview({
       command: "extension/semgrep/clear",
     });
   });
@@ -217,12 +217,22 @@ export function registerCommands(env: Environment): void {
     },
   );
 
+  // chat
+  // Register the command to open the chat
+  vscode.commands.registerCommand("semgrep.startChat", (args) => {
+    env.chatProvider!.example = args.example;
+    env.chatProvider!.language = args.language;
+
+    // Reveal the sidebar view programmatically
+    vscode.commands.executeCommand("workbench.view.extension.semgrepChat");
+  });
+
   /********/
   /* MISC */
   /********/
 
   vscode.commands.registerCommand("semgrep.search.exportRule", () => {
-    env.provider?.sendMessageToWebview({
+    env.searchProvider?.sendMessageToWebview({
       command: "extension/semgrep/exportRuleRequest",
     });
   });

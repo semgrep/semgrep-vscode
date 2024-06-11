@@ -48,6 +48,16 @@ export interface LspSearchParams {
 export interface SearchResults {
   locations: SearchResult[];
 }
+
+export interface AiChatMessage {
+  role: string;
+  content: string;
+}
+
+export interface AiChatPublishParams {
+  message: AiChatMessage;
+}
+
 export const login = new lc.RequestType0<LoginParams | null, void>(
   "semgrep/login",
 );
@@ -58,10 +68,16 @@ export const loginFinish = new lc.NotificationType<LoginParams>(
 
 export const logout = new lc.NotificationType("semgrep/logout");
 
-export const refreshRules = new lc.NotificationType("semgrep/refreshRules");
+export const refreshRules = new lc.NotificationType<void>(
+  "semgrep/refreshRules",
+);
 
-export const rulesRefreshed = new lc.NotificationType0(
+export const rulesRefreshed = new lc.NotificationType<void>(
   "semgrep/rulesRefreshed",
+);
+
+export const aiChatMessage = new lc.NotificationType<AiChatPublishParams>(
+  "semgrep/publishChat",
 );
 
 export const workspaceRules = new lc.RequestType0<any[], void>(

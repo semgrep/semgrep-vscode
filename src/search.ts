@@ -105,7 +105,7 @@ async function searchLoop(
     /* Communicate with the webview! */
     // console.log(results.locations);
     const viewResults = await viewResultsOfSearchResults(scanID, results);
-    env.provider?.sendMessageToWebview({
+    env.searchProvider?.sendMessageToWebview({
       command: "extension/semgrep/results",
       results: viewResults,
     });

@@ -5,23 +5,23 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { Environment } from "./env";
 import { registerCommands } from "./commands";
 import { createStatusBar } from "./statusBar";
-import * as fs from "fs";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
+import { SemgrepChatViewProvider } from "./ai-chat/AiChatProvidert";
 
 export let global_env: Environment | null = null;
 
 async function initEnvironment(
-  context: ExtensionContext
+  context: ExtensionContext,
 ): Promise<Environment> {
   global_env = await Environment.create(context);
   return global_env;
 }
 
 async function createOrUpdateEnvironment(
-  context: ExtensionContext
+  context: ExtensionContext,
 ): Promise<Environment> {
   return global_env ? global_env.reloadConfig() : initEnvironment(context);
 }
@@ -29,7 +29,7 @@ async function createOrUpdateEnvironment(
 async function afterClientStart(context: ExtensionContext, env: Environment) {
   if (!env.client) {
     vscode.window.showErrorMessage(
-      "Semgrep Extension failed to activate, please check output"
+      "Semgrep Extension failed to activate, please check output",
     );
     return;
   }
@@ -44,15 +44,25 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
       SemgrepSearchWebviewProvider.viewType,
       provider,
       // This makes it so that we don't lose matches hwen we close the sidebar!
-      { webviewOptions: { retainContextWhenHidden: true } }
-    )
+      { webviewOptions: { retainContextWhenHidden: true } },
+    ),
   );
-  env.provider = provider;
-
+  env.searchProvider = provider;
+  const semgrepChatViewProvider = new SemgrepChatViewProvider(
+    context.extensionUri,
+    context,
+  );
+  env.chatProvider = semgrepChatViewProvider;
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      "semgrepChatView",
+      semgrepChatViewProvider,
+    ),
+  );
   // register content provider for the AST showing document
   vscode.workspace.registerTextDocumentContentProvider(
     SemgrepDocumentProvider.scheme,
-    env.documentView
+    env.documentView,
   );
   // Handle configuration changes
   context.subscriptions.push(
@@ -62,8 +72,8 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
           await env.reloadConfig();
           restartLsp(env);
         }
-      }
-    )
+      },
+    ),
   );
   vscode.commands.executeCommand("semgrep.loginStatus").then(async () => {
     vscode.commands.executeCommand("semgrep.loginNudge");
@@ -72,7 +82,7 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
       const selection = await vscode.window.showInformationMessage(
         "Semgrep Extension succesfully installed. Would you like to try performing a full workspace scan (may take longer on bigger workspaces)?",
         "Scan Full Workspace",
-        "Dismiss"
+        "Dismiss",
       );
       if (selection == "Scan Full Workspace") {
         vscode.commands.executeCommand("semgrep.scanWorkspaceFull");
@@ -82,29 +92,12 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
 }
 
 export async function activate(
-  context: ExtensionContext
+  context: ExtensionContext,
 ): Promise<Environment | undefined> {
   initTelemetry(context.extensionMode);
   const env: Environment = await createOrUpdateEnvironment(context);
   await activateLsp(env);
   await afterClientStart(context, env);
-  const semgrepChatViewProvider = new SemgrepChatViewProvider(
-    context.extensionUri,
-    context
-  );
-  context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(
-      "semgrepChatView",
-      semgrepChatViewProvider
-    )
-  );
-  // Register the command to open the chat
-  const disposable = vscode.commands.registerCommand("semgrep.openChat", () => {
-    // Reveal the sidebar view programmatically
-    vscode.commands.executeCommand("workbench.view.extension.semgrepChat");
-  });
-
-  context.subscriptions.push(disposable);
 
   return env;
 }
@@ -116,49 +109,4 @@ export async function deactivate(): Promise<void> {
   await stopTelemetry();
   global_env?.dispose();
   global_env = null;
-}
-class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
-  private _view?: vscode.WebviewView;
-
-  // Constructor now takes the extension context
-  constructor(
-    private readonly _extensionUri: vscode.Uri,
-    private readonly _context: vscode.ExtensionContext
-  ) {}
-
-  public resolveWebviewView(
-    webviewView: vscode.WebviewView,
-    _context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken
-  ) {
-    this._view = webviewView;
-
-    webviewView.webview.options = {
-      enableScripts: true,
-    };
-
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
-    // Correctly manage the subscription
-    const messageHandler = webviewView.webview.onDidReceiveMessage(
-      (message) => {
-        switch (message.command) {
-          case "alert":
-            vscode.window.showErrorMessage(message.text);
-            return;
-        }
-      },
-      null, // Optional: context.subscriptions can be used here if needed for other disposables
-      this._context.subscriptions // Correctly add to the extension's subscriptions
-    );
-
-    // If you need to directly add the subscription
-    this._context.subscriptions.push(messageHandler);
-  }
-
-  private _getHtmlForWebview(webview: vscode.Webview): string {
-    const uri = vscode.Uri.joinPath(this._extensionUri, "src", "chat.html");
-
-    return fs.readFileSync(uri.fsPath, "utf8");
-  }
 }
