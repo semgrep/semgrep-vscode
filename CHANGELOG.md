@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated README
 - Extension will now log to a temporary file, and will properly handle LS telemetry events
 
 ## v1.8.1 - 2024-06-06
