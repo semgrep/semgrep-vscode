@@ -17,7 +17,7 @@ const App: React.FC = () => {
   vscode.onSetExample = (example: string, language: string) => {
     const message = {
       role: "assistant",
-      content: `What's wrong with the following code snippet?\n \`\`\`${language}\n${example}\n\`\`\``,
+      content: `What's wrong with the following code snippet?\n \`\`\`${language.toLowerCase()}\n${example}\n\`\`\``,
     };
     setMessages([message, ...messages]);
   };
