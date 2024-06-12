@@ -48,6 +48,13 @@ export interface LspSearchParams {
 export interface SearchResults {
   locations: SearchResult[];
 }
+
+export interface LspErrorParams {
+  message: string;
+  name: string;
+  stack: string;
+}
+
 export const login = new lc.RequestType0<LoginParams | null, void>(
   "semgrep/login",
 );

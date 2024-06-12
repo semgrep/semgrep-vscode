@@ -12,12 +12,16 @@ import {
 import { Environment } from "../env";
 import * as fs from "fs";
 import { DEFAULT_LSP_LOG_FOLDER } from "../utils";
+import { LspErrorParams } from "../lspExtensions";
 
 // global here so if user opts out the functions below don't do anything
 let sentryEnabled = false;
 const SENTRY_DSN =
   "https://01c918981c1d900a22d02793e241de70@o77510.ingest.us.sentry.io/4507352931434496";
-export function initSentry(environment: string): void {
+export function initSentry(
+  extensionEnvironment: string,
+  env: Environment,
+): void {
   if (sentryEnabled) {
     return;
   }
@@ -38,13 +42,21 @@ export function initSentry(environment: string): void {
       // TODO: Profiling, but to do so requires shipping a native module which is super non-trivial
       return [...filteredDefaultIntegrations];
     },
+    release: env.context.extension.packageJSON.version,
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
     attachStacktrace: true,
-    environment,
+    environment: extensionEnvironment,
   });
   Sentry.setUser({
     id: vscode.env.machineId,
+  });
+  // Only need to set these tags once
+  Sentry.setTags({
+    semgrepVersion: env.semgrepVersion,
+    isNewAppInstall: env.newInstall,
+    sessionId: vscode.env.sessionId,
+    extensionVersion: env.context.extension.packageJSON.version,
   });
 }
 const skipFields = [
@@ -79,10 +91,6 @@ export function setSentryContext(env: Environment): void {
       return { ...acc, ...setting };
     });
   Sentry.setTags({
-    semgrepVersion: env.semgrepVersion,
-    isNewAppInstall: env.newInstall,
-    sessionId: vscode.env.sessionId,
-    extensionVersion: env.context.extension.packageJSON.version,
     loggedIn: env.loggedIn,
     ...allSettings,
   });
@@ -123,6 +131,33 @@ export async function withSentryAsync(
   }
 }
 
+export async function captureLspError(lspError: LspErrorParams): Promise<void> {
+  if (!sentryEnabled) {
+    return;
+  }
+  Sentry.captureEvent(
+    {
+      exception: {
+        values: [
+          {
+            type: lspError.name,
+            value: lspError.message,
+          },
+        ],
+      },
+    },
+    {
+      attachments: [
+        {
+          filename: "lsp-stacktrace.log",
+          data: lspError.stack,
+          contentType: "text/plain",
+        },
+      ],
+    },
+  );
+}
+
 export class SentryErrorHandler implements ErrorHandler {
   restartCount = 0;
   constructor(
@@ -145,11 +180,12 @@ export class SentryErrorHandler implements ErrorHandler {
   closed(): CloseHandlerResult | Promise<CloseHandlerResult> {
     if (!sentryEnabled) {
       return { action: CloseAction.Restart, handled: false };
+    } else {
+      Sentry.captureException("Language client connection closed", {
+        data: { restartCount: this.restartCount },
+        attachments: this.attachOnCrash(),
+      });
     }
-    Sentry.captureException("Language client connection closed", {
-      data: { restartCount: this.restartCount },
-      attachments: this.attachOnCrash(),
-    });
     this.restartCount++;
     // Again, just log the event and continue
     if (this.restartCount < this.maxRestartCount) {
@@ -172,19 +208,13 @@ export class ProxyOutputChannel implements vscode.OutputChannel {
   readonly name: string;
   private logFile: string;
   private writeLog = true;
-  constructor(
-    public readonly baseOutputChannel: vscode.OutputChannel,
-    logPath: string,
-  ) {
+  constructor(public readonly baseOutputChannel: vscode.OutputChannel) {
     this.baseOutputChannel = baseOutputChannel;
     this.name = baseOutputChannel.name;
-    // Check if logPath exists, if not create a random one
+    const logPath = DEFAULT_LSP_LOG_FOLDER.fsPath;
+    // ensure logPath exists
     if (!fs.existsSync(logPath)) {
-      logPath = DEFAULT_LSP_LOG_FOLDER.fsPath;
-      // ensure logPath exists
-      if (!fs.existsSync(logPath)) {
-        fs.mkdirSync(logPath);
-      }
+      fs.mkdirSync(logPath);
     }
     this.logFile = `${logPath}/lsp-output.log`;
     // create/clear log file

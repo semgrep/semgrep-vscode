@@ -319,6 +319,7 @@
     "typescript-plugin-css-modules": "^5.1.0"
   },
   "dependencies": {
+    "@sentry/esbuild-plugin": "^2.18.0",
     "@sentry/node": "^8.7.0",
     "@sentry/types": "^8.7.0",
     "@types/node-fetch": "^2.5.7",
