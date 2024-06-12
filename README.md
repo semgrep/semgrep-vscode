@@ -22,7 +22,7 @@
   $ python3 -m pip install semgrep
 
   # use Docker to try Semgrep without installing the CLI
-  $ docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep
+  $ docker run --rm -v "${PWD}:/src" semgrep/semgrep semgrep
   ```
 
 ## Quickstart
@@ -55,18 +55,14 @@ https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-
 Fine-tune and customize the rules Semgrep uses to improve your scan results:
 
 1. Go to [Semgrep Registry](https://semgrep.dev/explore). Ensure that you are signed in.
-2. Explore the Semgrep Registry, select a rule, and then click **Add to Policy**. You can view and manage all of your rules in [Policies](https://semgrep.dev/orgs/-/policies).
+2. Explore the Semgrep Registry. When you find a rule you want to add, click the **plus sign** to expand the rule. Click **Add to Policy**, and [select your mode](https://semgrep.dev/docs/semgrep-code/policies#blocking-a-pr-or-mr-through-rule-modes). You can view and manage all of your rules in [Policies](https://semgrep.dev/orgs/-/policies).
 3. Rescan your code. Use <kbd>Ctrl+⇧Shift+P</kbd> or <kbd>⌘Command+⇧Shift+P</kbd> (macOS) to launch the Command Palette, then run `Semgrep: Update rules`.
 
 ### Language support
 
-Semgrep supports 30+ languages.
+Semgrep supports 30+ languages, including:
 
-| Category     | Languages                                                                                                                                                                     |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GA           | C# · Go · Java · JavaScript · JSX · Kotlin · JSON · PHP · Python · Ruby · Scala · Terraform · TypeScript                                                                      |
-| Beta         | Rust                                                                                                                                                                          |
-| Experimental | Bash · C · C++ · Clojure · Dart · Dockerfile · Elixir · HTML · Julia · Jsonnet · Lisp · Lua · OCaml · R · Scheme · Solidity · Swift · YAML · XML · Generic (ERB, Jinja, etc.) |
+Apex · Bash · C · C++ · C# · Clojure · Dart · Dockerfile · Elixir · HTML · Go · Java · JavaScript · JSX · JSON · Julia · Jsonnet · Kotlin · Lisp · Lua · OCaml · PHP · Python · R · Ruby · Rust · Scala · Scheme · Solidity · Swift · Terraform · TypeScript · TSX · YAML · XML · Generic (ERB, Jinja, etc.)
 
 ## Configure the extension
 
@@ -117,7 +113,7 @@ Run Semgrep extension commands through the [Visual Studio Code Command Palette](
 - `Semgrep: Sign out`: Log out from Semgrep Cloud Platform. Alternatively, you can sign out through your command-line interface by running `semgrep logout`.
 - `Semgrep: Update rules`: For logged-in users. If the rules in the [Policies](https://semgrep.dev/orgs/-/policies) or rules included through the **Semgrep › Scan: Configuration** configuration option have been changed, this command loads the new configuration of your rules for your next scan.
 
-Tip: You can click the Semgrep icon in the Visual Studio Code to access all available commands quickly.
+**Tip**: You can click the Semgrep icon in the Visual Studio Code to access all available commands quickly.
 
 ## Support
 
