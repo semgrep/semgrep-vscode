@@ -83,8 +83,8 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
-  initTelemetry(context.extensionMode);
   const env: Environment = await createOrUpdateEnvironment(context);
+  initTelemetry(context.extensionMode, env);
   await activateLsp(env);
   await afterClientStart(context, env);
   return env;
