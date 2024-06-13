@@ -2,14 +2,6 @@
   padding: 16px;
 }
 
-.examples-container {
-  margin-top: 16px;
-}
-
-.examples-section {
-  margin-bottom: 16px;
-}
-
 .example-box {
   display: flex;
   align-items: center;
@@ -27,4 +19,11 @@
 }
 .example-content {
   flex-grow: 1;
+}
+/* force badge inside container to be as small as text */
+.badge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
 }

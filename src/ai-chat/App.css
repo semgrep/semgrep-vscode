@@ -17,7 +17,8 @@ main,
 }
 .message.user {
   margin: 5px;
-  padding: 10px;
+  padding-left: 5px;
+  padding-right: 10px;
   margin-left: 25px;
   color: white;
   background-color: #007acc;
@@ -25,7 +26,8 @@ main,
 }
 .message.assistant {
   margin: 5px;
-  padding: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
   margin-right: 25px;
   color: black;
   background-color: #58bc97;

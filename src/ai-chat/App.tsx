@@ -41,14 +41,16 @@ const defaultMessage: AiChatMessage = {
     "Hello! I'm Semgrep Assistant and I'm here to help you write a rule. Give me good and bad examples and tell me your intent of the rule",
 };
 const App: React.FC = () => {
-  const [messages, setMessages] = useState<AiChatMessage[]>([]);
+  const [messages, setMessages] = useState<(AiChatMessage | string)[]>([]);
   const [initialized, setInitialized] = useState(false);
   const [goodExamples, setGoodExamples] = useState<string[]>([]);
   const [badExamples, setBadExamples] = useState<string[]>([]);
   const [languageGuessed, setLanguage] = useState<string>("python");
+  const [loading, setLoading] = useState(false);
   vscode.onMessage = (message: AiChatMessage) => {
     message.content = `\`\`\`yaml\n${message.content}\n\`\`\``;
     setMessages([message, ...messages]);
+    setLoading(false);
   };
 
   vscode.onSetBadExample = (example: string, language: string) => {
@@ -56,6 +58,9 @@ const App: React.FC = () => {
     setLanguage(language);
     if (messages.length == 0) {
       setMessages([defaultMessage]);
+    } else {
+      setLoading(true);
+      setMessages([`The user added a bad example`, ...messages]);
     }
   };
   vscode.onSetGoodExample = (example: string, language: string) => {
@@ -63,6 +68,9 @@ const App: React.FC = () => {
     setLanguage(language);
     if (messages.length == 0) {
       setMessages([defaultMessage]);
+    } else {
+      setLoading(true);
+      setMessages([`The user added a good example`, ...messages]);
     }
   };
   const onRemoveBadExample = (example: string) => {
@@ -71,6 +79,8 @@ const App: React.FC = () => {
       good: false,
       example: example,
     });
+    setMessages([`The user removed a bad example`, ...messages]);
+    setLoading(true);
   };
   const onRemoveGoodExample = (example: string) => {
     vscode.sendMessageToExtension({
@@ -78,6 +88,8 @@ const App: React.FC = () => {
       good: true,
       example: example,
     });
+    setMessages([`The user removed a good example`, ...messages]);
+    setLoading(true);
   };
 
   const onSend = (messageContent: string) => {
@@ -95,6 +107,7 @@ const App: React.FC = () => {
       });
     }
     setMessages([message, ...messages]);
+    setLoading(true);
   };
   const onViewInApp = () => {
     const lastMessage = messages[0].content;
@@ -138,8 +151,8 @@ const App: React.FC = () => {
         onRemoveGoodExample={onRemoveGoodExample}
       />
       <VSCodeDivider />
-      <Chat messages={messages} />
-      {messages.length > 1 && (
+      <Chat messages={messages} loading={loading} />
+      {!loading && messages.length > 1 && (
         <VSCodeButton onClick={onViewInApp}>View in App</VSCodeButton>
       )}
       <Input placeholder={placeholder} onSend={onSend} />

@@ -46,8 +46,8 @@ export const Examples: React.FC<ExamplesProps> = ({
     return `\`\`\`${language}\n${example}\n\`\`\``;
   };
   return (
-    <div className="examples-container">
-      <div className="examples-section">
+    <div>
+      <div>
         <h3>Good Examples</h3>
         {goodExamples.map((example, index) => (
           <div key={index} className="example-box good-example">
