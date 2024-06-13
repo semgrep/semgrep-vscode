@@ -47,6 +47,7 @@ export const getLanguage = "webview/semgrep/getActiveLang";
 export const exportRule = "webview/semgrep/exportRule";
 export const webviewPostChat = "webview/semgrep/postChat";
 export const init = "webview/semgrep/init";
+export const removeExample = "webview/semgrep/removeExample";
 
 export type webviewToExtensionCommand =
   | {
@@ -69,7 +70,8 @@ export type webviewToExtensionCommand =
       language: string;
     }
   | { command: typeof webviewPostChat; message: AiChatMessage }
-  | { command: typeof init; message: AiChatMessage };
+  | { command: typeof init; message: AiChatMessage }
+  | { command: typeof removeExample; good: boolean; example: string };
 
 /*****************************************************************************/
 /* Extension to webview commands */

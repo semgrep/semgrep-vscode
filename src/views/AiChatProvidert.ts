@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 import {
   init,
   postChat,
+  removeExample,
   setBadExample,
   setGoodExample,
   webviewPostChat,
@@ -18,13 +19,13 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
   // Constructor now takes the extension context
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    private readonly _context: vscode.ExtensionContext
+    private readonly _context: vscode.ExtensionContext,
   ) {}
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     _context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): void {
     this._view = webviewView;
 
@@ -53,10 +54,15 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
               message: message.message,
             });
             return;
+          case removeExample:
+            vscode.commands.executeCommand("semgrep/removeExample", {
+              good: message.good,
+              example: message.example,
+            });
         }
       },
       null, // Optional: context.subscriptions can be used here if needed for other disposables
-      this._context.subscriptions // Correctly add to the extension's subscriptions
+      this._context.subscriptions, // Correctly add to the extension's subscriptions
     );
 
     // If you need to directly add the subscription
@@ -74,7 +80,7 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
     file: string,
     start_line: number,
     end_line: number,
-    isGoodExample: boolean
+    isGoodExample: boolean,
   ): void {
     const hasExamples =
       (this.goodExamples && this.goodExamples.length > 0) ||
@@ -106,7 +112,7 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
     language: string,
     file: string,
     start_line: number,
-    end_line: number
+    end_line: number,
   ): void {
     this.addExample(example, language, file, start_line, end_line, true);
   }
@@ -116,7 +122,7 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
     language: string,
     file: string,
     start_line: number,
-    end_line: number
+    end_line: number,
   ): void {
     this.addExample(example, language, file, start_line, end_line, false);
   }
@@ -126,15 +132,15 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
 
     // The CSS file from the React build output
     const stylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "ai-chat-webview.css")
+      vscode.Uri.joinPath(assetsPath, "ai-chat-webview.css"),
     );
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(assetsPath, "ai-chat-webview.js")
+      vscode.Uri.joinPath(assetsPath, "ai-chat-webview.js"),
     );
     // The global CSS file
     const globalStylesUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "global.css")
+      vscode.Uri.joinPath(this._extensionUri, "media", "global.css"),
     );
 
     const nonce = randomUUID();

@@ -3,8 +3,10 @@ import "./App.css";
 import { Chat } from "./src/Chat";
 import { vscode } from "./utilities/vscode";
 import { AiChatMessage } from "../lspExtensions";
-import { init, webviewPostChat } from "../interface/interface";
+import { init, removeExample, webviewPostChat } from "../interface/interface";
 import { Input } from "./src/Input";
+import { Examples } from "./src/Examples";
+import { VSCodeButton, VSCodeDivider } from "@vscode/webview-ui-toolkit/react";
 interface CodeLoc {
   line: number;
   col?: number;
@@ -36,7 +38,7 @@ type RulePostParams = {
 const defaultMessage: AiChatMessage = {
   role: "assistant",
   content:
-    "Hello! I'm here to help you write a rule. What is wrong with this piece of code?",
+    "Hello! I'm Semgrep Assistant and I'm here to help you write a rule. Give me good and bad examples and tell me your intent of the rule",
 };
 const App: React.FC = () => {
   const [messages, setMessages] = useState<AiChatMessage[]>([]);
@@ -62,6 +64,20 @@ const App: React.FC = () => {
     if (messages.length == 0) {
       setMessages([defaultMessage]);
     }
+  };
+  const onRemoveBadExample = (example: string) => {
+    vscode.sendMessageToExtension({
+      command: removeExample,
+      good: false,
+      example: example,
+    });
+  };
+  const onRemoveGoodExample = (example: string) => {
+    vscode.sendMessageToExtension({
+      command: removeExample,
+      good: true,
+      example: example,
+    });
   };
 
   const onSend = (messageContent: string) => {
@@ -112,15 +128,19 @@ const App: React.FC = () => {
       : "Explain what you would like the rule to do";
   return (
     <main>
-      <Chat
-        messages={messages}
+      <Examples
         goodExamples={goodExamples}
         badExamples={badExamples}
         setBadExamples={setBadExamples}
         setGoodExamples={setGoodExamples}
+        language={languageGuessed}
+        onRemoveBadExample={onRemoveBadExample}
+        onRemoveGoodExample={onRemoveGoodExample}
       />
+      <VSCodeDivider />
+      <Chat messages={messages} />
       {messages.length > 1 && (
-        <button onClick={onViewInApp}>View in App</button>
+        <VSCodeButton onClick={onViewInApp}>View in App</VSCodeButton>
       )}
       <Input placeholder={placeholder} onSend={onSend} />
     </main>

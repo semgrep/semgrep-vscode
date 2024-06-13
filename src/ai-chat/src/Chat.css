@@ -1,41 +1,30 @@
 .chat-container {
-    padding: 16px;
+  padding: 16px;
 }
-  
+
 .examples-container {
-    margin-top: 16px;
+  margin-top: 16px;
 }
 
 .examples-section {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .example-box {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 8px;
-    border: 1px solid;
-    border-radius: 5px;
-    position: relative;
-}
-
-.good-example {
-    border-color: green;
-}
-
-.bad-example {
-    border-color: red;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  position: relative;
 }
 .close-button {
-    display: flex;
-    margin-right: 8px;
-    background: transparent; 
-    z-index: 5;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
+  display: flex;
+  margin-right: 8px;
+  background: transparent;
+  z-index: 5;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
 }
 .example-content {
-    flex-grow: 1;
+  flex-grow: 1;
 }

@@ -34,19 +34,13 @@ main,
 .input-container {
   display: flex;
 }
-input[type="text"] {
+.input[type="text"] {
   flex: 1;
   padding: 10px;
   margin: 10px;
-  border-radius: 5px;
-  border: 1px solid #343a40;
 }
-button {
+.button {
   margin: 10px;
   padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  background-color: #007acc;
-  color: white;
   cursor: pointer;
 }
