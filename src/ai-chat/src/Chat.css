@@ -1,0 +1,36 @@
+.chat-container {
+    padding: 16px;
+}
+  
+.examples-container {
+    margin-top: 16px;
+}
+
+.examples-section {
+    margin-bottom: 16px;
+}
+
+.example-box {
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid;
+    position: relative;
+}
+
+.good-example {
+    border-color: green;
+}
+
+.bad-example {
+    border-color: red;
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+}

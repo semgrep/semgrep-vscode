@@ -1,6 +1,6 @@
 import { AiChatMessage } from "../../lspExtensions";
 import { ChatBox } from "./ChatBox";
-import { Box, Text, CloseButton } from "@mantine/core";
+import "./Chat.css";
 
 export interface ChatProps {
   messages: AiChatMessage[];
@@ -35,43 +35,37 @@ export const Chat: React.FC<ChatProps> = ({
         <ChatBox key={index} role={message.role} content={message.content} />
       ))}
 
-      <Box mt="md">
-        <Text w={500}>Good Examples</Text>
-        {goodExamples.map((example, index) => (
-          <Box
-            key={index}
-            p="sm"
-            mb="sm"
-            style={{ border: "1px solid green", position: "relative" }}
-          >
-            <Text>{example}</Text>
-            <CloseButton
-              size="sm"
-              style={{ position: "absolute", top: 5, right: 5 }}
-              onClick={() => removeGoodExample(index)}
-            />
-          </Box>
-        ))}
-      </Box>
+      <div className="examples-container">
+        <div className="examples-section">
+          <h3>Good Examples</h3>
+          {goodExamples.map((example, index) => (
+            <div key={index} className="example-box good-example">
+              <span>{example}</span>
+              <button
+                className="close-button"
+                onClick={() => removeGoodExample(index)}
+              >
+                x
+              </button>
+            </div>
+          ))}
+        </div>
 
-      <Box mt="md">
-        <Text w={500}>Bad Examples</Text>
-        {badExamples.map((example, index) => (
-          <Box
-            key={index}
-            p="sm"
-            mb="sm"
-            style={{ border: "1px solid red", position: "relative" }}
-          >
-            <Text>{example}</Text>
-            <CloseButton
-              size="sm"
-              style={{ position: "absolute", top: 5, right: 5 }}
-              onClick={() => removeBadExample(index)}
-            />
-          </Box>
-        ))}
-      </Box>
+        <div className="examples-section">
+          <h3>Bad Examples</h3>
+          {badExamples.map((example, index) => (
+            <div key={index} className="example-box bad-example">
+              <span>{example}</span>
+              <button
+                className="close-button"
+                onClick={() => removeBadExample(index)}
+              >
+                x
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

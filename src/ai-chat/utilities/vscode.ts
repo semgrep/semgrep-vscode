@@ -2,7 +2,6 @@ import type { WebviewApi } from "vscode-webview";
 import {
   extensionToWebviewCommand,
   postChat,
-  setExample,
   webviewToExtensionCommand,
 } from "../../interface/interface";
 import { AiChatMessage } from "../../lspExtensions";
