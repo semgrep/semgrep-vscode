@@ -80,7 +80,8 @@ export const activeLang = "extension/semgrep/activeLang";
 export const clear = "extension/semgrep/clear";
 export const exportRuleRequest = "extension/semgrep/exportRuleRequest";
 export const postChat = "extension/semgrep/postChat";
-export const setExample = "extension/semgrep/setExample";
+export const setGoodExample = "extension/semgrep/setGoodExample";
+export const setBadExample = "extension/semgrep/setBadExample";
 export type SearchLanguage = (typeof SUPPORTED_LANGS)[number];
 
 export type extensionToWebviewCommand =
@@ -95,4 +96,5 @@ export type extensionToWebviewCommand =
   | { command: typeof clear }
   | { command: typeof exportRuleRequest }
   | { command: typeof postChat; message: AiChatMessage }
-  | { command: typeof setExample; example: string; language: string };
+  | { command: typeof setGoodExample; example: string; language: string }
+  | { command: typeof setBadExample; example: string; language: string };

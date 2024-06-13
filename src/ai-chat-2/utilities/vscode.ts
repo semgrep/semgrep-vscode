@@ -19,6 +19,8 @@ class VSCodeAPIWrapper {
   private readonly vsCodeApi: WebviewApi<void> | undefined;
   public onMessage?: (message: AiChatMessage) => void;
   public onSetExample?: (example: string, language: string) => void;
+  public onSetGoodExample?: (example: string, language: string) => void;
+  public onSetBadExample?: (example: string, language: string) => void;
   constructor() {
     // Check if the acquireVsCodeApi function exists in the current development
     // context (i.e. VS Code development window or web browser)
@@ -56,6 +58,9 @@ class VSCodeAPIWrapper {
         break;
       case setExample:
         this.onSetExample?.(data.example, data.language);
+        break;
+      case onSetBadExample:
+        this.onSetBadExample?.(data.example, data.language);
         break;
     }
   }

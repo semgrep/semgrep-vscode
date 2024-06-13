@@ -4,22 +4,23 @@ import { Chat } from "./src/Chat";
 import { vscode } from "./utilities/vscode";
 import { AiChatMessage } from "../lspExtensions";
 import { init, webviewPostChat } from "../interface/interface";
+import { Text, TextInput } from "@mantine/core";
 import { Input } from "./src/Input";
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<AiChatMessage[]>([]);
   const [initialized, setInitialized] = useState(false);
+  const [goodExamples, setGoodExamples] = useState<string[]>([]);
+  const [badExamples, setBadExamples] = useState<string[]>([]);
   vscode.onMessage = (message: AiChatMessage) => {
     message.content = `\`\`\`yaml\n${message.content}\n\`\`\``;
     setMessages([message, ...messages]);
   };
-
-  vscode.onSetExample = (example: string, language: string) => {
-    const message = {
-      role: "assistant",
-      content: `What's wrong with the following code snippet?\n \`\`\`${language}\n${example}\n\`\`\``,
-    };
-    setMessages([message, ...messages]);
+  vscode.onSetBadExample = (example: string, language: string) => {
+    setBadExamples([example, ...badExamples]);
+  };
+  vscode.onSetGoodExample = (example: string, language: string) => {
+    setGoodExamples([example, ...goodExamples]);
   };
 
   const onSend = (messageContent: string) => {
@@ -38,10 +39,19 @@ const App: React.FC = () => {
     }
     setMessages([message, ...messages]);
   };
+  console.log("Here");
   return (
     <main>
-      <Chat messages={messages} />
-      <Input onSend={onSend} />
+      {/* <Chat
+        messages={messages}
+        goodExamples={goodExamples}
+        badExamples={badExamples}
+        setBadExamples={setBadExamples}
+        setGoodExamples={setGoodExamples}
+      /> */}
+      <Text>Enter a message</Text>
+      <TextInput placeholder="Enter a message"></TextInput>
+      {/* <Input onSend={onSend}> iokjlafcealjkedsfklja</Input> */}
     </main>
   );
 };

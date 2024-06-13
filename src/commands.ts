@@ -38,7 +38,7 @@ import { handleSearch } from "./search";
 async function replaceAndOpenUriContent(
   uri: vscode.Uri,
   content: string,
-  active_editor: vscode.TextEditor,
+  active_editor: vscode.TextEditor
 ): Promise<void> {
   const doc = await vscode.workspace.openTextDocument(uri);
   const edit = new vscode.WorkspaceEdit();
@@ -83,7 +83,7 @@ export function registerCommands(env: Environment): void {
       const resp = await vscode.window.showInformationMessage(
         "Sign in to use your team's shared Semgrep rule configuration",
         "Sign in",
-        "Do not show again",
+        "Do not show again"
       );
       if (resp == "Sign in") {
         vscode.commands.executeCommand("semgrep.login");
@@ -101,14 +101,14 @@ export function registerCommands(env: Environment): void {
     const onlyGitDirty = env.config.onlyGitDirty;
     if (!onlyGitDirty) {
       vscode.window.showInformationMessage(
-        'Semgrep is now only scanning files and lines that have been changed since the last commit. You can disable this in settings by unchecking "Only Git Dirty", or by running "Scan all files in workspace"',
+        'Semgrep is now only scanning files and lines that have been changed since the last commit. You can disable this in settings by unchecking "Only Git Dirty", or by running "Scan all files in workspace"'
       );
       // This will always restart the LS, since the LS restarts on config change
       // And on startup we always refresh rules
       env.config.onlyGitDirty = true;
       env.onRulesRefreshed(
         () => env.client?.sendNotification(scanWorkspace, { full: false }),
-        true,
+        true
       );
     } else {
       env.client?.sendNotification(scanWorkspace, { full: false });
@@ -119,14 +119,14 @@ export function registerCommands(env: Environment): void {
     const onlyGitDirty = env.config.onlyGitDirty;
     if (onlyGitDirty) {
       vscode.window.showInformationMessage(
-        'Semgrep is now always scanning all files and lines regardless of if they have been changed since the last commit. You can disable this in settings by checking "Only Git Dirty", or by running "Scan changed files in workspace"',
+        'Semgrep is now always scanning all files and lines regardless of if they have been changed since the last commit. You can disable this in settings by checking "Only Git Dirty", or by running "Scan changed files in workspace"'
       );
       // This will always restart the LS, since the LS restarts on config change
       // And on startup we always refresh rules
       env.config.onlyGitDirty = false;
       env.onRulesRefreshed(
         () => env.client?.sendNotification(scanWorkspace, { full: true }),
-        true,
+        true
       );
     } else {
       env.client?.sendNotification(scanWorkspace, { full: true });
@@ -177,7 +177,7 @@ export function registerCommands(env: Environment): void {
     "semgrep.search",
     async (searchParams: SearchParams) => {
       await handleSearch(env, searchParams);
-    },
+    }
   );
 
   vscode.commands.registerCommand("semgrep.search.clear", () => {
@@ -192,12 +192,12 @@ export function registerCommands(env: Environment): void {
       const selection = await vscode.window.showWarningMessage(
         `Really apply fix to ${matches.locations.length} files?`,
         "Yes",
-        "No",
+        "No"
       );
       if (selection === "Yes") {
         replaceAll(matches);
       }
-    },
+    }
   );
 
   vscode.commands.registerCommand(
@@ -214,7 +214,7 @@ export function registerCommands(env: Environment): void {
       const edit = new vscode.WorkspaceEdit();
       edit.replace(vscode.Uri.parse(uri), range, fix);
       await applyFixAndSave(edit);
-    },
+    }
   );
 
   // chat
@@ -222,9 +222,22 @@ export function registerCommands(env: Environment): void {
   vscode.commands.registerCommand("semgrep.startChat", async (args) => {
     // Reveal the sidebar view programmatically
     await vscode.commands.executeCommand(
-      "workbench.view.extension.semgrepChat",
+      "workbench.view.extension.semgrepChat"
     );
-    env.chatProvider!.setExample(args.example, args.language);
+  });
+
+  vscode.commands.registerCommand("semgrep.addGoodExample", async (args) => {
+    await vscode.commands.executeCommand(
+      "workbench.view.extension.semgrepChat"
+    );
+    env.chatProvider!.addGoodExample(args.example, args.language);
+  });
+
+  vscode.commands.registerCommand("semgrep.addBadExample", async (args) => {
+    await vscode.commands.executeCommand(
+      "workbench.view.extension.semgrepChat"
+    );
+    env.chatProvider!.addBadExample(args.example, args.language);
   });
 
   /********/
@@ -241,18 +254,18 @@ export function registerCommands(env: Environment): void {
     vscode.window.showInformationMessage("Restarting Semgrep Language Server");
     restartLsp(env);
     vscode.window.showInformationMessage(
-      "Semgrep Language Server has finished restarting",
+      "Semgrep Language Server has finished restarting"
     );
   });
 
   vscode.commands.registerCommand("semgrep.showDemoFile", async () => {
     const path = env.context.asAbsolutePath(
-      "walkthrough/semgrep-extension.demo.py",
+      "walkthrough/semgrep-extension.demo.py"
     );
     const content = await vscode.workspace.fs.readFile(vscode.Uri.parse(path));
     let dir = vscode.Uri.joinPath(
       env.context.globalStorageUri,
-      "demo-workspace",
+      "demo-workspace"
     );
     dir = vscode.Uri.parse(dir.fsPath); // So dumb
     await vscode.workspace.fs.createDirectory(dir);
