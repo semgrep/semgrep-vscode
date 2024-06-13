@@ -3,8 +3,10 @@ import * as fs from "fs";
 import { AiChatMessage } from "../lspExtensions";
 import { randomUUID } from "crypto";
 import {
+  RulePostParams,
   init,
   postChat,
+  sendToApp,
   setBadExample,
   setGoodExample,
   webviewPostChat,
@@ -48,6 +50,9 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
               },
             });
             return;
+          case sendToApp:
+            this.sendToApp(message.message);
+            return;
           case webviewPostChat:
             vscode.commands.executeCommand("semgrep/postChat", {
               message: message.message,
@@ -61,6 +66,26 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
 
     // If you need to directly add the subscription
     this._context.subscriptions.push(messageHandler);
+  }
+  private sendToApp(message: RulePostParams): void {
+    fetch("http://localhost:3000/api/registry/rule", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        const link = data["meta"]["rule"]["url"];
+        const parsedLink = link.replace("https", "http");
+        vscode.env.openExternal(vscode.Uri.parse(parsedLink));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    return;
   }
   public addMessage(message: AiChatMessage): void {
     this._view?.webview.postMessage({

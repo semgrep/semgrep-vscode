@@ -36,7 +36,34 @@ import * as vscode from "vscode";
 /*****************************************************************************/
 /* Webview to extension commandsj */
 /*****************************************************************************/
-
+interface CodeLoc {
+  line: number;
+  col?: number;
+}
+type Visibility =
+  | "unlisted"
+  | "public"
+  | "org_private"
+  | "logged_in"
+  | "team_tier";
+export interface CodeRange {
+  start: CodeLoc;
+  end: CodeLoc;
+}
+export type TestCaseHighlight = CodeRange & {
+  message: string;
+  fix?: string;
+};
+export type RulePostParams = {
+  definition: any;
+  path?: string;
+  language: string;
+  test_target: string;
+  visibility: Visibility;
+  highlights?: TestCaseHighlight[];
+  // only needed if visibility is org_private
+  deployment_id?: number;
+};
 export const search = "webview/semgrep/search";
 /* just a test command. can be removed later. */
 export const print = "webview/semgrep/print";
@@ -47,6 +74,7 @@ export const getLanguage = "webview/semgrep/getActiveLang";
 export const exportRule = "webview/semgrep/exportRule";
 export const webviewPostChat = "webview/semgrep/postChat";
 export const init = "webview/semgrep/init";
+export const sendToApp = "webview/semgrep/sendToApp";
 
 export type webviewToExtensionCommand =
   | {
@@ -69,7 +97,8 @@ export type webviewToExtensionCommand =
       language: string;
     }
   | { command: typeof webviewPostChat; message: AiChatMessage }
-  | { command: typeof init; message: AiChatMessage };
+  | { command: typeof init; message: AiChatMessage }
+  | { command: typeof sendToApp; message: RulePostParams };
 
 /*****************************************************************************/
 /* Extension to webview commands */

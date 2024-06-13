@@ -35,11 +35,6 @@ export const Chat: React.FC<ChatProps> = ({
 
   return (
     <div className="chat-container">
-      <ChatBox
-        key={"default"}
-        role="assistant"
-        content="Hello! I'm Semgrep Assistant and I'm here to help you write a rule. Give me good and bad examples and tell me your intent of the rule"
-      />
       {messages.map((message: AiChatMessage, index: number) => (
         <ChatBox key={index} role={message.role} content={message.content} />
       ))}

@@ -3,8 +3,10 @@ import "./App.css";
 import { Chat } from "./src/Chat";
 import { vscode } from "./utilities/vscode";
 import { AiChatMessage } from "../lspExtensions";
-import { init, webviewPostChat } from "../interface/interface";
+import { init, sendToApp, webviewPostChat } from "../interface/interface";
 import { Input } from "./src/Input";
+import { parse } from "yaml"; // Import yaml
+
 interface CodeLoc {
   line: number;
   col?: number;
@@ -83,28 +85,24 @@ const App: React.FC = () => {
   const onViewInApp = () => {
     const lastMessage = messages[0].content;
     const combinedExamples = [...badExamples, "", ...goodExamples].join("\n");
+    let definition = { rules: lastMessage };
+    try {
+      const yamlContent = lastMessage.replace(/```yaml\n|```/g, "");
+      definition = parse(yamlContent);
+    } catch (e) {
+      console.error("Failed to parse YAML", e);
+    }
     const saveMetadata: RulePostParams = {
-      definition: { rules: [lastMessage] },
+      definition: definition,
       language: languageGuessed,
       test_target: combinedExamples,
+      highlights: [],
       visibility: "unlisted",
     };
-    fetch("http://localhost:3000/api/registry/rule", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(saveMetadata),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        const path = data["path"];
-        window.open(`http://localhost:3000/orgs/-/editor/r/${path}`, "_blank");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    vscode.sendMessageToExtension({
+      command: sendToApp,
+      message: saveMetadata,
+    });
   };
   const placeholder =
     messages.length !== 0
