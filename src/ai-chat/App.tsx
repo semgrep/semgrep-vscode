@@ -4,7 +4,6 @@ import { Chat } from "./src/Chat";
 import { vscode } from "./utilities/vscode";
 import { AiChatMessage } from "../lspExtensions";
 import { init, webviewPostChat } from "../interface/interface";
-import { Text, TextInput } from "@mantine/core";
 import { Input } from "./src/Input";
 
 const App: React.FC = () => {
@@ -42,16 +41,14 @@ const App: React.FC = () => {
   console.log("Here");
   return (
     <main>
-      {/* <Chat
+      <Chat
         messages={messages}
         goodExamples={goodExamples}
         badExamples={badExamples}
         setBadExamples={setBadExamples}
         setGoodExamples={setGoodExamples}
-      /> */}
-      <Text>Enter a message</Text>
-      <TextInput placeholder="Enter a message"></TextInput>
-      {/* <Input onSend={onSend}> iokjlafcealjkedsfklja</Input> */}
+      />
+      <Input onSend={onSend}> iokjlafcealjkedsfklja</Input>
     </main>
   );
 };
