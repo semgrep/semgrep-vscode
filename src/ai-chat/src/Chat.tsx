@@ -1,5 +1,8 @@
 import { AiChatMessage } from "../../lspExtensions";
 import { ChatBox } from "./ChatBox";
+import Markdown from "react-markdown";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./Chat.css";
 
 export interface ChatProps {
@@ -40,13 +43,20 @@ export const Chat: React.FC<ChatProps> = ({
           <h3>Good Examples</h3>
           {goodExamples.map((example, index) => (
             <div key={index} className="example-box good-example">
-              <span>{example}</span>
               <button
-                className="close-button"
+                style={{
+                  position: "absolute",
+                  top: "5px",
+                  right: "5px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                }}
                 onClick={() => removeGoodExample(index)}
               >
-                x
+                <FontAwesomeIcon size="xs" icon={faTimes} />
               </button>
+              <Markdown>{example}</Markdown>
             </div>
           ))}
         </div>
@@ -55,13 +65,20 @@ export const Chat: React.FC<ChatProps> = ({
           <h3>Bad Examples</h3>
           {badExamples.map((example, index) => (
             <div key={index} className="example-box bad-example">
-              <span>{example}</span>
               <button
-                className="close-button"
+                style={{
+                  position: "absolute",
+                  top: "5px",
+                  right: "5px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                }}
                 onClick={() => removeBadExample(index)}
               >
-                x
+                <FontAwesomeIcon size="xs" icon={faTimes} />
               </button>
+              <Markdown>{example}</Markdown>
             </div>
           ))}
         </div>

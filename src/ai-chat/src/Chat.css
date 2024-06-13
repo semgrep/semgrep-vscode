@@ -11,9 +11,10 @@
 }
 
 .example-box {
-    padding: 8px;
+    padding: 10px;
     margin-bottom: 8px;
     border: 1px solid;
+    border-radius: 5px;
     position: relative;
 }
 

@@ -108,7 +108,7 @@ const App: React.FC = () => {
         setBadExamples={setBadExamples}
         setGoodExamples={setGoodExamples}
       />
-      {messages.length !== 0 && (
+      {messages.length > 1 && (
         <button onClick={onViewInApp}>View in App</button>
       )}
       <Input placeholder={placeholder} onSend={onSend} />

@@ -343,6 +343,8 @@
     "typescript-plugin-css-modules": "^5.1.0"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@sentry/node": "^8.7.0",
     "@sentry/types": "^8.7.0",
     "@types/node-fetch": "^2.5.7",

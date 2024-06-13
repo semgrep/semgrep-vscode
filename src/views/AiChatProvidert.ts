@@ -68,25 +68,39 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
       message: message,
     });
   }
-  public addGoodExample(example: string, language: string): void {
-    if (this.goodExamples) {
-      this.goodExamples.push(example);
+  private addExample(
+    example: string,
+    language: string,
+    isGoodExample: boolean
+  ): void {
+    const hasExamples =
+      (this.goodExamples && this.goodExamples.length > 0) ||
+      (this.badExamples && this.badExamples.length > 0);
+
+    if (isGoodExample) {
+      this.goodExamples?.push(example);
+    } else {
+      this.badExamples?.push(example);
     }
-    this._view?.webview.postMessage({
-      command: setGoodExample,
-      example: example,
-      language: language,
+
+    const command = isGoodExample ? setGoodExample : setBadExample;
+    const delay = hasExamples ? 0 : 1000;
+
+    new Promise((resolve) => setTimeout(resolve, delay)).then(() => {
+      this._view?.webview.postMessage({
+        command: command,
+        example: example,
+        language: language,
+      });
     });
   }
+
+  public addGoodExample(example: string, language: string): void {
+    this.addExample(example, language, true);
+  }
+
   public addBadExample(example: string, language: string): void {
-    if (this.badExamples) {
-      this.badExamples.push(example);
-    }
-    this._view?.webview.postMessage({
-      command: setBadExample,
-      example: example,
-      language: language,
-    });
+    this.addExample(example, language, false);
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {

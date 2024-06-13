@@ -2,6 +2,8 @@ import type { WebviewApi } from "vscode-webview";
 import {
   extensionToWebviewCommand,
   postChat,
+  setBadExample,
+  setGoodExample,
   webviewToExtensionCommand,
 } from "../../interface/interface";
 import { AiChatMessage } from "../../lspExtensions";
@@ -55,12 +57,11 @@ class VSCodeAPIWrapper {
       case postChat:
         this.onMessage?.(data.message);
         break;
-      case setExample:
-        this.onSetExample?.(data.example, data.language);
-        break;
-      case onSetBadExample:
+      case setBadExample:
         this.onSetBadExample?.(data.example, data.language);
         break;
+      case setGoodExample:
+        this.onSetGoodExample?.(data.example, data.language);
     }
   }
 }
