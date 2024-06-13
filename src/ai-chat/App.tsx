@@ -11,10 +11,12 @@ const App: React.FC = () => {
   const [initialized, setInitialized] = useState(false);
   const [goodExamples, setGoodExamples] = useState<string[]>([]);
   const [badExamples, setBadExamples] = useState<string[]>([]);
+
   vscode.onMessage = (message: AiChatMessage) => {
     message.content = `\`\`\`yaml\n${message.content}\n\`\`\``;
     setMessages([message, ...messages]);
   };
+
   vscode.onSetBadExample = (example: string, language: string) => {
     setBadExamples([example, ...badExamples]);
   };
