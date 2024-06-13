@@ -7,6 +7,7 @@ import {
   init,
   postChat,
   sendToApp,
+  removeExample,
   setBadExample,
   setGoodExample,
   webviewPostChat,
@@ -58,6 +59,11 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
               message: message.message,
             });
             return;
+          case removeExample:
+            vscode.commands.executeCommand("semgrep/removeExample", {
+              good: message.good,
+              example: message.example,
+            });
         }
       },
       null, // Optional: context.subscriptions can be used here if needed for other disposables

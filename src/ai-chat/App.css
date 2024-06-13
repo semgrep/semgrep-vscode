@@ -17,7 +17,8 @@ main,
 }
 .message.user {
   margin: 5px;
-  padding: 10px;
+  padding-left: 5px;
+  padding-right: 10px;
   margin-left: 25px;
   color: white;
   background-color: #007acc;
@@ -25,7 +26,8 @@ main,
 }
 .message.assistant {
   margin: 5px;
-  padding: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
   margin-right: 25px;
   color: black;
   background-color: #58bc97;
@@ -34,19 +36,13 @@ main,
 .input-container {
   display: flex;
 }
-input[type="text"] {
+.input[type="text"] {
   flex: 1;
   padding: 10px;
   margin: 10px;
-  border-radius: 5px;
-  border: 1px solid #343a40;
 }
-button {
+.button {
   margin: 10px;
   padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  background-color: #007acc;
-  color: white;
   cursor: pointer;
 }

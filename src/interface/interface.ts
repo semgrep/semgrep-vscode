@@ -75,6 +75,7 @@ export const exportRule = "webview/semgrep/exportRule";
 export const webviewPostChat = "webview/semgrep/postChat";
 export const init = "webview/semgrep/init";
 export const sendToApp = "webview/semgrep/sendToApp";
+export const removeExample = "webview/semgrep/removeExample";
 
 export type webviewToExtensionCommand =
   | {
@@ -98,7 +99,8 @@ export type webviewToExtensionCommand =
     }
   | { command: typeof webviewPostChat; message: AiChatMessage }
   | { command: typeof init; message: AiChatMessage }
-  | { command: typeof sendToApp; message: RulePostParams };
+  | { command: typeof sendToApp; message: RulePostParams }
+  | { command: typeof removeExample; good: boolean; example: string };
 
 /*****************************************************************************/
 /* Extension to webview commands */
