@@ -71,6 +71,9 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
   private addExample(
     example: string,
     language: string,
+    file: string,
+    start_line: number,
+    end_line: number,
     isGoodExample: boolean
   ): void {
     const hasExamples =
@@ -91,16 +94,31 @@ export class SemgrepChatViewProvider implements vscode.WebviewViewProvider {
         command: command,
         example: example,
         language: language,
+        file: file,
+        start_line: start_line,
+        end_line: end_line,
       });
     });
   }
 
-  public addGoodExample(example: string, language: string): void {
-    this.addExample(example, language, true);
+  public addGoodExample(
+    example: string,
+    language: string,
+    file: string,
+    start_line: number,
+    end_line: number
+  ): void {
+    this.addExample(example, language, file, start_line, end_line, true);
   }
 
-  public addBadExample(example: string, language: string): void {
-    this.addExample(example, language, false);
+  public addBadExample(
+    example: string,
+    language: string,
+    file: string,
+    start_line: number,
+    end_line: number
+  ): void {
+    this.addExample(example, language, file, start_line, end_line, false);
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
