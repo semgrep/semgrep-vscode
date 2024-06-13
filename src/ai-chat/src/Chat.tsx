@@ -2,7 +2,7 @@ import { AiChatMessage } from "../../lspExtensions";
 import { ChatBox } from "./ChatBox";
 import Markdown from "react-markdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCircleXmark, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./Chat.css";
 
 export interface ChatProps {
@@ -44,19 +44,16 @@ export const Chat: React.FC<ChatProps> = ({
           {goodExamples.map((example, index) => (
             <div key={index} className="example-box good-example">
               <button
-                style={{
-                  position: "absolute",
-                  top: "5px",
-                  right: "5px",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                className="close-button"
                 onClick={() => removeGoodExample(index)}
               >
-                <FontAwesomeIcon size="xs" icon={faTimes} />
+                x
               </button>
-              <Markdown>{example}</Markdown>
+              <div
+                style={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+              >
+                <Markdown>{example}</Markdown>
+              </div>
             </div>
           ))}
         </div>
@@ -66,19 +63,16 @@ export const Chat: React.FC<ChatProps> = ({
           {badExamples.map((example, index) => (
             <div key={index} className="example-box bad-example">
               <button
-                style={{
-                  position: "absolute",
-                  top: "5px",
-                  right: "5px",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                className="close-button"
                 onClick={() => removeBadExample(index)}
               >
-                <FontAwesomeIcon size="xs" icon={faTimes} />
+                x
               </button>
-              <Markdown>{example}</Markdown>
+              <div
+                style={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+              >
+                <Markdown>{example}</Markdown>
+              </div>
             </div>
           ))}
         </div>

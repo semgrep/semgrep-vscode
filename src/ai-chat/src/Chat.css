@@ -11,6 +11,8 @@
 }
 
 .example-box {
+    display: flex;
+    align-items: center;
     padding: 10px;
     margin-bottom: 8px;
     border: 1px solid;
@@ -25,13 +27,15 @@
 .bad-example {
     border-color: red;
 }
-
 .close-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: none;
+    display: flex;
+    margin-right: 8px;
+    background: transparent; 
+    z-index: 5;
     border: none;
     cursor: pointer;
     font-size: 12px;
+}
+.example-content {
+    flex-grow: 1;
 }
