@@ -33,6 +33,11 @@ type RulePostParams = {
   // only needed if visibility is org_private
   deployment_id?: number;
 };
+const defaultMessage: AiChatMessage = {
+  role: "assistant",
+  content:
+    "Hello! I'm here to help you write a rule. What is wrong with this piece of code?",
+};
 const App: React.FC = () => {
   const [messages, setMessages] = useState<AiChatMessage[]>([]);
   const [initialized, setInitialized] = useState(false);
@@ -47,10 +52,16 @@ const App: React.FC = () => {
   vscode.onSetBadExample = (example: string, language: string) => {
     setBadExamples([example, ...badExamples]);
     setLanguage(language);
+    if (messages.length == 0) {
+      setMessages([defaultMessage]);
+    }
   };
   vscode.onSetGoodExample = (example: string, language: string) => {
     setGoodExamples([example, ...goodExamples]);
     setLanguage(language);
+    if (messages.length == 0) {
+      setMessages([defaultMessage]);
+    }
   };
 
   const onSend = (messageContent: string) => {

@@ -99,3 +99,5 @@ export const searchOngoing = new lc.RequestType0<SearchResults, void>(
 export const showAst = new lc.RequestType<ShowAstParams, string, void>(
   "semgrep/showAst",
 );
+
+export const addExample = "semgrep/addExample";
