@@ -254,7 +254,7 @@
           {
             "id": "semgrep.welcome.signin",
             "title": "Level up your security practice",
-            "description": "Tkae a simple step for Pro coverage.\n\n[Sign in to use Pro features](command:semgrep.login \"Sign in to Semgrep Cloud Platform\")",
+            "description": "Take a simple step for Pro coverage.\n\n[Sign in to use Pro features](command:semgrep.login \"Sign in to Semgrep Cloud Platform\")",
             "media": {
               "markdown": "walkthrough/2-sign-in.md"
             },
