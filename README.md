@@ -20,9 +20,6 @@
 
   # Ubuntu/WSL/Linux/macOS
   $ python3 -m pip install semgrep
-
-  # use Docker to try Semgrep without installing the CLI
-  $ docker run --rm -v "${PWD}:/src" semgrep/semgrep semgrep
   ```
 
 ## Quickstart
