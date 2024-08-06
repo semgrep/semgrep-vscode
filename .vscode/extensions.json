@@ -1,3 +1,7 @@
 {
-  "recommendations": ["Semgrep.semgrep", "Tobermory.es6-string-html"]
+"recommendations": [
+    "Semgrep.semgrep",
+    "Tobermory.es6-string-html",
+    "connor4312.esbuild-problem-matchers"
+]
 }

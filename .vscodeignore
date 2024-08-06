@@ -2,6 +2,14 @@
 .vscode-test/**
 out/test/**
 src/**
+node_modules/**
+.pre-commit-config.yaml
+build.mjs
+download-lspjs.sh
+eslint.config.js
+semgrep-version
+images/**
+.github/**
 .gitignore
 vsc-extension-quickstart.md
 **/tsconfig.json
