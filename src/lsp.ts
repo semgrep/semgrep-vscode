@@ -29,6 +29,7 @@ import {
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
+  LSPJS_PATH,
 } from "./constants";
 import { Environment } from "./env";
 import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
@@ -140,7 +141,7 @@ async function serverOptionsCli(
 }
 
 function serverOptionsJs(env: Environment): ServerOptions {
-  const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
+  const serverModule = LSPJS_PATH;
   const stackSize = env.config.get("stackSizeJS");
   const heapSize = env.config.get("heapSizeJS");
   const serverOptionsJs = {

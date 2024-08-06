@@ -8,7 +8,7 @@
       "runtimeExecutable": "${execPath}",
       "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
-      "preLaunchTask": "watch-build"
+      "preLaunchTask": "watch"
     },
     {
       "type": "node",
@@ -34,7 +34,7 @@
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
       "preLaunchTask": {
         "type": "npm",
-        "script": "test-compile"
+        "script": "esbuild"
       }
     }
   ]

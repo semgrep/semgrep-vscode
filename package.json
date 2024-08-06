@@ -282,15 +282,15 @@
     "vscode:prepublish": "npm run esbuild-base -- --minify",
     "esbuild-base": "npm run setup-lspjs && ./build.mjs",
     "esbuild": "npm run esbuild-base -- --sourcemap",
-    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test-compile": "tsc -p ./ && npm run esbuild",
+    "watch:esbuild": "npm run esbuild-base -- --sourcemap --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "lint": "eslint src --ext ts",
     "pretest": "npm run test-compile && npm run lint && cp -rf src/test/fixtures out/src/test",
     "test-native": "node ./out/src/test/runTest.js",
     "test-js": "USE_JS=1 node ./out/src/test/runTest.js",
     "test": "npm run test-native && npm run test-js",
     "clean": "rm -rf ./out",
-    "setup-lspjs": "./download-lspjs.sh Main.bc.js language-server-wasm.js semgrep-lsp-bindings.js semgrep-lsp.js",
+    "setup-lspjs": "./download-lspjs.sh",
     "install:all": "npm install"
   },
   "devDependencies": {
