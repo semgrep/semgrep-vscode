@@ -14,7 +14,7 @@
       "type": "node",
       "request": "attach",
       "name": "Attach to Server",
-      "port": 6009,
+      "port": 9229,
       "restart": true,
       "outFiles": [
         "${workspaceRoot}/lspjs/out/**/*.js",

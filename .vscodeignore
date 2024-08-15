@@ -7,7 +7,7 @@ node_modules/**
 build.mjs
 download-lspjs.sh
 eslint.config.js
-semgrep-version
+dist/lspjs/**
 images/**
 .github/**
 .gitignore

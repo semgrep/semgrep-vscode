@@ -29,7 +29,7 @@ import {
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
-  LSPJS_PATH,
+  LSPJS_ENTRYPOINT,
 } from "./constants";
 import { Environment } from "./env";
 import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
@@ -141,9 +141,12 @@ async function serverOptionsCli(
 }
 
 function serverOptionsJs(env: Environment): ServerOptions {
-  const serverModule = LSPJS_PATH;
+  const serverModule = LSPJS_ENTRYPOINT;
   const stackSize = env.config.get("stackSizeJS");
   const heapSize = env.config.get("heapSizeJS");
+  const inspectMode = env.config.lspjsBreakBeforeStart
+    ? "inspect-brk"
+    : "inspect";
   const serverOptionsJs = {
     run: {
       module: serverModule,
@@ -161,7 +164,7 @@ function serverOptionsJs(env: Environment): ServerOptions {
       options: {
         execArgv: [
           "--nolazy",
-          "--inspect=6009",
+          `--${inspectMode}=9229`,
           `--stack-size=${stackSize}`,
           `--max-old-space-size=${heapSize}`,
         ],

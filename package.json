@@ -111,6 +111,12 @@
           "default": "off",
           "description": "Traces the communication between VS Code and the language server."
         },
+        "semgrep.trace.lspjsBreakBeforeStart": {
+          "scope": "window",
+          "type": "boolean",
+          "default": false,
+          "description": "Break before starting the LSP server in the Javascript version of the extension. Warning, this is for debugging purposes and may break things."
+        },
         "semgrep.path": {
           "description": "Path to the semgrep executable. Note: this is overriden by the semgrep.useJS setting.",
           "type": "string",

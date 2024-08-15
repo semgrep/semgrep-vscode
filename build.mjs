@@ -18,17 +18,16 @@ async function buildSentrySourceMap() {
     ],
   });
 }
-async function buildExtension(watch) {
+// We should really just do this in the semgrep repo but oh well
+async function buildLspJS(watch, minify) {
   const options = {
     logLevel: "info",
-    entryPoints: ["./src/extension.ts"],
-    outfile: "./out/main.js",
+    entryPoints: ["./dist/lspjs/semgrep-lsp.js"],
+    outfile: "./out/semgrep-lsp.js",
     bundle: true,
     platform: "node",
     format: "cjs",
-    external: ["vscode"],
-    plugins: [esbuildProblemMatcherPlugin],
-    sourcemap: isSourcemap,
+    minify,
   };
   if (watch) {
     let ctx = await esbuild.context(options);
@@ -37,7 +36,27 @@ async function buildExtension(watch) {
     await esbuild.build(options);
   }
 }
-async function buildWebview(watch) {
+async function buildExtension(watch, sourcemap, minify) {
+  const options = {
+    logLevel: "info",
+    entryPoints: ["./src/extension.ts"],
+    outfile: "./out/main.js",
+    bundle: true,
+    platform: "node",
+    format: "cjs",
+    external: ["vscode"],
+    sourcemap,
+    plugins: [esbuildProblemMatcherPlugin],
+    minify,
+  };
+  if (watch) {
+    let ctx = await esbuild.context(options);
+    await ctx.watch();
+  } else {
+    await esbuild.build(options);
+  }
+}
+async function buildWebview(watch, sourcemap, minify) {
   let options = {
     logLevel: "info",
     entryPoints: ["./src/webview-ui/index.tsx"],
@@ -45,7 +64,8 @@ async function buildWebview(watch) {
     bundle: true,
     platform: "node",
     plugins: [cssModulesPlugin()],
-    sourcemap: isSourcemap,
+    sourcemap,
+    minify,
   };
   if (watch) {
     let ctx = await esbuild.context(options);
@@ -57,7 +77,7 @@ async function buildWebview(watch) {
 
 const isWatch = process.argv.includes("--watch");
 const isSourcemap = process.argv.includes("--sourcemap");
-
+const isMinify = process.argv.includes("--minify");
 /**
  * @type {import('esbuild').Plugin}
  */
@@ -80,7 +100,8 @@ const esbuildProblemMatcherPlugin = {
   },
 };
 await Promise.all([
-  buildExtension(isWatch, isSourcemap),
-  buildWebview(isWatch, isSourcemap),
+  buildExtension(isWatch, isSourcemap, isMinify),
+  buildLspJS(isWatch, isMinify),
+  buildWebview(isWatch, isSourcemap, isMinify),
   buildSentrySourceMap(),
 ]);

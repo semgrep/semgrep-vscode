@@ -26,6 +26,9 @@ export class Config {
     return this.cfg.get<string>("trace.server") == "verbose";
   }
 
+  get lspjsBreakBeforeStart(): boolean {
+    return this.cfg.get<boolean>("trace.lspjsBreakBeforeStart") ?? false;
+  }
   get path(): string {
     return this.cfg.get<string>("path") ?? "semgrep";
   }

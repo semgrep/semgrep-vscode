@@ -9,7 +9,7 @@ export const DEFAULT_RULESET = "p/r2c";
 export const VSCODE_CONFIG_KEY = "semgrep";
 export const VSCODE_EXT_NAME = CLIENT_NAME;
 export const DIST_PATH = path.join(__dirname, "../dist");
-export const LSPJS_PATH = path.join(DIST_PATH, "lspjs/semgrep-lsp.js");
+export const LSPJS_ENTRYPOINT = "./semgrep-lsp.js";
 export const DIST_BINARY_PATH = path.join(DIST_PATH, "osemgrep-pro");
 export type VersionInfo = {
   latest: SemVer;
