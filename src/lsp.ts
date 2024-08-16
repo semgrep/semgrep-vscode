@@ -2,9 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as cp from "child_process";
 import * as semver from "semver";
-const execShell = (cmd: string, env?: any) =>
+const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
-    cp.exec(cmd, { env: env }, (err, out) => {
+    cp.execFile(cmd, args, (err, out) => {
       if (err) {
         return reject(err);
       }
@@ -41,18 +41,18 @@ import {
 import { checkCliVersion } from "./utils";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
-  let server_path;
+  let serverPath;
   // First, check if the user has set the path to the Semgrep binary, use that always
   if (env.config.path.length > 0) {
-    server_path = env.config.path;
+    serverPath = env.config.path;
   }
 
-  if (!server_path) {
-    server_path = DIST_BINARY_PATH;
+  if (!serverPath) {
+    serverPath = DIST_BINARY_PATH;
   }
 
   return {
-    command: server_path,
+    command: serverPath,
   };
 }
 
@@ -96,9 +96,11 @@ async function serverOptionsCli(
   if (server.options) {
     server.options.cwd = cwd;
   }
-  if (!env.config.cfg.get("ignoreCliVersion")) {
-    const cmd = `"${server.command}" --version`;
-    const version = await execShell(cmd, server.options?.env);
+
+  // Only check the version if we're not using the packaged version
+  // This is to avoid us releasing a new version of the extension late and then people get annoying popups
+  if (!env.config.cfg.get("ignoreCliVersion") && env.config.path.length > 0) {
+    const version = await execShell(server.command, ["--version"]);
     const semVersion = new semver.SemVer(version);
     checkCliVersion(semVersion);
     env.semgrepVersion = version;
