@@ -5,9 +5,11 @@ on:
   workflow_dispatch:
     inputs:
       dry-run:
-        description: "Dry run"
+        default: false
+        description: Whether a dry-run should be peformed. Actually push images if false.
         required: true
         type: boolean
+
 jobs:
   vsce-test:
     strategy:
@@ -45,4 +47,4 @@ jobs:
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           target: ${{ matrix.target }}
-          dryRun: ${{ github.event.inputs.dry-run }}
+          dryRun: ${{ inputs.dry-run }}
