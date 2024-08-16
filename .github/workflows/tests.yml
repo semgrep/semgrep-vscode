@@ -25,12 +25,12 @@ jobs:
       - name: Install Semgrep
         run: python -m pip install semgrep
       - name: Setup
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4.0.3
         with:
-          node-version: 16.x
+          node-version: lts/*
       - name: install dependencies
         run: npm ci
-      - uses: "aws-actions/configure-aws-credentials@v1"
+      - uses: "aws-actions/configure-aws-credentials@v4.0.2"
         with:
           role-to-assume: "arn:aws:iam::338683922796:role/returntocorp-semgrep-vscode-deploy-role"
           role-duration-seconds: 900,
@@ -70,9 +70,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4.0.3
         with:
-          node-version: 16.x
+          node-version: lts/*
       - name: install dependencies
         run: npm ci
         # This is needed so download-lspjs.sh can run
