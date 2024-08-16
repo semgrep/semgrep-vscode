@@ -30,6 +30,18 @@ jobs:
           node-version: 16.x
       - name: install dependencies
         run: npm ci
+      - uses: "aws-actions/configure-aws-credentials@v1"
+        with:
+          role-to-assume: "arn:aws:iam::338683922796:role/returntocorp-semgrep-vscode-deploy-role"
+          role-duration-seconds: 900,
+          role-session-name: "semgrep-vscode-deploy"
+          aws-region: "us-west-2"
+      - if: matrix.os == 'macos-latest'
+        name: download osemgrep pro
+        run: ./download-osemgrep-pro.sh darwin-arm64
+      - if: matrix.os == 'ubuntu-latest'
+        name: download osemgrep pro
+        run: ./download-osemgrep-pro.sh linux-x64
       - name: pretest
         run: npm run pretest
       - name: run native tests (Linux)
