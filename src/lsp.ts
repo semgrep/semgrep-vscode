@@ -73,7 +73,6 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
       .trim()
       .replace("release-", "");
     env.semgrepVersion = version;
-    env.logger.log(`Semgrep version: ${version}`);
     await env.reloadConfig();
   }
 
