@@ -10,7 +10,7 @@ node_modules
 
 # Misc
 .DS_Store
-lspjs
+dist/*
 # From testing
 *_results.json
 

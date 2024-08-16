@@ -18,24 +18,7 @@ async function buildSentrySourceMap() {
     ],
   });
 }
-// We should really just do this in the semgrep repo but oh well
-async function buildLspJS(watch, minify) {
-  const options = {
-    logLevel: "info",
-    entryPoints: ["./dist/lspjs/semgrep-lsp.js"],
-    outfile: "./out/semgrep-lsp.js",
-    bundle: true,
-    platform: "node",
-    format: "cjs",
-    minify,
-  };
-  if (watch) {
-    let ctx = await esbuild.context(options);
-    await ctx.watch();
-  } else {
-    await esbuild.build(options);
-  }
-}
+
 async function buildExtension(watch, sourcemap, minify) {
   const options = {
     logLevel: "info",
@@ -101,7 +84,6 @@ const esbuildProblemMatcherPlugin = {
 };
 await Promise.all([
   buildExtension(isWatch, isSourcemap, isMinify),
-  buildLspJS(isWatch, isMinify),
   buildWebview(isWatch, isSourcemap, isMinify),
   buildSentrySourceMap(),
 ]);

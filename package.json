@@ -118,9 +118,9 @@
           "description": "Break before starting the LSP server in the Javascript version of the extension. Warning, this is for debugging purposes and may break things."
         },
         "semgrep.path": {
-          "description": "Path to the semgrep executable. Note: this is overriden by the semgrep.useJS setting.",
+          "description": "Path to the Semgrep executable. If none is set the extension will use the prepackaged version of Semgrep. Note: this has no effect if semgrep.useJS is set",
           "type": "string",
-          "default": "semgrep"
+          "default": ""
         },
         "semgrep.useJS": {
           "description": "Use the pure Javascript version of the extension. Warning, this is experimental and may break or have performance issues",
@@ -286,7 +286,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "npm run setup-lspjs && ./build.mjs",
+    "esbuild-base": "npm run download-lspjs && ./build.mjs",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "watch:esbuild": "npm run esbuild-base -- --sourcemap --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
@@ -296,7 +296,7 @@
     "test-js": "USE_JS=1 node ./out/src/test/runTest.js",
     "test": "npm run test-native && npm run test-js",
     "clean": "rm -rf ./out",
-    "setup-lspjs": "./download-lspjs.sh",
+    "download-lspjs": "./download-lspjs.sh",
     "install:all": "npm install"
   },
   "devDependencies": {

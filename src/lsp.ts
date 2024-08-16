@@ -20,16 +20,14 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
-import * as which from "which";
-
 import * as vscode from "vscode";
 
 import {
-  SEMGREP_BINARY,
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
-  LSPJS_ENTRYPOINT,
+  DIST_BINARY_PATH,
+  LSPJS_PATH,
 } from "./constants";
 import { Environment } from "./env";
 import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
@@ -43,44 +41,18 @@ import {
 import { checkCliVersion } from "./utils";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
-  let server_path = which.sync(SEMGREP_BINARY, { nothrow: true });
-  let env_vars = null;
-  if (env.config.path !== "semgrep") {
+  let server_path;
+  // First, check if the user has set the path to the Semgrep binary, use that always
+  if (env.config.path.length > 0) {
     server_path = env.config.path;
   }
+
   if (!server_path) {
-    let pip = which.sync("pip", { nothrow: true });
-    if (!pip) {
-      pip = which.sync("pip3", { nothrow: true });
-    }
-    if (!pip) {
-      vscode.window.showErrorMessage(
-        "Python 3.7+ required for the Semgrep Extension",
-      );
-      return null;
-    }
-    const globalStoragePath = env.globalStoragePath;
-    const cmd = `PYTHONUSERBASE="${globalStoragePath}" pip install --user --upgrade --ignore-installed semgrep`;
-    try {
-      await execShell(cmd);
-    } catch {
-      vscode.window.showErrorMessage(
-        "Semgrep binary could not be installed, please see https://semgrep.dev/docs/getting-started/ for instructions",
-      );
-      return null;
-    }
-    server_path = `${globalStoragePath}/bin/semgrep`;
-    env_vars = {
-      ...process.env,
-      PYTHONUSERBASE: globalStoragePath,
-    };
+    server_path = DIST_BINARY_PATH;
   }
 
   return {
     command: server_path,
-    options: {
-      env: env_vars,
-    },
   };
 }
 
@@ -141,7 +113,7 @@ async function serverOptionsCli(
 }
 
 function serverOptionsJs(env: Environment): ServerOptions {
-  const serverModule = LSPJS_ENTRYPOINT;
+  const serverModule = LSPJS_PATH;
   const stackSize = env.config.get("stackSizeJS");
   const heapSize = env.config.get("heapSizeJS");
   const inspectMode = env.config.lspjsBreakBeforeStart

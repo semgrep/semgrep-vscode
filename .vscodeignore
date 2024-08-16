@@ -1,13 +1,14 @@
 .vscode/**
 .vscode-test/**
 out/test/**
+out/semgrep-lsp.js
 src/**
 node_modules/**
 .pre-commit-config.yaml
 build.mjs
 download-lspjs.sh
+download-osemgrep-pro.sh
 eslint.config.js
-dist/lspjs/**
 images/**
 .github/**
 .gitignore
