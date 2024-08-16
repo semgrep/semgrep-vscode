@@ -1,6 +1,19 @@
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      preRelease:
+        description: "Is this a pre-release?"
+        type: boolean
+        required: false
+        default: false
+      dryRun:
+        description: "Is this a dry run?"
+        type: boolean
+        required: false
+        default: false
+
 jobs:
   vsce-test:
     strategy:
@@ -30,7 +43,8 @@ jobs:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
           target: ${{ matrix.target }} # only for specific platforms
           # release pre-release if that's the event
-          preRelease: ${{github.event.release.prerelease}}
+          preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
+          dryRun: "${{ inputs.dryRun }}"
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
@@ -40,4 +54,5 @@ jobs:
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           target: ${{ matrix.target }}
           # release pre-release if that's the event
-          preRelease: ${{github.event.release.prerelease}}
+          preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
+          dryRun: "${{ inputs.dryRun }}"
