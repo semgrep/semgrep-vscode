@@ -291,7 +291,7 @@
     "watch:esbuild": "npm run esbuild-base -- --sourcemap --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "lint": "eslint src --ext ts",
-    "pretest": "npm run test-compile && npm run lint && cp -rf src/test/fixtures out/src/test",
+    "pretest": "npm run esbuild && npm run lint && cp -rf src/test/fixtures out/src/test",
     "test-native": "node ./out/src/test/runTest.js",
     "test-js": "USE_JS=1 node ./out/src/test/runTest.js",
     "test": "npm run test-native && npm run test-js",
