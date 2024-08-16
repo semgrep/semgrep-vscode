@@ -2,6 +2,12 @@ on:
   push:
     tags:
       - "*"
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Dry run"
+        required: true
+        type: boolean
 jobs:
   vsce-test:
     strategy:
@@ -30,6 +36,7 @@ jobs:
           # Tied to austin@, lives in 1password, does not expire
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
           target: ${{ matrix.target }} # only for specific platforms
+          dryRun: ${{ github.event.inputs.dry-run }}
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
@@ -38,3 +45,4 @@ jobs:
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           target: ${{ matrix.target }}
+          dryRun: ${{ github.event.inputs.dry-run }}
