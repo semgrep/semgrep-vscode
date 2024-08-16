@@ -1,15 +1,6 @@
 on:
-  push:
-    tags:
-      - "*"
-  workflow_dispatch:
-    inputs:
-      dry-run:
-        default: false
-        description: Whether a dry-run should be peformed. Actually push images if false.
-        required: true
-        type: boolean
-
+  release:
+    types: [published]
 jobs:
   vsce-test:
     strategy:
@@ -38,7 +29,8 @@ jobs:
           # Tied to austin@, lives in 1password, does not expire
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
           target: ${{ matrix.target }} # only for specific platforms
-          dryRun: ${{ github.event.inputs.dry-run }}
+          # release pre-release if that's the event
+          preRelease: ${{github.event.release.prerelease}}
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
@@ -47,4 +39,5 @@ jobs:
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           target: ${{ matrix.target }}
-          dryRun: ${{ inputs.dry-run }}
+          # release pre-release if that's the event
+          preRelease: ${{github.event.release.prerelease}}
