@@ -28,6 +28,7 @@ import {
   DIAGNOSTIC_COLLECTION_NAME,
   DIST_BINARY_PATH,
   LSPJS_PATH,
+  VERSION_PATH,
 } from "./constants";
 import { Environment } from "./env";
 import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
@@ -39,16 +40,41 @@ import {
   captureLspError,
 } from "./telemetry/sentry";
 import { checkCliVersion } from "./utils";
+import which from "which";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let serverPath;
   // First, check if the user has set the path to the Semgrep binary, use that always
   if (env.config.path.length > 0) {
     serverPath = env.config.path;
+    // check if the path exists
+    if (!fs.existsSync(serverPath)) {
+      // try checking if its a binary in the PATH
+      serverPath = which.sync("semgrep", { nothrow: true });
+    }
+    // Only check the version if we're not using the packaged version
+    // This is to avoid us releasing a new version of the extension late and then people get annoying popups
+    if (!env.config.cfg.get("ignoreCliVersion") && serverPath) {
+      const version = await execShell(serverPath, ["--version"]);
+      const semVersion = new semver.SemVer(version);
+      checkCliVersion(semVersion);
+      env.semgrepVersion = version;
+      await env.reloadConfig();
+    }
   }
 
   if (!serverPath) {
     serverPath = DIST_BINARY_PATH;
+    // Read version from extension's shipped version file
+    // This is hacky, we should instead exec the binary with --version like we did previously, but that is currently off by one release always
+    const version = fs
+      .readFileSync(VERSION_PATH)
+      .toString()
+      .trim()
+      .replace("release-", "");
+    env.semgrepVersion = version;
+    env.logger.log(`Semgrep version: ${version}`);
+    await env.reloadConfig();
   }
 
   return {
@@ -95,16 +121,6 @@ async function serverOptionsCli(
   server.args = cmdlineOpts;
   if (server.options) {
     server.options.cwd = cwd;
-  }
-
-  // Only check the version if we're not using the packaged version
-  // This is to avoid us releasing a new version of the extension late and then people get annoying popups
-  if (!env.config.cfg.get("ignoreCliVersion") && env.config.path.length > 0) {
-    const version = await execShell(server.command, ["--version"]);
-    const semVersion = new semver.SemVer(version);
-    checkCliVersion(semVersion);
-    env.semgrepVersion = version;
-    await env.reloadConfig();
   }
 
   const serverOptions: ServerOptions = server;
