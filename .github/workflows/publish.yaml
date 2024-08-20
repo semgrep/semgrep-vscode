@@ -15,7 +15,7 @@ on:
         default: false
 
 jobs:
-  vsce-test:
+  vscode-extension-publish:
     strategy:
       matrix:
         target: [linux-x64, linux-arm64, darwin-x64, darwin-arm64]
@@ -44,7 +44,7 @@ jobs:
           target: ${{ matrix.target }} # only for specific platforms
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
-          dryRun: "${{ inputs.dryRun }}"
+          dryRun: ${{ inputs.dryRun }}
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
@@ -55,4 +55,4 @@ jobs:
           target: ${{ matrix.target }}
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
-          dryRun: "${{ inputs.dryRun }}"
+          dryRun: ${{ inputs.dryRun }}

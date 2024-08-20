@@ -6,10 +6,11 @@ if [ -L dist/lspjs ]; then
     exit 0
 fi
 mkdir -p dist/lspjs
-echo "Downloading lspjs from S3 for version $(cat ./semgrep-version)"
-for var in Main.bc.js language-server-wasm.js semgrep-lsp-bindings.js semgrep-lsp.js
+SEMGREP_VERSION=$(cat ./semgrep-version)
+echo "Downloading lspjs from S3 for version $SEMGREP_VERSION"
+for filename in Main.bc.js language-server-wasm.js semgrep-lsp-bindings.js semgrep-lsp.js
 do
-    echo "Downloading $var"
-    curl "https://static.semgrep.dev/static/turbo/$(cat ./semgrep-version)/language_server/dist/$var" -o "./dist/lspjs/$var"
+    echo "Downloading $filename"
+    curl "https://static.semgrep.dev/static/turbo/$SEMGREP_VERSION/language_server/dist/$filename" -o "./dist/lspjs/$filename"
 done
 echo "Downloaded lspjs"
