@@ -54,7 +54,6 @@ if (USE_JS || process.platform === "win32") {
     "lib/startup/validatePreconditions.ts",
     "routes/redirect.ts",
     "routes/search.ts",
-    "cli/src/semgrep/commands/install.py",
   ];
   SKIPPED_FILES = SKIPPED_FILES.concat(additional_skipped_files);
 }
