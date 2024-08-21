@@ -165,5 +165,6 @@ export class Environment {
 
   dispose(): void {
     this.channel.dispose();
+    this.client?.dispose();
   }
 }

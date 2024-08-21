@@ -26,6 +26,8 @@ async function createOrUpdateEnvironment(
 }
 
 async function afterClientStart(context: ExtensionContext, env: Environment) {
+  context.subscriptions.push(env);
+
   if (!env.client) {
     vscode.window.showErrorMessage(
       "Semgrep Extension failed to activate, please check output",
@@ -33,7 +35,8 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
     return;
   }
   const statusBar = createStatusBar();
-  registerCommands(env);
+  context.subscriptions.push(statusBar);
+  registerCommands(env).forEach((d) => context.subscriptions.push(d));
   statusBar.show();
 
   // register stuff for search webview
@@ -49,9 +52,11 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   env.provider = provider;
 
   // register content provider for the AST showing document
-  vscode.workspace.registerTextDocumentContentProvider(
-    SemgrepDocumentProvider.scheme,
-    env.documentView,
+  context.subscriptions.push(
+    vscode.workspace.registerTextDocumentContentProvider(
+      SemgrepDocumentProvider.scheme,
+      env.documentView,
+    ),
   );
   // Handle configuration changes
   context.subscriptions.push(
