@@ -1,7 +1,16 @@
 .vscode/**
 .vscode-test/**
 out/test/**
+out/semgrep-lsp.js
 src/**
+node_modules/**
+.pre-commit-config.yaml
+build.mjs
+download-lspjs.sh
+download-osemgrep-pro.sh
+eslint.config.js
+images/**
+.github/**
 .gitignore
 vsc-extension-quickstart.md
 **/tsconfig.json

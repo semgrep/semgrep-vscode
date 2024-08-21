@@ -8,13 +8,13 @@
       "runtimeExecutable": "${execPath}",
       "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
-      "preLaunchTask": "watch-build"
+      "preLaunchTask": "watch"
     },
     {
       "type": "node",
       "request": "attach",
       "name": "Attach to Server",
-      "port": 6009,
+      "port": 9229,
       "restart": true,
       "outFiles": [
         "${workspaceRoot}/lspjs/out/**/*.js",
@@ -34,7 +34,7 @@
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
       "preLaunchTask": {
         "type": "npm",
-        "script": "test-compile"
+        "script": "esbuild"
       }
     }
   ]

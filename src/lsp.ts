@@ -2,9 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as cp from "child_process";
 import * as semver from "semver";
-const execShell = (cmd: string, env?: any) =>
+const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
-    cp.exec(cmd, { env: env }, (err, out) => {
+    cp.execFile(cmd, args, (err, out) => {
       if (err) {
         return reject(err);
       }
@@ -20,15 +20,15 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
-import * as which from "which";
-
 import * as vscode from "vscode";
 
 import {
-  SEMGREP_BINARY,
   CLIENT_ID,
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
+  DIST_BINARY_PATH,
+  LSPJS_PATH,
+  VERSION_PATH,
 } from "./constants";
 import { Environment } from "./env";
 import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
@@ -40,47 +40,50 @@ import {
   captureLspError,
 } from "./telemetry/sentry";
 import { checkCliVersion } from "./utils";
+import which from "which";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
-  let server_path = which.sync(SEMGREP_BINARY, { nothrow: true });
-  let env_vars = null;
-  if (env.config.path !== "semgrep") {
-    server_path = env.config.path;
-  }
-  if (!server_path) {
-    let pip = which.sync("pip", { nothrow: true });
-    if (!pip) {
-      pip = which.sync("pip3", { nothrow: true });
+  let serverPath;
+  // First, check if the user has set the path to the Semgrep binary, use that always
+  if (env.config.path.length > 0) {
+    serverPath = env.config.path;
+    // check if the path exists
+    if (!fs.existsSync(serverPath)) {
+      // try checking if its a binary in the PATH
+      serverPath = which.sync("semgrep", { nothrow: true });
     }
-    if (!pip) {
-      vscode.window.showErrorMessage(
-        "Python 3.7+ required for the Semgrep Extension",
-      );
-      return null;
+    // Only check the version if we're not using the packaged version
+    // This is to avoid us releasing a new version of the extension late and then people get annoying popups
+    if (!env.config.cfg.get("ignoreCliVersion") && serverPath) {
+      const version = await execShell(serverPath, ["--version"]);
+      const semVersion = new semver.SemVer(version);
+      checkCliVersion(semVersion);
+      env.semgrepVersion = version;
+      await env.reloadConfig();
     }
-    const globalStoragePath = env.globalStoragePath;
-    const cmd = `PYTHONUSERBASE="${globalStoragePath}" pip install --user --upgrade --ignore-installed semgrep`;
-    try {
-      await execShell(cmd);
-    } catch {
-      vscode.window.showErrorMessage(
-        "Semgrep binary could not be installed, please see https://semgrep.dev/docs/getting-started/ for instructions",
-      );
-      return null;
-    }
-    server_path = `${globalStoragePath}/bin/semgrep`;
-    env_vars = {
-      ...process.env,
-      PYTHONUSERBASE: globalStoragePath,
-    };
   }
 
-  return {
-    command: server_path,
-    options: {
-      env: env_vars,
-    },
-  };
+  if (!serverPath) {
+    serverPath = DIST_BINARY_PATH;
+    // Read version from extension's shipped version file
+    // This is hacky, we should instead exec the binary with --version like we did previously, but that is currently off by one release always
+    const version = fs
+      .readFileSync(VERSION_PATH)
+      .toString()
+      .trim()
+      .replace("release-", "");
+    env.semgrepVersion = version;
+    await env.reloadConfig();
+  }
+
+  // one last check to see if the binary exists
+  if (fs.existsSync(serverPath)) {
+    return {
+      command: serverPath,
+    };
+  } else {
+    return null;
+  }
 }
 
 function semgrepCmdLineOpts(env: Environment): string[] {
@@ -123,14 +126,6 @@ async function serverOptionsCli(
   if (server.options) {
     server.options.cwd = cwd;
   }
-  if (!env.config.cfg.get("ignoreCliVersion")) {
-    const cmd = `"${server.command}" --version`;
-    const version = await execShell(cmd, server.options?.env);
-    const semVersion = new semver.SemVer(version);
-    checkCliVersion(semVersion);
-    env.semgrepVersion = version;
-    await env.reloadConfig();
-  }
 
   const serverOptions: ServerOptions = server;
   env.logger.log(
@@ -140,9 +135,12 @@ async function serverOptionsCli(
 }
 
 function serverOptionsJs(env: Environment): ServerOptions {
-  const serverModule = path.join(__dirname, "../lspjs/dist/semgrep-lsp.js");
+  const serverModule = LSPJS_PATH;
   const stackSize = env.config.get("stackSizeJS");
   const heapSize = env.config.get("heapSizeJS");
+  const inspectMode = env.config.lspjsBreakBeforeStart
+    ? "inspect-brk"
+    : "inspect";
   const serverOptionsJs = {
     run: {
       module: serverModule,
@@ -160,7 +158,7 @@ function serverOptionsJs(env: Environment): ServerOptions {
       options: {
         execArgv: [
           "--nolazy",
-          "--inspect=6009",
+          `--${inspectMode}=9229`,
           `--stack-size=${stackSize}`,
           `--max-old-space-size=${heapSize}`,
         ],
@@ -217,17 +215,12 @@ async function lspOptions(
   };
 
   let serverOptions;
-  if (process.platform === "win32" || env.config.get("useJS")) {
-    serverOptions = serverOptionsJs(env);
-  } else {
-    // Don't call this before as it can crash the extension on windows
+  // if we're not on windows or not using JS, we can use the CLI
+  if (process.platform !== "win32") {
     serverOptions = await serverOptionsCli(env);
-    if (!serverOptions) {
-      vscode.window.showErrorMessage(
-        "Semgrep Extension failed to activate, please check output",
-      );
-      return [null, null];
-    }
+  }
+  if (!serverOptions || env.config.get("useJS")) {
+    serverOptions = serverOptionsJs(env);
   }
 
   return [serverOptions, clientOptions];

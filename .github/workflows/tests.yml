@@ -10,6 +10,9 @@ on:
       - master
     paths-ignore:
       - "**.md"
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   vsce-test:
@@ -25,11 +28,23 @@ jobs:
       - name: Install Semgrep
         run: python -m pip install semgrep
       - name: Setup
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4.0.3
         with:
-          node-version: 16.x
+          node-version: lts/*
       - name: install dependencies
         run: npm ci
+      - uses: "aws-actions/configure-aws-credentials@v4.0.2"
+        with:
+          role-to-assume: "arn:aws:iam::338683922796:role/semgrep-ide-integration-deploy-role"
+          role-duration-seconds: 900,
+          role-session-name: "semgrep-ide-integration-deploy"
+          aws-region: "us-west-2"
+      - if: matrix.os == 'macos-latest'
+        name: download osemgrep pro
+        run: ./download-osemgrep-pro.sh darwin-arm64
+      - if: matrix.os == 'ubuntu-latest'
+        name: download osemgrep pro
+        run: ./download-osemgrep-pro.sh linux-x64
       - name: pretest
         run: npm run pretest
       - name: run native tests (Linux)
@@ -39,7 +54,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: npm run test-native
       - name: uninstall semgrep
-        run: python -m pip uninstall -y semgrep
+        run: python -m pip uninstall -y semgrep && rm dist/osemgrep-pro
       - name: run js tests (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run -a npm run test-js
@@ -58,9 +73,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4.0.3
         with:
-          node-version: 16.x
+          node-version: lts/*
       - name: install dependencies
         run: npm ci
         # This is needed so download-lspjs.sh can run
@@ -83,8 +98,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4.0.3
         with:
-          node-version: 16
+          node-version: lts/*
+      - uses: "aws-actions/configure-aws-credentials@v4.0.2"
+        with:
+          role-to-assume: "arn:aws:iam::338683922796:role/semgrep-ide-integration-deploy-role"
+          role-duration-seconds: 900,
+          role-session-name: "semgrep-ide-integration-deploy"
+          aws-region: "us-west-2"
+      - name: download osemgrep pro
+        run: ./download-osemgrep-pro.sh linux-x64
       - run: npm ci
       - run: npm run vscode:prepublish

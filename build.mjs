@@ -6,6 +6,8 @@ import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
 async function buildSentrySourceMap() {
   esbuild.build({
     sourcemap: true, // Source map generation must be turned on
+    bundle: true,
+    platform: "node",
     plugins: [
       // Put the Sentry esbuild plugin after all other plugins
       sentryEsbuildPlugin({
@@ -16,7 +18,8 @@ async function buildSentrySourceMap() {
     ],
   });
 }
-async function buildExtension(watch) {
+
+async function buildExtension(watch, sourcemap, minify) {
   const options = {
     logLevel: "info",
     entryPoints: ["./src/extension.ts"],
@@ -25,7 +28,9 @@ async function buildExtension(watch) {
     platform: "node",
     format: "cjs",
     external: ["vscode"],
-    sourcemap: isSourcemap,
+    sourcemap,
+    plugins: [esbuildProblemMatcherPlugin],
+    minify,
   };
   if (watch) {
     let ctx = await esbuild.context(options);
@@ -34,14 +39,16 @@ async function buildExtension(watch) {
     await esbuild.build(options);
   }
 }
-async function buildWebview(watch) {
+async function buildWebview(watch, sourcemap, minify) {
   let options = {
     logLevel: "info",
     entryPoints: ["./src/webview-ui/index.tsx"],
     outfile: "./out/webview.js",
     bundle: true,
+    platform: "node",
     plugins: [cssModulesPlugin()],
-    sourcemap: isSourcemap,
+    sourcemap,
+    minify,
   };
   if (watch) {
     let ctx = await esbuild.context(options);
@@ -53,9 +60,30 @@ async function buildWebview(watch) {
 
 const isWatch = process.argv.includes("--watch");
 const isSourcemap = process.argv.includes("--sourcemap");
+const isMinify = process.argv.includes("--minify");
+/**
+ * @type {import('esbuild').Plugin}
+ */
+const esbuildProblemMatcherPlugin = {
+  name: "esbuild-problem-matcher",
 
+  setup(build) {
+    build.onStart(() => {
+      console.log("[watch] build started");
+    });
+    build.onEnd((result) => {
+      result.errors.forEach(({ text, location }) => {
+        console.error(`✘ [ERROR] ${text}`);
+        console.error(
+          `    ${location.file}:${location.line}:${location.column}:`,
+        );
+      });
+      console.log("[watch] build finished");
+    });
+  },
+};
 await Promise.all([
-  buildExtension(isWatch, isSourcemap),
-  buildWebview(isWatch, isSourcemap),
+  buildExtension(isWatch, isSourcemap, isMinify),
+  buildWebview(isWatch, isSourcemap, isMinify),
   buildSentrySourceMap(),
 ]);

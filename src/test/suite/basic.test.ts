@@ -10,7 +10,6 @@ import {
   PublishDiagnosticsParams,
 } from "vscode-languageclient/node";
 import path = require("path");
-import { restartLsp } from "../../lsp";
 
 const SCAN_TIMEOUT = 180000;
 const USE_JS = process.env["USE_JS"];
