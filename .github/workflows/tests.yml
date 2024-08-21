@@ -30,7 +30,7 @@ jobs:
       - name: Setup
         uses: actions/setup-node@v4.0.3
         with:
-          node-version: lts/*
+          node-version: 16
       - name: install dependencies
         run: npm ci
       - uses: "aws-actions/configure-aws-credentials@v4.0.2"
