@@ -210,7 +210,11 @@ async function lspOptions(
   };
 
   let serverOptions;
-  if (process.platform === "win32" || env.config.get("useJS")) {
+  if (
+    process.platform === "win32" ||
+    env.config.get("useJS") ||
+    process.env["USE_JS"]
+  ) {
     serverOptions = serverOptionsJs(env);
   } else {
     // Don't call this before as it can crash the extension on windows
