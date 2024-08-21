@@ -76,9 +76,14 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
     await env.reloadConfig();
   }
 
-  return {
-    command: serverPath,
-  };
+  // one last check to see if the binary exists
+  if (fs.existsSync(serverPath)) {
+    return {
+      command: serverPath,
+    };
+  } else {
+    return null;
+  }
 }
 
 function semgrepCmdLineOpts(env: Environment): string[] {
@@ -210,21 +215,12 @@ async function lspOptions(
   };
 
   let serverOptions;
-  if (
-    process.platform === "win32" ||
-    env.config.get("useJS") ||
-    process.env["USE_JS"]
-  ) {
-    serverOptions = serverOptionsJs(env);
-  } else {
-    // Don't call this before as it can crash the extension on windows
+  // if we're not on windows or not using JS, we can use the CLI
+  if (process.platform !== "win32") {
     serverOptions = await serverOptionsCli(env);
-    if (!serverOptions) {
-      vscode.window.showErrorMessage(
-        "Semgrep Extension failed to activate, please check output",
-      );
-      return [null, null];
-    }
+  }
+  if (!serverOptions || env.config.get("useJS")) {
+    serverOptions = serverOptionsJs(env);
   }
 
   return [serverOptions, clientOptions];
