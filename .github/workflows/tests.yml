@@ -36,7 +36,7 @@ jobs:
       - uses: "aws-actions/configure-aws-credentials@v4.0.2"
         with:
           role-to-assume: "arn:aws:iam::338683922796:role/semgrep-ide-integration-deploy-role"
-          role-duration-seconds: 3600,
+          role-duration-seconds: 900,
           role-session-name: "semgrep-ide-integration-deploy"
           aws-region: "us-west-2"
       - if: matrix.os == 'macos-latest'
