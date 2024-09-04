@@ -16,7 +16,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Update version
         env:
           SEMGREP_STATIC_VERSION: "release-${{ inputs.version }}"
