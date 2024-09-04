@@ -9,7 +9,8 @@ case "${uname}" in
     *)    machine=manylinux;;
 esac
 # NOT the same as the semgrep version!!!!
-OSEMGREP_PRO_VERSION=$(cat ./osemgrep-pro-version)
+release_char_count=$(echo "release-" | wc -c)
+OSEMGREP_PRO_VERSION=$(cat ./semgrep-version | cut -c $((release_char_count))-)
 BINARY=semgrep-core-proprietary-${machine}-${OSEMGREP_PRO_VERSION}
 # Check if osemgrep-pro exists and if its a symlink then exit
 if [ -L dist/osemgrep-pro ]; then
