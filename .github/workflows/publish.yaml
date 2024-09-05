@@ -38,6 +38,10 @@ jobs:
           aws-region: "us-west-2"
       - name: download osemgrep pro
         run: ./download-osemgrep-pro.sh ${{ matrix.target }}
+      - name: install vsix
+        run: npm install -g @vscode/vsce
+      - name: Package with vsce
+        run: vsce package --target ${{ matrix.target }}
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         id: publishToOpenVSX
@@ -58,7 +62,6 @@ jobs:
           # Tied to bence@, lives in 1password expires in may 2024
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
-          target: ${{ matrix.target }}
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
           dryRun: ${{ inputs.dryRun }}
