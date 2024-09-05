@@ -57,7 +57,7 @@ jobs:
           # Tied to bence@, lives in 1password expires in may 2024
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
-          target: ${{ matrix.target }}
+          extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
           dryRun: ${{ inputs.dryRun }}
