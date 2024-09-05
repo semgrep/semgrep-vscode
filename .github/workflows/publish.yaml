@@ -41,6 +41,9 @@ jobs:
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         id: publishToOpenVSX
+        # Try publishing to Open VSX, but don't fail if it fails
+        # that way we can still publish to the marketplace
+        continue-on-error: true
         with:
           # Tied to austin@, lives in 1password, does not expire
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
@@ -54,7 +57,6 @@ jobs:
           # Tied to bence@, lives in 1password expires in may 2024
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
-          extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           target: ${{ matrix.target }}
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
