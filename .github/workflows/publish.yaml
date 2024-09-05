@@ -51,7 +51,7 @@ jobs:
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
           dryRun: ${{ inputs.dryRun }}
       - name: delete package
-        run: rm -rf "${{ steps.publishToOpenVSX.outputs.vsixPath }}""
+        run: rm -rf "${{ steps.publishToOpenVSX.outputs.vsixPath }}"
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
