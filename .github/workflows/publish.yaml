@@ -47,17 +47,18 @@ jobs:
         with:
           # Tied to austin@, lives in 1password, does not expire
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
-          target: ${{ matrix.target }} # only for specific platforms
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
           dryRun: ${{ inputs.dryRun }}
+      - name: delete package
+        run: rm -rf "${{ steps.publishToOpenVSX.outputs.vsixPath }}""
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         with:
           # Tied to bence@, lives in 1password expires in may 2024
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
-          extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
+          target: ${{ matrix.target }}
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
           dryRun: ${{ inputs.dryRun }}
