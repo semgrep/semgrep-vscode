@@ -44,7 +44,7 @@ jobs:
         run: vsce package --target ${{ matrix.target }}
       - name: Find the vsix
         id: vsixPathStep
-        run: echo "::set-output name=vsixPath::$(find . -name '*.vsix' -print -quit)"
+        run: echo "{vsixPath}={$(find . -name '*.vsix' -print -quit)}"
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         id: publishToOpenVSX
