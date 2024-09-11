@@ -5,6 +5,9 @@ out/semgrep-lsp.js
 src/**
 node_modules/**
 !node_modules/vscode-languageserver
+!node_modules/vscode-languageserver-protocol
+!node_modules/vscode-languageserver-types
+!node_modules/vscode-jsonrpc
 .pre-commit-config.yaml
 build.mjs
 download-lspjs.sh
