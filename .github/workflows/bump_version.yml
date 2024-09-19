@@ -17,6 +17,9 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4.0.3
+        with:
+          node-version: lts/*
       - name: Update version
         env:
           SEMGREP_STATIC_VERSION: "release-${{ inputs.version }}"
@@ -26,10 +29,6 @@ jobs:
               exit 1
           fi
           echo "${SEMGREP_STATIC_VERSION}" > semgrep-version
-      - uses: actions/setup-node@v4.0.3
-        with:
-          node-version: lts/*
-      - run: npm ci
       - name: Commit and push
         id: commit
         env:
@@ -43,12 +42,15 @@ jobs:
           BRANCH="gha/bump-version-${NEW_SEMGREP_VERSION}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           SUBJECT="Bump semgrep to ${NEW_SEMGREP_VERSION}"
           git checkout -b "${BRANCH}"
-          npm version patch
           git add .
           git commit -m "${SUBJECT}"
           git push --set-upstream origin "${BRANCH}"
           echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
           echo "subject=${SUBJECT}" >> "${GITHUB_OUTPUT}"
+      - name: bump package patch version
+        run: |
+          npm version patch
+          git push
       - name: Create PR
         id: open-pr
         env:
