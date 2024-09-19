@@ -21,7 +21,15 @@ jobs:
   vscode-extension-publish:
     strategy:
       matrix:
-        target: [linux-x64, linux-arm64, darwin-x64, darwin-arm64]
+        target:
+          [
+            linux-x64,
+            linux-arm64,
+            darwin-x64,
+            darwin-arm64,
+            win32-x64,
+            win32-arm64,
+          ]
     name: Deploy Extension
     runs-on: ubuntu-latest
     steps:
@@ -37,14 +45,26 @@ jobs:
           role-session-name: "semgrep-ide-integration-deploy"
           aws-region: "us-west-2"
       - name: download osemgrep pro
+        # skip if windows
+        if: matrix.target != 'win32-x64' && matrix.target != 'win32-arm64'
         run: ./download-osemgrep-pro.sh ${{ matrix.target }}
+      - name: install vsix
+        run: npm install -g @vscode/vsce
+      - name: Package with vsce
+        run: vsce package --target ${{ matrix.target }}
+      - name: Find the vsix
+        id: vsixPathStep
+        run: echo "vsixPath=$(find . -name '*.vsix' -print -quit)" >> "$GITHUB_OUTPUT"
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v1.6.2
         id: publishToOpenVSX
+        # Try publishing to Open VSX, but don't fail if it fails
+        # that way we can still publish to the marketplace
+        continue-on-error: true
         with:
           # Tied to austin@, lives in 1password, does not expire
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
-          target: ${{ matrix.target }} # only for specific platforms
+          extensionFile: ${{ steps.vsixPathStep.outputs.vsixPath }}
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
           dryRun: ${{ inputs.dryRun }}
@@ -54,8 +74,7 @@ jobs:
           # Tied to bence@, lives in 1password expires in may 2024
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
-          extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
-          target: ${{ matrix.target }}
+          extensionFile: ${{ steps.vsixPathStep.outputs.vsixPath }}
           # release pre-release if that's the event
           preRelease: ${{github.event.release.prerelease || inputs.preRelease}}
           dryRun: ${{ inputs.dryRun }}
