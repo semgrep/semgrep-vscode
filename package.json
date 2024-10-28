@@ -26,7 +26,7 @@
     "color": "#ffffff",
     "theme": "light"
   },
-  "qna": "https://r2c.dev/slack",
+  "qna": "https://go.semgrep.dev/slack",
   "main": "./out/main.js",
   "contributes": {
     "icons": {
