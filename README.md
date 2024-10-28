@@ -11,16 +11,7 @@
 
 ## Prerequisites
 
-- Windows users must use Semgrep extension v1.6.2 or later.
-- It's highly recommended that macOS, Linux, and WSL users install the Semgrep command-line interface (CLI) before using the Semgrep VS Code extension for a more performant and stable experience. The extension communicates with the CLI to run scans. To install the CLI:
-
-  ```sh
-  # macOS
-  $ brew install semgrep
-
-  # Ubuntu/WSL/Linux/macOS
-  $ python3 -m pip install semgrep
-  ```
+- Windows users must use Semgrep VS Code extension v1.6.2 or later.
 
 ## Quickstart
 
