@@ -183,7 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - Enable scanning on JavaScript React (.jsx) files by default.
-  [Semgrep 0.20.0](https://github.com/returntocorp/semgrep/releases/tag/v0.20.0) had just been released
+  [Semgrep 0.20.0](https://github.com/semgrep/semgrep/releases/tag/v0.20.0) had just been released
   with support for JSX tag metavariables.
 
 ## 0.1.1 - 2020-08-11

@@ -6,7 +6,7 @@ This extension is made to help you. We’d love your feedback to improve it furt
 
 Don't hesitate to
 
-- raise a ticket in [our GitHub repo](https://github.com/returntocorp/semgrep-vscode/issues),
+- raise a ticket in [our GitHub repo](https://github.com/semgrep/semgrep-vscode/issues),
 - or reach out on [Slack](https://go.semgrep.dev/slack).
 
 Step into our Slack community to get answers to your questions and share knowledge with others.
