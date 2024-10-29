@@ -20,13 +20,13 @@
     "onStartupFinished"
   ],
   "publisher": "Semgrep",
-  "repository": "https://github.com/returntocorp/semgrep-vscode",
+  "repository": "https://github.com/semgrep/semgrep-vscode",
   "icon": "semgrep-icon.png",
   "galleryBanner": {
     "color": "#ffffff",
     "theme": "light"
   },
-  "qna": "https://r2c.dev/slack",
+  "qna": "https://go.semgrep.dev/slack",
   "main": "./out/main.js",
   "contributes": {
     "icons": {
@@ -276,7 +276,7 @@
               "markdown": "walkthrough/3-support.md"
             },
             "completionEvents": [
-              "onLink:https://github.com/returntocorp/semgrep-vscode/issues",
+              "onLink:https://github.com/semgrep/semgrep-vscode/issues",
               "onLink:https://go.semgrep.dev/slack"
             ]
           }

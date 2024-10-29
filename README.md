@@ -6,7 +6,7 @@
 - Inline results and problem highlighting, as well as quick links to the definitions of the rules underlying the findings
 - Autofix, which allows you to apply Semgrep's suggested resolution for the findings
 
-<video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3" controls="controls">
+<video src="https://github.com/semgrep/semgrep-vscode/assets/626337/b08d17b6-3fb7-46fe-93ec-09f9257d58a3" controls="controls">
 </video>
 
 ## Prerequisites
@@ -27,18 +27,18 @@
    ```
 4. To see detailed vulnerability information, hover over the code that's underlined in yellow. You can also see the findings identified by Semgrep using <kbd>⇧Shift+Ctrl+M</kbd> or <kbd>⌘Command+⇧Shift+M</kbd> (macOS) and opening the **Problems** tab.
 
-   <video src="https://github.com/returntocorp/semgrep-vscode/assets/626337/49033d56-f4f4-4b70-8318-1b0ea8e991b5" controls="controls">
+   <video src="https://github.com/semgrep/semgrep-vscode/assets/626337/49033d56-f4f4-4b70-8318-1b0ea8e991b5" controls="controls">
    </video>
 
 ## Use the full potential of Semgrep
 
 Try Autofix.
 
-https://github.com/returntocorp/semgrep-vscode/assets/626337/3b6a730d-57e9-48a4-8065-9fa52388d77a
+https://github.com/semgrep/semgrep-vscode/assets/626337/3b6a730d-57e9-48a4-8065-9fa52388d77a
 
 Add and update new rules to expand Semgrep extension capabilities.
 
-https://github.com/returntocorp/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b
+https://github.com/semgrep/semgrep-vscode/assets/626337/fed6b6ec-e0b5-495b-a488-4f3c805dd58b
 
 Fine-tune and customize the rules Semgrep uses to improve your scan results:
 
