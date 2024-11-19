@@ -1,12 +1,12 @@
 import { vscode } from "./utilities/vscode";
 import "./App.css";
 import { useState, useSyncExternalStore } from "react";
-import { TopSection } from "./src/components/TopSection/TopSection";
-import { SearchResults } from "./src/components/SearchResults/SearchResults";
-import { State } from "./src/types/state";
-import { ViewResults } from "./src/types/results";
-import { InfoBlurb } from "./src/components/utils/InfoBlurb";
-import { exportRule, useSetStore, useStore } from "./src/hooks/useStore";
+import { TopSection } from "./components/TopSection/TopSection";
+import { SearchResults } from "./components/SearchResults/SearchResults";
+import { State } from "./types/state";
+import { ViewResults } from "./types/results";
+import { InfoBlurb } from "./components/utils/InfoBlurb";
+import { exportRule, useSetStore, useStore } from "./hooks/useStore";
 
 const App: React.FC = () => {
   // This store is all of the non-search-result related state that the

@@ -13,8 +13,8 @@
  * LICENSE for more details.
  */
 
-import { SUPPORTED_LANGS } from "../constants";
-import { ViewResults } from "../webview-ui/src/types/results";
+import { type SUPPORTED_LANGS } from "../langs";
+import { ViewResults } from "./types/results";
 import * as vscode from "vscode";
 
 /*****************************************************************************/

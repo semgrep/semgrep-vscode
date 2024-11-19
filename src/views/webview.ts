@@ -5,8 +5,8 @@ import {
   extensionToWebviewCommand,
   SearchLanguage,
   webviewToExtensionCommand,
-} from "../interface/interface";
-import { SUPPORTED_LANGS } from "../constants";
+} from "../webview-ui/interface";
+import { SUPPORTED_LANGS } from "../langs";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider
@@ -165,7 +165,7 @@ export class SemgrepSearchWebviewProvider
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}' 'unsafe-inline';">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
           <link rel="stylesheet" type="text/css" href="${globalStylesUri}">
           <title>Hello World</title>

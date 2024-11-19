@@ -5,7 +5,7 @@ import {
   search,
   searchOngoing,
 } from "./lspExtensions";
-import { ViewResults } from "./webview-ui/src/types/results";
+import { ViewResults } from "./webview-ui/types/results";
 import * as vscode from "vscode";
 import { Environment } from "./env";
 

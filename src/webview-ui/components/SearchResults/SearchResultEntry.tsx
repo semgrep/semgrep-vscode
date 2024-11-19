@@ -4,7 +4,7 @@ import { ViewMatch, ViewResult } from "../../types/results";
 import styles from "./SearchResults.module.css";
 import { EntryHeader } from "./EntryHeader";
 import { useState } from "react";
-import { vscode } from "../../../utilities/vscode";
+import { vscode } from "../../utilities/vscode";
 import { onStoreChange } from "../../hooks/useStore";
 
 export interface SearchResultEntryProps {

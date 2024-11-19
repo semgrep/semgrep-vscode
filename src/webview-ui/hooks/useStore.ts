@@ -1,6 +1,6 @@
-import { vscode } from "../../utilities/vscode";
-import { SUPPORTED_LANGS } from "../../../constants";
-import { SearchLanguage } from "../../../interface/interface";
+import { vscode } from "../utilities/vscode";
+import { SUPPORTED_LANGS } from "../../langs";
+import { SearchLanguage } from "../interface";
 import { simplePattern } from "../components/TopSection/PatternList";
 import { useSyncExternalStore } from "react";
 

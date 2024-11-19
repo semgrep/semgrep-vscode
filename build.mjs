@@ -45,7 +45,6 @@ async function buildWebview(watch, sourcemap, minify) {
     entryPoints: ["./src/webview-ui/index.tsx"],
     outfile: "./out/webview.js",
     bundle: true,
-    platform: "node",
     plugins: [cssModulesPlugin()],
     sourcemap,
     minify,
