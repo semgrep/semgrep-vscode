@@ -31,6 +31,7 @@ import * as vscode from "vscode";
    See `search.ts` for the view which implements the handler.
  */
 
+// TODO: This should really be obtained from the CLI rather than be static.
 export const SUPPORTED_LANGS = [
   "bash",
   "sh",
@@ -65,7 +66,6 @@ export const SUPPORTED_LANGS = [
   "swift",
   "terraform",
   "typescript",
-  "vue",
   "xml",
   "yaml",
 ];
