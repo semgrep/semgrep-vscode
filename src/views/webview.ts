@@ -5,8 +5,8 @@ import {
   extensionToWebviewCommand,
   SearchLanguage,
   webviewToExtensionCommand,
-} from "../webview-ui/interface";
-import { SUPPORTED_LANGS } from "../webview-ui/interface";
+} from "../webviews/interface";
+import { SUPPORTED_LANGS } from "../webviews/interface";
 
 export class SemgrepSearchWebviewProvider
   implements vscode.WebviewViewProvider

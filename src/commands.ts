@@ -12,7 +12,7 @@ import {
 } from "./lspExtensions";
 import { restartLsp } from "./lsp";
 import { encodeUri } from "./showAstDocument";
-import { ViewResults } from "./webview-ui/types/results";
+import { ViewResults } from "./webviews/types/results";
 import { applyFixAndSave, replaceAll } from "./utils";
 import { handleSearch } from "./search";
 import { Disposable } from "vscode-languageclient";
