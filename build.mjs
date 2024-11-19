@@ -42,7 +42,7 @@ async function buildExtension(watch, sourcemap, minify) {
 async function buildWebview(watch, sourcemap, minify) {
   let options = {
     logLevel: "info",
-    entryPoints: ["./src/webview-ui/index.tsx"],
+    entryPoints: ["./src/webviews/index.tsx"],
     outfile: "./out/webview.js",
     bundle: true,
     plugins: [cssModulesPlugin()],
