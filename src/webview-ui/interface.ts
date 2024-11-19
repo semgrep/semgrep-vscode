@@ -13,7 +13,6 @@
  * LICENSE for more details.
  */
 
-import { type SUPPORTED_LANGS } from "../langs";
 import { ViewResults } from "./types/results";
 import * as vscode from "vscode";
 
@@ -31,6 +30,45 @@ import * as vscode from "vscode";
 
    See `search.ts` for the view which implements the handler.
  */
+
+export const SUPPORTED_LANGS = [
+  "bash",
+  "sh",
+  "c",
+  "clojure",
+  "c++",
+  "c#",
+  "dart",
+  "dockerfile",
+  "elixir",
+  "go",
+  "hack",
+  "html",
+  "java",
+  "javascript",
+  "json",
+  "jsonnet",
+  "julia",
+  "kotlin",
+  "lisp",
+  "lua",
+  "ocaml",
+  "php",
+  "python",
+  "r",
+  "ruby",
+  "rust",
+  "scala",
+  "scheme",
+  "solidity",
+  "sol",
+  "swift",
+  "terraform",
+  "typescript",
+  "vue",
+  "xml",
+  "yaml",
+];
 
 /*****************************************************************************/
 /* Webview to extension commandsj */
