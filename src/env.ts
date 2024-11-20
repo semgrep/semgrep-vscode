@@ -1,18 +1,20 @@
+import * as fs from "fs";
+import * as vscode from "vscode";
 import {
   ExtensionContext,
   OutputChannel,
+  window,
+  workspace,
   WorkspaceConfiguration,
 } from "vscode";
-import { window, workspace } from "vscode";
-import * as fs from "fs";
 
-import { VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
-import { Logger } from "./utils";
-import { SemgrepDocumentProvider } from "./showAstDocument";
-import { LanguageClient } from "vscode-languageclient/node";
 import { EventEmitter } from "stream";
-import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { LanguageClient } from "vscode-languageclient/node";
+import { VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
+import { SemgrepDocumentProvider } from "./showAstDocument";
 import { setSentryContext } from "./telemetry/sentry";
+import { Logger } from "./utils";
+import { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -73,6 +75,7 @@ export class Environment {
   }
 
   set loggedIn(val: boolean) {
+    vscode.commands.executeCommand("setContext", "semgrep.loggedIn", val);
     this.context.globalState.update("loggedIn", val);
   }
 

@@ -223,6 +223,10 @@
           "type": "webview",
           "id": "semgrep.searchView",
           "name": "Code Search"
+        },
+        {
+          "id": "semgrep.view.help",
+          "name": "Help and Feedback"
         }
       ]
     },
@@ -243,8 +247,8 @@
     "walkthroughs": [
       {
         "id": "semgrep.welcome",
-        "title": "Get started with Semgrep",
-        "description": "Make your code secure before you make that commit",
+        "title": "Get Started with Semgrep",
+        "description": "Est voluptatibus et qui et autem error ratione deleniti.",
         "steps": [
           {
             "id": "semgrep.welcome.getstarted",
@@ -265,7 +269,7 @@
               "markdown": "walkthrough/2-sign-in.md"
             },
             "completionEvents": [
-              "onCommand:semgrep.login"
+              "onContext:semgrep.loggedIn"
             ]
           },
           {

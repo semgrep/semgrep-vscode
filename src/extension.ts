@@ -9,6 +9,7 @@ import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
+import { SemgrepHelpProvider } from "./views/support";
 
 export let global_env: Environment | null = null;
 
@@ -50,6 +51,16 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
     ),
   );
   env.provider = provider;
+
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      SemgrepHelpProvider.viewType,
+      new SemgrepHelpProvider(
+        context.extensionUri,
+        context.extension.packageJSON.version,
+      ),
+    ),
+  );
 
   // register content provider for the AST showing document
   context.subscriptions.push(
