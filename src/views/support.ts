@@ -1,4 +1,3 @@
-import { SemVer } from "semver";
 import * as vscode from "vscode";
 
 export class SemgrepHelpProvider implements vscode.TreeDataProvider<HelpItem> {
