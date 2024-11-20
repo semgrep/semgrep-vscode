@@ -212,7 +212,7 @@
       "activitybar": [
         {
           "id": "semgrep-sidebar",
-          "title": "Semgrep Search",
+          "title": "Semgrep",
           "icon": "semgrep-icon-basic.png"
         }
       ]
