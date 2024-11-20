@@ -3,9 +3,9 @@ import {
   SearchLanguage,
   extensionToWebviewCommand,
   webviewToExtensionCommand,
-} from "../../interface/interface";
-import { State } from "../src/types/state";
-import { ViewResults } from "../src/types/results";
+} from "../interface";
+import { State } from "../types/state";
+import { ViewResults } from "../types/results";
 
 /**
  * A utility wrapper around the acquireVsCodeApi() function, which enables

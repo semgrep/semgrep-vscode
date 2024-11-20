@@ -1,5 +1,5 @@
 import { TextBox } from "../utils/TextBox";
-import { vscode } from "../../../utilities/vscode";
+import { vscode } from "../../utilities/vscode";
 import { State } from "../../types/state";
 import { VscReplaceAll } from "react-icons/vsc";
 import styles from "./MainInputs.module.css";
