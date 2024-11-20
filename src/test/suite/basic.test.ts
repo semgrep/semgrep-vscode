@@ -27,6 +27,7 @@ if (USE_JS || process.platform === "win32") {
   const additional_skipped_files = [
     "long.py", // This one times out lspjs
     "test.ts", // Another timeout for lspjs
+    "Dockerfile", // Timeout related
     "cli/bin/semgrep", // No file extension == bad on windows. This is a bug in Guess_lang on how we determine executables
     "ograph_extended", // Fails because its an ocaml file in CLRF. I don't think anyone will care about CLRF ocaml files on windows :D
     "tree_sitter.ml", // Not sure why this fails, but it does
