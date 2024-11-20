@@ -247,8 +247,8 @@
     "walkthroughs": [
       {
         "id": "semgrep.welcome",
-        "title": "Get Started with Semgrep",
-        "description": "Est voluptatibus et qui et autem error ratione deleniti.",
+        "title": "Get started with Semgrep",
+        "description": "Make your code secure before you make that commit",
         "steps": [
           {
             "id": "semgrep.welcome.getstarted",
@@ -269,7 +269,7 @@
               "markdown": "walkthrough/2-sign-in.md"
             },
             "completionEvents": [
-              "onContext:semgrep.loggedIn"
+              "onCommand:semgrep.login"
             ]
           },
           {
