@@ -212,7 +212,7 @@
       "activitybar": [
         {
           "id": "semgrep-sidebar",
-          "title": "Semgrep Search",
+          "title": "Semgrep",
           "icon": "semgrep-icon-basic.png"
         }
       ]
@@ -223,6 +223,10 @@
           "type": "webview",
           "id": "semgrep.searchView",
           "name": "Code Search"
+        },
+        {
+          "id": "semgrep.view.help",
+          "name": "Help and Feedback"
         }
       ]
     },
