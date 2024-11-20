@@ -265,7 +265,7 @@
               "markdown": "walkthrough/2-sign-in.md"
             },
             "completionEvents": [
-              "onCommand:semgrep.login"
+              "onContext:semgrep.loggedIn"
             ]
           },
           {
