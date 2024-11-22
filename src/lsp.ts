@@ -249,8 +249,24 @@ async function start(env: Environment): Promise<void> {
     env.emitRulesRefreshedEvent();
   };
 
+  // TODO: This is an ugly hack to allow for easily updating the login status.
+  // It is rather fragile and we should instead do this by cleaning up the LSP
+  // extensions we use for login. However, this lets us ensure we have
+  // reasonably up-to-date UI state until then.
+  const updateLoginStatus: NotificationHandler<ShowMessageParams> = (
+    s: ShowMessageParams,
+  ) => {
+    if (
+      s.type === MessageType.Info &&
+      s.message === "Successfully logged into Semgrep Code"
+    ) {
+      env.loggedIn = true;
+    }
+  };
+
   // Register handlers here
   c.onNotification(rulesRefreshed, notificationHandler);
+  c.onNotification(ShowMessageNotification.type, updateLoginStatus);
   c.onTelemetry((e) => {
     // We only send errors, so we can safely cast this
     // See RPC_server.ml for the definition of LspErrorParams

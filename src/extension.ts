@@ -61,6 +61,12 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
       ),
     ),
   );
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      SemgrepPolicyViewProvider.viewType,
+      new SemgrepPolicyViewProvider(context.extensionUri),
+    ),
+  );
 
   // register content provider for the AST showing document
   context.subscriptions.push(
