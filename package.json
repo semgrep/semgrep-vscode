@@ -242,6 +242,16 @@
           "when": "editorTextFocus",
           "group": "navigation"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "semgrep.login",
+          "when": "!semgrep.loggedIn"
+        },
+        {
+          "command": "semgrep.logout",
+          "when": "semgrep.loggedIn"
+        }
       ]
     },
     "walkthroughs": [
