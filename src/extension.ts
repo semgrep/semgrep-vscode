@@ -1,15 +1,16 @@
 import * as vscode from "vscode";
 
-import { VSCODE_CONFIG_KEY } from "./constants";
-import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
-import { Environment } from "./env";
-import { registerCommands } from "./commands";
-import { createStatusBar } from "./statusBar";
-import { SemgrepDocumentProvider } from "./showAstDocument";
 import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
-import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { registerCommands } from "./commands";
+import { VSCODE_CONFIG_KEY } from "./constants";
+import { Environment } from "./env";
+import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
+import { SemgrepDocumentProvider } from "./showAstDocument";
+import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
+import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
+import { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export let global_env: Environment | null = null;
 
@@ -59,6 +60,12 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
         context.extensionUri,
         context.extension.packageJSON.version,
       ),
+    ),
+  );
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      SemgrepPolicyViewProvider.viewType,
+      new SemgrepPolicyViewProvider(context.extensionUri),
     ),
   );
 

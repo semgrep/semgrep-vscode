@@ -1,6 +1,6 @@
+import * as cp from "child_process";
 import * as fs from "fs";
 import * as path from "path";
-import * as cp from "child_process";
 import * as semver from "semver";
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -13,15 +13,21 @@ const execShell = (cmd: string, args: string[]) =>
   });
 
 import {
+  Executable,
   LanguageClient,
   LanguageClientOptions,
+  MessageType,
+  NotificationHandler,
   ServerOptions,
-  Executable,
+  ShowMessageNotification,
+  ShowMessageParams,
   TransportKind,
 } from "vscode-languageclient/node";
 
 import * as vscode from "vscode";
 
+import { NotificationHandler0 } from "vscode-languageserver";
+import which from "which";
 import {
   CLIENT_ID,
   CLIENT_NAME,
@@ -31,16 +37,14 @@ import {
   VERSION_PATH,
 } from "./constants";
 import { Environment } from "./env";
-import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
-import { NotificationHandler0 } from "vscode-languageserver";
+import { LspErrorParams, rulesRefreshed } from "./lspExtensions";
 import {
-  SentryErrorHandler,
   ProxyOutputChannel,
-  withSentryAsync,
+  SentryErrorHandler,
   captureLspError,
+  withSentryAsync,
 } from "./telemetry/sentry";
 import { checkCliVersion } from "./utils";
-import which from "which";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let serverPath;
@@ -249,8 +253,24 @@ async function start(env: Environment): Promise<void> {
     env.emitRulesRefreshedEvent();
   };
 
+  // TODO(cooper): This is an ugly hack to allow for easily updating the login
+  // status.  It is rather fragile and we should instead do this by cleaning up
+  // the LSP extensions we use for login. However, this lets us ensure we have
+  // reasonably up-to-date UI state until then.
+  const updateLoginStatus: NotificationHandler<ShowMessageParams> = (
+    s: ShowMessageParams,
+  ) => {
+    if (
+      s.type === MessageType.Info &&
+      s.message === "Successfully logged into Semgrep Code"
+    ) {
+      env.loggedIn = true;
+    }
+  };
+
   // Register handlers here
   c.onNotification(rulesRefreshed, notificationHandler);
+  c.onNotification(ShowMessageNotification.type, updateLoginStatus);
   c.onTelemetry((e) => {
     // We only send errors, so we can safely cast this
     // See RPC_server.ml for the definition of LspErrorParams

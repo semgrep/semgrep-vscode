@@ -217,8 +217,19 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "semgrep.view.policy",
+        "contents": "[Sign in](command:semgrep.login)",
+        "when": "!semgrep.loggedIn"
+      }
+    ],
     "views": {
       "semgrep-sidebar": [
+        {
+          "id": "semgrep.view.policy",
+          "name": "Policy Configuration"
+        },
         {
           "type": "webview",
           "id": "semgrep.searchView",
