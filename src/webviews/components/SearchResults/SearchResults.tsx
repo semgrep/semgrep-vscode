@@ -1,7 +1,7 @@
-import { State } from "../../types/state";
+import type { State } from "../../types/state";
+import { SearchResultEntry } from "./SearchResultEntry";
 
 import styles from "./SearchResults.module.css";
-import { SearchResultEntry } from "./SearchResultEntry";
 
 export interface SearchResultsProps {
   state: State;

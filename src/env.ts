@@ -1,20 +1,19 @@
-import * as fs from "fs";
+import fs from "node:fs";
+import { EventEmitter } from "node:stream";
 import * as vscode from "vscode";
 import {
-  ExtensionContext,
-  OutputChannel,
+  type ExtensionContext,
+  type OutputChannel,
+  type WorkspaceConfiguration,
   window,
   workspace,
-  WorkspaceConfiguration,
 } from "vscode";
-
-import { EventEmitter } from "stream";
-import { LanguageClient } from "vscode-languageclient/node";
+import type { LanguageClient } from "vscode-languageclient/node";
 import { VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { setSentryContext } from "./telemetry/sentry";
 import { Logger } from "./utils";
-import { SemgrepSearchWebviewProvider } from "./views/webview";
+import type { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {

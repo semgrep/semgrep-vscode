@@ -1,11 +1,11 @@
 import type { WebviewApi } from "vscode-webview";
-import {
+import type {
   SearchLanguage,
   extensionToWebviewCommand,
   webviewToExtensionCommand,
 } from "../interface";
-import { State } from "../types/state";
-import { ViewResults } from "../types/results";
+import type { ViewResults } from "../types/results";
+import type { State } from "../types/state";
 
 /**
  * A utility wrapper around the acquireVsCodeApi() function, which enables

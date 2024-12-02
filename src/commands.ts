@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
-import { Environment } from "./env";
+import type { Disposable } from "vscode-languageclient";
+import type { Environment } from "./env";
+import { restartLsp } from "./lsp";
 import {
+  type SearchParams,
   login,
   loginFinish,
   loginStatus,
@@ -8,14 +11,11 @@ import {
   refreshRules,
   scanWorkspace,
   showAst,
-  SearchParams,
 } from "./lspExtensions";
-import { restartLsp } from "./lsp";
-import { encodeUri } from "./showAstDocument";
-import { ViewResults } from "./webviews/types/results";
-import { applyFixAndSave, replaceAll } from "./utils";
 import { handleSearch } from "./search";
-import { Disposable } from "vscode-languageclient";
+import { encodeUri } from "./showAstDocument";
+import { applyFixAndSave, replaceAll } from "./utils";
+import type { ViewResults } from "./webviews/types/results";
 
 /*****************************************************************************/
 /* Prelude */

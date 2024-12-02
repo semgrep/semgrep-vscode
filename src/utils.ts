@@ -1,14 +1,13 @@
-import { tmpdir } from "os";
+import { tmpdir } from "node:os";
+import * as semver from "semver";
 import { Uri } from "vscode";
+import type { OutputChannel } from "vscode";
+import * as vscode from "vscode";
+import { getVersionInfo } from "./constants";
+import type { ViewResults } from "./webviews/types/results";
+
 // Can't put this in constants for some reason??
 export const DEFAULT_LSP_LOG_FOLDER = Uri.file(tmpdir());
-
-import { OutputChannel } from "vscode";
-import * as vscode from "vscode";
-
-import { ViewResults } from "./webviews/types/results";
-import * as semver from "semver";
-import { getVersionInfo } from "./constants";
 
 export class Logger {
   enabled: boolean;
@@ -29,6 +28,7 @@ export class Logger {
     }
   }
 }
+
 export async function checkCliVersion(
   currentVersion: semver.SemVer,
 ): Promise<void> {
@@ -58,6 +58,7 @@ export async function checkCliVersion(
     );
   }
 }
+
 export async function applyFixAndSave(
   edit: vscode.WorkspaceEdit,
 ): Promise<void> {

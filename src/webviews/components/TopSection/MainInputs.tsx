@@ -1,10 +1,11 @@
-import { TextBox } from "../utils/TextBox";
-import { vscode } from "../../utilities/vscode";
-import { State } from "../../types/state";
 import { VscReplaceAll } from "react-icons/vsc";
-import styles from "./MainInputs.module.css";
-import { Store, useSetStore } from "../../hooks/useStore";
+import { type Store, useSetStore } from "../../hooks/useStore";
+import type { State } from "../../types/state";
+import { vscode } from "../../utilities/vscode";
+import { TextBox } from "../utils/TextBox";
 import { PatternList } from "./PatternList";
+
+import styles from "./MainInputs.module.css";
 
 export interface MainInputsProps {
   onNewSearch: (scanID: string) => void;

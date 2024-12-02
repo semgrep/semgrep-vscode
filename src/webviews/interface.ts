@@ -13,8 +13,8 @@
  * LICENSE for more details.
  */
 
-import { ViewResults } from "./types/results";
-import * as vscode from "vscode";
+import type * as vscode from "vscode";
+import type { ViewResults } from "./types/results";
 
 /*****************************************************************************/
 /* Prelude */

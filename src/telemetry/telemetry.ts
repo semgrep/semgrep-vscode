@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
+import type { Environment } from "../env";
 import { initSentry, stopSentry } from "./sentry";
-import { Environment } from "../env";
 
 enum ExtensionEnvironment {
   Release = "release",

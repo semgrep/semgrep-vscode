@@ -1,5 +1,5 @@
 import { VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
-import { Store, useSearch } from "../../hooks/useStore";
+import { type Store, useSearch } from "../../hooks/useStore";
 
 const style = {
   // this makes it not quite as weirdly tall

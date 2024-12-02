@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { TextBox } from "../utils/TextBox";
-import { LangChooser } from "../utils/LangChooser";
-import styles from "./MainInputs.module.css";
 import { VscClose } from "react-icons/vsc";
-import { useSetStore, Store } from "../../hooks/useStore";
+import { type Store, useSetStore } from "../../hooks/useStore";
+import { LangChooser } from "../utils/LangChooser";
+import { TextBox } from "../utils/TextBox";
 import { PositivityBadge } from "./PositivityBadge";
+
+import styles from "./MainInputs.module.css";
 
 export type simplePattern = { positive: boolean; pattern: string };
 

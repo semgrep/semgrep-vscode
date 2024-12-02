@@ -1,7 +1,35 @@
-import * as fs from "fs";
-import * as path from "path";
-import * as cp from "child_process";
+import cp from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import * as semver from "semver";
+import * as vscode from "vscode";
+import {
+  type Executable,
+  LanguageClient,
+  type LanguageClientOptions,
+  type ServerOptions,
+  TransportKind,
+} from "vscode-languageclient/node";
+import type { NotificationHandler0 } from "vscode-languageserver";
+import which from "which";
+import {
+  CLIENT_ID,
+  CLIENT_NAME,
+  DIAGNOSTIC_COLLECTION_NAME,
+  DIST_BINARY_PATH,
+  LSPJS_PATH,
+  VERSION_PATH,
+} from "./constants";
+import type { Environment } from "./env";
+import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
+import {
+  ProxyOutputChannel,
+  SentryErrorHandler,
+  captureLspError,
+  withSentryAsync,
+} from "./telemetry/sentry";
+import { checkCliVersion } from "./utils";
+
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
     cp.execFile(cmd, args, (err, out) => {
@@ -11,36 +39,6 @@ const execShell = (cmd: string, args: string[]) =>
       return resolve(out);
     });
   });
-
-import {
-  LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
-  Executable,
-  TransportKind,
-} from "vscode-languageclient/node";
-
-import * as vscode from "vscode";
-
-import {
-  CLIENT_ID,
-  CLIENT_NAME,
-  DIAGNOSTIC_COLLECTION_NAME,
-  DIST_BINARY_PATH,
-  LSPJS_PATH,
-  VERSION_PATH,
-} from "./constants";
-import { Environment } from "./env";
-import { rulesRefreshed, LspErrorParams } from "./lspExtensions";
-import { NotificationHandler0 } from "vscode-languageserver";
-import {
-  SentryErrorHandler,
-  ProxyOutputChannel,
-  withSentryAsync,
-  captureLspError,
-} from "./telemetry/sentry";
-import { checkCliVersion } from "./utils";
-import which from "which";
 
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let serverPath;

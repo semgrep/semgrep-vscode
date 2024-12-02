@@ -1,4 +1,4 @@
-import { SearchMatch } from "../../search";
+import type { SearchMatch } from "../../search";
 
 export type ViewMatch = {
   // Flags set on each match. Initially false, and populated if the

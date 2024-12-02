@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
-import { simplePattern } from "../components/TopSection/PatternList";
-import { SearchLanguage, SUPPORTED_LANGS } from "../interface";
+import type { simplePattern } from "../components/TopSection/PatternList";
+import { SUPPORTED_LANGS, type SearchLanguage } from "../interface";
 import { vscode } from "../utilities/vscode";
 
 export interface Store {
