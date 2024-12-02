@@ -1,7 +1,8 @@
-import styles from "./MainInputs.module.css";
 import { VscAdd, VscChevronDown } from "react-icons/vsc";
-import { isLast, simplePattern } from "./PatternList";
 import { VscCircleSlash } from "react-icons/vsc";
+import { isLast, type simplePattern } from "./PatternList";
+
+import styles from "./MainInputs.module.css";
 
 export interface PositivityBadgeProps {
   index: number | null;

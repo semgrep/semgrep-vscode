@@ -1,18 +1,18 @@
+import fs from "node:fs";
 import * as Sentry from "@sentry/node";
+import type { Attachment, Integration } from "@sentry/types";
 import * as vscode from "vscode";
-import { Attachment, Integration } from "@sentry/types";
 import {
   CloseAction,
-  CloseHandlerResult,
+  type CloseHandlerResult,
   ErrorAction,
-  ErrorHandler,
-  ErrorHandlerResult,
-  Message,
+  type ErrorHandler,
+  type ErrorHandlerResult,
+  type Message,
 } from "vscode-languageclient";
-import { Environment } from "../env";
-import * as fs from "fs";
+import type { Environment } from "../env";
+import type { LspErrorParams } from "../lspExtensions";
 import { DEFAULT_LSP_LOG_FOLDER } from "../utils";
-import { LspErrorParams } from "../lspExtensions";
 
 // global here so if user opts out the functions below don't do anything
 let sentryEnabled = false;

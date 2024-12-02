@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import { SemVer } from "semver";
 
 export const SEMGREP_BINARY = "semgrep";
@@ -12,10 +12,12 @@ export const DIST_PATH = path.join(__dirname, "../dist");
 export const LSPJS_PATH = path.join(DIST_PATH, "lspjs/semgrep-lsp.js");
 export const DIST_BINARY_PATH = path.join(DIST_PATH, "osemgrep-pro");
 export const VERSION_PATH = path.join(__dirname, "../semgrep-version");
+
 export type VersionInfo = {
   latest: SemVer;
   min: SemVer;
 };
+
 export async function getVersionInfo(): Promise<VersionInfo | undefined> {
   const url = "https://semgrep.dev/api/check-version";
   try {

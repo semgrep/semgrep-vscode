@@ -1,9 +1,9 @@
-import { ViewMatch } from "../../types/results";
+import useHover from "react-use/lib/useHover";
+import type { ViewMatch } from "../../types/results";
+import { vscode } from "../../utilities/vscode";
+import { MatchItemButtons } from "./MatchItemButtons";
 
 import styles from "./SearchResults.module.css";
-import { vscode } from "../../utilities/vscode";
-import useHover from "react-use/lib/useHover";
-import { MatchItemButtons } from "./MatchItemButtons";
 
 export interface MatchItemProps {
   uri: string;

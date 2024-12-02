@@ -1,7 +1,7 @@
 import { VSCodeBadge } from "@vscode/webview-ui-toolkit/react";
-import { ViewResult } from "../../types/results";
-import { PathHeader } from "./PathHeader";
 import { VscChevronDown, VscChevronRight } from "react-icons/vsc";
+import type { ViewResult } from "../../types/results";
+import { PathHeader } from "./PathHeader";
 
 import styles from "./SearchResults.module.css";
 

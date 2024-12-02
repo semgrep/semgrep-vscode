@@ -1,7 +1,7 @@
-import { ViewMatch } from "../../types/results";
+import { VscClose, VscReplace } from "react-icons/vsc";
+import type { ViewMatch } from "../../types/results";
 
 import styles from "./SearchResults.module.css";
-import { VscClose, VscReplace } from "react-icons/vsc";
 
 export interface MatchItemButtonsProps {
   isHovered: boolean;

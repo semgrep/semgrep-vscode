@@ -1,5 +1,5 @@
 import * as lc from "vscode-languageclient";
-import { SearchResult } from "./search";
+import type { SearchResult } from "./search";
 
 // https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts
 

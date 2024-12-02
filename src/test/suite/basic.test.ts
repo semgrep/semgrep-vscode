@@ -1,15 +1,14 @@
-import * as assert from "assert";
+import assert from "node:assert";
+import cp from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import * as vscode from "vscode";
-import * as cp from "child_process";
-import * as fs from "fs";
-
 import {
-  LanguageClient,
-  ProtocolNotificationType,
+  type LanguageClient,
+  type ProtocolNotificationType,
   PublishDiagnosticsNotification,
-  PublishDiagnosticsParams,
+  type PublishDiagnosticsParams,
 } from "vscode-languageclient/node";
-import path = require("path");
 
 const SCAN_TIMEOUT = 180000;
 const USE_JS = process.env["USE_JS"];

@@ -1,12 +1,12 @@
 import { useState } from "react";
+import { VscEllipsis } from "react-icons/vsc";
+import { type Store, useSetStore } from "../../hooks/useStore";
+import type { State } from "../../types/state";
+import { TextBox } from "../utils/TextBox";
 import { MainInputs } from "./MainInputs";
+import { MatchesSummary } from "./MatchesSummary";
 
 import styles from "./TopSection.module.css";
-import { VscEllipsis } from "react-icons/vsc";
-import { TextBox } from "../utils/TextBox";
-import { State } from "../../types/state";
-import { MatchesSummary } from "./MatchesSummary";
-import { useSetStore, Store } from "../../hooks/useStore";
 
 export interface TopSectionProps {
   onNewSearch: (scanID: string) => void;

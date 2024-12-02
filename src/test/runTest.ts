@@ -1,12 +1,12 @@
-import * as path from "path";
+import path from "node:path";
 import find = require("find-process");
-import * as tmp from "tmp";
-import * as cp from "child_process";
+import * as cp from "node:child_process";
 import {
   downloadAndUnzipVSCode,
   resolveCliArgsFromVSCodeExecutablePath,
   runTests,
 } from "@vscode/test-electron";
+import * as tmp from "tmp";
 
 const REPOS = [
   ["semgrep", "https://github.com/semgrep/semgrep.git", "v1.52.0"],

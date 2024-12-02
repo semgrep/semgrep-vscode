@@ -1,15 +1,14 @@
 import * as vscode from "vscode";
-
-import { VSCODE_CONFIG_KEY } from "./constants";
-import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
-import { Environment } from "./env";
+import type { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { registerCommands } from "./commands";
-import { createStatusBar } from "./statusBar";
+import { VSCODE_CONFIG_KEY } from "./constants";
+import { Environment } from "./env";
+import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
-import { ConfigurationChangeEvent, ExtensionContext } from "vscode";
-import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
 import { SemgrepHelpProvider } from "./views/support";
+import { SemgrepSearchWebviewProvider } from "./views/webview";
 
 export let global_env: Environment | null = null;
 

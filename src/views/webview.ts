@@ -1,9 +1,9 @@
+import { randomUUID } from "node:crypto";
 import * as vscode from "vscode";
-import { SearchParams } from "../lspExtensions";
-import { randomUUID } from "crypto";
-import {
-  extensionToWebviewCommand,
+import type { SearchParams } from "../lspExtensions";
+import type {
   SearchLanguage,
+  extensionToWebviewCommand,
   webviewToExtensionCommand,
 } from "../webviews/interface";
 import { SUPPORTED_LANGS } from "../webviews/interface";

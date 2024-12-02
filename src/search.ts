@@ -1,13 +1,13 @@
-import path = require("path");
+import path from "node:path";
+import * as vscode from "vscode";
+import type { Environment } from "./env";
 import {
-  SearchParams,
-  SearchResults,
+  type SearchParams,
+  type SearchResults,
   search,
   searchOngoing,
 } from "./lspExtensions";
-import { ViewResults } from "./webviews/types/results";
-import * as vscode from "vscode";
-import { Environment } from "./env";
+import type { ViewResults } from "./webviews/types/results";
 
 /*****************************************************************************/
 /* Types */

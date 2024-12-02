@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import type * as vscode from "vscode";
 
 export class SemgrepDocumentProvider
   implements vscode.TextDocumentContentProvider

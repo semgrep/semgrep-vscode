@@ -1,4 +1,4 @@
-import { State } from "../../types/state";
+import type { State } from "../../types/state";
 
 import styles from "./TopSection.module.css";
 export interface MatchesSummaryProps {
