@@ -20,12 +20,12 @@ export const scanWorkspace = new lc.NotificationType<ScanWorkspaceParams>(
   "semgrep/scanWorkspace",
 );
 
-export interface LoginParams {
+export interface LoginStartResponse {
   url: string;
   sessionId: string;
 }
 
-export interface LoginStatusParams {
+export interface LoginStatusResponse {
   loggedIn: boolean;
 }
 
@@ -55,13 +55,15 @@ export interface LspErrorParams {
   stack: string;
 }
 
-export const login = new lc.RequestType0<LoginParams | null, void>(
-  "semgrep/login",
+export const loginStart = new lc.RequestType0<LoginStartResponse | null, void>(
+  "semgrep/loginStart",
 );
 
-export const loginFinish = new lc.NotificationType<LoginParams>(
-  "semgrep/loginFinish",
-);
+export const loginFinish = new lc.RequestType<
+  LoginStartResponse,
+  LoginStatusResponse,
+  void
+>("semgrep/loginFinish");
 
 export const logout = new lc.NotificationType("semgrep/logout");
 
@@ -75,9 +77,10 @@ export const workspaceRules = new lc.RequestType0<any[], void>(
   "semgrep/workspaceRules",
 );
 
-export const loginStatus = new lc.RequestType0<LoginStatusParams | null, void>(
-  "semgrep/loginStatus",
-);
+export const loginStatus = new lc.RequestType0<
+  LoginStatusResponse | null,
+  void
+>("semgrep/loginStatus");
 
 export const search = new lc.RequestType<LspSearchParams, SearchResults, void>(
   "semgrep/search",
