@@ -4,8 +4,8 @@ import type { Environment } from "./env";
 import { restartLsp } from "./lsp";
 import {
   type SearchParams,
-  login,
   loginFinish,
+  loginStart,
   loginStatus,
   logout,
   refreshRules,
@@ -61,10 +61,13 @@ export function registerCommands(env: Environment): Disposable[] {
     /************/
 
     vscode.commands.registerCommand("semgrep.login", async () => {
-      const result = await env.client?.sendRequest(login);
+      const result = await env.client?.sendRequest(loginStart);
       if (result) {
         vscode.env.openExternal(vscode.Uri.parse(result.url));
-        env.client?.sendNotification(loginFinish, result);
+        const status = await env.client?.sendRequest(loginFinish, result);
+        if (status) {
+          env.loggedIn = status.loggedIn;
+        }
       }
     }),
 
