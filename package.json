@@ -49,11 +49,13 @@
       },
       {
         "command": "semgrep.login",
-        "title": "Semgrep: Sign in"
+        "title": "Semgrep: Sign in",
+        "when": "!semgrep.loggedIn"
       },
       {
         "command": "semgrep.logout",
-        "title": "Semgrep: Sign out"
+        "title": "Semgrep: Sign out",
+        "when": "semgrep.loggedIn"
       },
       {
         "command": "semgrep.refreshRules",
