@@ -63,7 +63,7 @@ jobs:
         run: npm run test-js
       - name: upload semgrep results for windows
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: semgrep-results
           path: ./*_results.json
@@ -87,7 +87,7 @@ jobs:
       - name: pretest
         run: npm run pretest
       - name: download semgrep results from linux
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: semgrep-results
           path: ./
