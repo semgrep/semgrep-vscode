@@ -15,11 +15,11 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       # pre-commit is a Python script, this speedup things from Xmin to Ymin?
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       # note that in a CI context pre-commit runs the hooks with the '--all' flag, so
@@ -30,7 +30,7 @@ jobs:
   github-actions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: reviewdog/action-actionlint@v1
         with:
           fail_on_error: true

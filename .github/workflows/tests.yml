@@ -21,8 +21,8 @@ jobs:
         os: [macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install Semgrep
@@ -63,7 +63,7 @@ jobs:
         run: npm run test-js
       - name: upload semgrep results for windows
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: semgrep-results
           path: ./*_results.json
@@ -71,7 +71,7 @@ jobs:
     needs: vsce-test
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup
         uses: actions/setup-node@v4.0.3
         with:
@@ -87,7 +87,7 @@ jobs:
       - name: pretest
         run: npm run pretest
       - name: download semgrep results from linux
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: semgrep-results
           path: ./
@@ -97,7 +97,7 @@ jobs:
   vsce-prepublish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4.0.3
         with:
           node-version: lts/*
