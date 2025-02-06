@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+
 import type { ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { registerCommands } from "./commands";
 import { VSCODE_CONFIG_KEY } from "./constants";
@@ -7,6 +8,7 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
+import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
 
@@ -35,8 +37,7 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
     return;
   }
   const statusBar = createStatusBar();
-  context.subscriptions.push(statusBar);
-  registerCommands(env).forEach((d) => context.subscriptions.push(d));
+  context.subscriptions.push(statusBar, ...registerCommands(env));
   statusBar.show();
 
   // register stuff for search webview
@@ -58,6 +59,12 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
         context.extensionUri,
         context.extension.packageJSON.version,
       ),
+    ),
+  );
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      SemgrepPolicyViewProvider.viewType,
+      new SemgrepPolicyViewProvider(context.extensionUri, env),
     ),
   );
 

@@ -69,12 +69,17 @@ export class Environment {
     setSentryContext(this);
   }
 
+  loginEvent?: vscode.EventEmitter<void> = undefined;
+
   get loggedIn(): boolean {
     return this.context.globalState.get("loggedIn", false);
   }
 
   set loggedIn(val: boolean) {
     vscode.commands.executeCommand("setContext", "semgrep.loggedIn", val);
+    if (this.loginEvent) {
+      this.loginEvent.fire();
+    }
     this.context.globalState.update("loggedIn", val);
   }
 
