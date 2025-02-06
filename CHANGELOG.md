@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - New sidebar section with support information (email and slack contact; documentation)
+- New sidebar section with scan config/policy information
 
 ### Changed
 
