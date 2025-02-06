@@ -220,8 +220,8 @@
     "viewsWelcome": [
       {
         "view": "semgrep.view.policy",
-        "contents": "[Sign in](command:semgrep.login)",
-        "when": "!semgrep.loggedIn"
+        "contents": "Using Semgrep with your organization? \n[Sign in](command:semgrep.login)\n or [configure a local policy](command:workbench.action.openSettings?%22semgrep.scan.configuration%22) in the settings",
+        "when": "!semgrep.loggedIn && (config.semgrep.scan.configuration.length === 0)"
       }
     ],
     "views": {

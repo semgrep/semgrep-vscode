@@ -9,11 +9,18 @@ export class SemgrepPolicyViewProvider
   //  [ + add more? ]
   // root
   //  \ connect to org (log in)    OR     <ORG NAME>'s policy
+  //  \ ...items from config
   constructor(
     private readonly extensionUri: vscode.Uri,
     private readonly env: Environment,
   ) {
     env.loginEvent = this._onDidChangeTreeData;
+    // Also refresh when configuration changes
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("semgrep.scan.configuration")) {
+        this._onDidChangeTreeData.fire();
+      }
+    });
   }
 
   getTreeItem(element: PolicyItem): PolicyItem {
@@ -24,12 +31,31 @@ export class SemgrepPolicyViewProvider
     element?: PolicyItem | undefined,
   ): vscode.ProviderResult<PolicyItem[]> {
     if (!element) {
+      const items: PolicyItem[] = [];
+
+      // Show org policy if logged in
       if (this.env.loggedIn) {
-        const login_status = new PolicyItem("Using your organization's policy");
-        login_status.iconPath = new vscode.ThemeIcon("cloud-download");
-        return [login_status];
+        const loginStatus = new PolicyItem(
+          "Using your organization's policy",
+          vscode.TreeItemCollapsibleState.None,
+        );
+        loginStatus.iconPath = new vscode.ThemeIcon("cloud-download");
+        items.push(loginStatus);
       }
-      return [];
+
+      // Show local configurations if any exist
+      const localConfigs =
+        this.env.config.cfg.get<string[]>("scan.configuration") || [];
+      for (const config of localConfigs) {
+        const configItem = new PolicyItem(
+          config,
+          vscode.TreeItemCollapsibleState.None,
+        );
+        configItem.iconPath = new vscode.ThemeIcon("file-code");
+        items.push(configItem);
+      }
+
+      return items;
     }
     return [];
   }
@@ -40,4 +66,12 @@ export class SemgrepPolicyViewProvider
     this._onDidChangeTreeData.event;
 }
 
-class PolicyItem extends vscode.TreeItem {}
+class PolicyItem extends vscode.TreeItem {
+  constructor(
+    label: string,
+    collapsibleState: vscode.TreeItemCollapsibleState = vscode
+      .TreeItemCollapsibleState.None,
+  ) {
+    super(label, collapsibleState);
+  }
+}
