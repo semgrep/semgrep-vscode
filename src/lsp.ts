@@ -1,13 +1,17 @@
-import cp from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
+import * as cp from "node:child_process";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import * as semver from "semver";
 import * as vscode from "vscode";
 import {
   type Executable,
   LanguageClient,
   type LanguageClientOptions,
+  MessageType,
+  type NotificationHandler,
   type ServerOptions,
+  ShowMessageNotification,
+  ShowMessageParams,
   TransportKind,
 } from "vscode-languageclient/node";
 import type { NotificationHandler0 } from "vscode-languageserver";
@@ -246,7 +250,6 @@ async function start(env: Environment): Promise<void> {
     env.logger.log("Rules loaded");
     env.emitRulesRefreshedEvent();
   };
-
   // Register handlers here
   c.onNotification(rulesRefreshed, notificationHandler);
   c.onTelemetry((e) => {
