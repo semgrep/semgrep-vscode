@@ -232,6 +232,9 @@ async function lspOptions(
 }
 
 async function start(env: Environment): Promise<void> {
+  // TODO: Remove when semgrep is no longer experimental on Windows.
+  if (process.platform === "win32") process.env.SEMGREP_FORCE_INSTALL = "1";
+
   // Compute LSP server and client options
   const [serverOptions, clientOptions] = await lspOptions(env);
 
