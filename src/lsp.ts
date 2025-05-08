@@ -133,6 +133,11 @@ async function serverOptionsCli(
   env.logger.log(
     `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`,
   );
+  if (process.platform === "win32") {
+    vscode.window.showWarningMessage(
+      "The Semgrep Extension on Windows is experimental. Please report any issues here: https://github.com/semgrep/semgrep-vscode/issues",
+    );
+  }
   return serverOptions;
 }
 
