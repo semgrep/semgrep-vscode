@@ -10,7 +10,9 @@ export const VSCODE_CONFIG_KEY = "semgrep";
 export const VSCODE_EXT_NAME = CLIENT_NAME;
 export const DIST_PATH = path.join(__dirname, "../dist");
 export const LSPJS_PATH = path.join(DIST_PATH, "lspjs/semgrep-lsp.js");
-export const DIST_BINARY_PATH = path.join(DIST_PATH, "osemgrep-pro");
+const DIST_BINARY_NAME =
+  process.platform === "win32" ? "osemgrep-pro.exe" : "osemgrep-pro";
+export const DIST_BINARY_PATH = path.join(DIST_PATH, DIST_BINARY_NAME);
 export const VERSION_PATH = path.join(__dirname, "../semgrep-version");
 
 export type VersionInfo = {
