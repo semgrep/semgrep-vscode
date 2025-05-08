@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Prefer native executable on Windows instead of lspjs
 
+- Extension now uses installed semgrep from the PATH correctly, before trying
+  to use the bundled semgrep executable.
+
 ## v1.9.0 - 2024-08-28
 
 ### Added
