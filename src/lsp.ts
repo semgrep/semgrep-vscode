@@ -133,6 +133,11 @@ async function serverOptionsCli(
   env.logger.log(
     `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`,
   );
+  if (process.platform === "win32") {
+    vscode.window.showWarningMessage(
+      "The Semgrep Extension on Windows is experimental. Please report any issues here: https://github.com/semgrep/semgrep-vscode/issues",
+    );
+  }
   return serverOptions;
 }
 
@@ -168,7 +173,7 @@ function serverOptionsJs(env: Environment): ServerOptions {
     },
   };
   vscode.window.showWarningMessage(
-    "Semgrep Extension is using the experimental JS LSP server, this is due to the current platform being Windows, or the setting 'semgrep.useJS' being set to true. There may be bugs or performance issues!",
+    "The Semgrep Extension is using the experimental JS LSP server, this is due to not finding the Semgrep executable, or of 'semgrep.useJS' being set to true. There may be bugs or performance issues!",
   );
   return serverOptionsJs;
 }
@@ -217,10 +222,8 @@ async function lspOptions(
   };
 
   let serverOptions;
-  // if we're not on windows or not using JS, we can use the CLI
-  if (process.platform !== "win32") {
-    serverOptions = await serverOptionsCli(env);
-  }
+  // if we're not using JS, we can use the native binary
+  serverOptions = await serverOptionsCli(env);
   if (!serverOptions || env.config.get("useJS")) {
     serverOptions = serverOptionsJs(env);
   }
@@ -229,6 +232,9 @@ async function lspOptions(
 }
 
 async function start(env: Environment): Promise<void> {
+  // TODO: Remove when semgrep is no longer experimental on Windows.
+  if (process.platform === "win32") process.env.SEMGREP_FORCE_INSTALL = "1";
+
   // Compute LSP server and client options
   const [serverOptions, clientOptions] = await lspOptions(env);
 
