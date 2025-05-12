@@ -44,9 +44,14 @@ jobs:
           role-duration-seconds: 900,
           role-session-name: "semgrep-ide-integration-deploy"
           aws-region: "us-west-2"
+      - uses: actions/setup-python@v5
+        # setup Python/pip to download the Windows wheel for the DLLs
+        if: matrix.target == 'win32-x64'
+        with:
+          python-version: "3.11"
       - name: download osemgrep pro
-        # skip if windows
-        if: matrix.target != 'win32-x64' && matrix.target != 'win32-arm64'
+        # skip if windows ARM64, we don't build a compatible binary
+        if: matrix.target != 'win32-arm64'
         run: ./download-osemgrep-pro.sh ${{ matrix.target }}
       - name: install vsix
         run: npm install -g @vscode/vsce
