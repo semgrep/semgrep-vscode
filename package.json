@@ -311,7 +311,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "npm run download-lspjs && ./build.mjs",
+    "esbuild-base": "npm run download-lspjs && node ./build.mjs",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "watch:esbuild": "npm run esbuild-base -- --sourcemap --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
@@ -322,7 +322,7 @@
     "test-js": "USE_JS=1 node ./out/src/test/runTest.js",
     "test": "npm run test-native && npm run test-js",
     "clean": "rm -rf ./out",
-    "download-lspjs": "./download-lspjs.sh",
+    "download-lspjs": "bash ./download-lspjs.sh",
     "install:all": "npm install"
   },
   "devDependencies": {
