@@ -49,20 +49,21 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
   // First, check if the user has set the path to the Semgrep binary, use that always
   if (env.config.path.length > 0) {
     serverPath = env.config.path;
-    // check if the path exists
-    if (!fs.existsSync(serverPath)) {
-      // try checking if its a binary in the PATH
-      serverPath = which.sync("semgrep", { nothrow: true });
-    }
-    // Only check the version if we're not using the packaged version
-    // This is to avoid us releasing a new version of the extension late and then people get annoying popups
-    if (!env.config.cfg.get("ignoreCliVersion") && serverPath) {
-      const version = await execShell(serverPath, ["--version"]);
-      const semVersion = new semver.SemVer(version);
-      checkCliVersion(semVersion);
-      env.semgrepVersion = version;
-      await env.reloadConfig();
-    }
+  }
+
+  // check if the path exists
+  if (!serverPath || !fs.existsSync(serverPath)) {
+    // try checking if its a binary in the PATH
+    serverPath = which.sync("semgrep", { nothrow: true });
+  }
+  // Only check the version if we're not using the packaged version
+  // This is to avoid us releasing a new version of the extension late and then people get annoying popups
+  if (!env.config.cfg.get("ignoreCliVersion") && serverPath) {
+    const version = await execShell(serverPath, ["--version"]);
+    const semVersion = new semver.SemVer(version);
+    checkCliVersion(semVersion);
+    env.semgrepVersion = version;
+    await env.reloadConfig();
   }
 
   if (!serverPath) {
