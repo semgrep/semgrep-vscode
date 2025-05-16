@@ -129,8 +129,8 @@ export async function handleSearch(
   env: Environment,
   searchParams: SearchParams,
 ): Promise<void> {
-  env.scanID = searchParams.scanID;
   if (searchParams != null) {
+    env.scanID = searchParams.scanID;
     const results = await env.client?.sendRequest(
       search,
       searchParams.lspParams,

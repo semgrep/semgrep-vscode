@@ -181,6 +181,12 @@ export function registerCommands(env: Environment): Disposable[] {
     vscode.commands.registerCommand(
       "semgrep.search",
       async (searchParams: SearchParams) => {
+        if (!searchParams) {
+          vscode.window.showErrorMessage(
+            "Semgrep Search by pattern can only be run via the Semgrep Sidebar.",
+          );
+          return;
+        }
         await handleSearch(env, searchParams);
       },
     ),
@@ -207,17 +213,15 @@ export function registerCommands(env: Environment): Disposable[] {
 
     vscode.commands.registerCommand(
       "semgrep.search.replace",
-      async ({
-        uri,
-        fix,
-        range,
-      }: {
-        uri: string;
-        fix: string;
-        range: vscode.Range;
-      }) => {
+      async (args: { uri?: string; fix?: string; range?: vscode.Range }) => {
+        if (!args?.uri || !args?.fix || !args?.range) {
+          vscode.window.showErrorMessage(
+            "Semgrep Semantic Replace can only be run via the Semgrep Sidebar.",
+          );
+          return;
+        }
         const edit = new vscode.WorkspaceEdit();
-        edit.replace(vscode.Uri.parse(uri), range, fix);
+        edit.replace(vscode.Uri.parse(args.uri), args.range, args.fix);
         await applyFixAndSave(edit);
       },
     ),
