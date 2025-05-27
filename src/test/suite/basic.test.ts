@@ -235,6 +235,9 @@ suite("Extension Features", function () {
         result.length,
         "No diagnostics after change",
       );
+      await vscode.commands.executeCommand(
+        "workbench.action.closeActiveEditor",
+      );
     }).timeout(SCAN_TIMEOUT);
   });
 });
