@@ -39,6 +39,9 @@ export class Logger {
 // of the extension, not of the CLI. VSCode does this for us already.
 // TODO: Should we simply disable this version check?
 //
+// Note that we are still interested in collecting stats about the extension
+// version that users are running but this doesn't seem to be done here.
+//
 export async function checkCliVersion(
   currentVersion: semver.SemVer,
 ): Promise<void> {
