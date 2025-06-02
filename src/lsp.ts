@@ -59,7 +59,8 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
   // Only check the version if we're not using the packaged version
   // This is to avoid us releasing a new version of the extension late and then people get annoying popups
   if (!env.config.cfg.get("ignoreCliVersion") && serverPath) {
-    const version = await execShell(serverPath, ["--version"]);
+    // 'osemgrep --version' fails; not sure how intentional that is.
+    const version = await execShell(serverPath, ["show", "version"]);
     const semVersion = new semver.SemVer(version);
     checkCliVersion(semVersion);
     env.semgrepVersion = version;
