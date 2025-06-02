@@ -29,6 +29,16 @@ export class Logger {
   }
 }
 
+// 1. Obtain from the semgrep.dev server the minimum recommended version
+//    for the CLI.
+// 2. Show a warning asking the user to upgrade their CLI.
+//
+// Unfortunately, the VSCode extension is bundled with the semgrep CLI.
+// I don't think we should encourage users to upgrade their CLI
+// independently from the VSCode extension code. We should check the version
+// of the extension, not of the CLI. VSCode does this for us already.
+// TODO: Should we simply disable this version check?
+//
 export async function checkCliVersion(
   currentVersion: semver.SemVer,
 ): Promise<void> {
