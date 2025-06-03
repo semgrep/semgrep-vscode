@@ -96,7 +96,11 @@ async function main() {
           extensionDevelopmentPath,
           extensionTestsPath,
           extensionTestsEnv,
-          launchArgs: [repoPath],
+          launchArgs: [
+            repoPath,
+            // DBG: Disable other extensions
+            "--disable-extensions",
+          ],
         });
       } catch (err) {
         console.error(`Failed to run tests for ${repoName}`);
