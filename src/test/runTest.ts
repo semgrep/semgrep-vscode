@@ -78,6 +78,7 @@ async function main() {
       ...extensionTestsEnv,
       CWD: cwd,
       NODE_ENV: "test",
+      VSCODE_EXTENSION_DIR: "/nonexistent", // empty or fake folder
     };
     for (const repo of REPOS) {
       const repoName = repo[0];
