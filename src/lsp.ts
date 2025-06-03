@@ -32,7 +32,6 @@ import {
   captureLspError,
   withSentryAsync,
 } from "./telemetry/sentry";
-import { checkCliVersion } from "./utils";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -61,7 +60,6 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
   if (!env.config.cfg.get("ignoreCliVersion") && serverPath) {
     const version = await execShell(serverPath, ["--version"]);
     const semVersion = new semver.SemVer(version);
-    checkCliVersion(semVersion);
     env.semgrepVersion = version;
     await env.reloadConfig();
   }

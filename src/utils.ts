@@ -3,7 +3,6 @@ import * as semver from "semver";
 import { Uri } from "vscode";
 import type { OutputChannel } from "vscode";
 import * as vscode from "vscode";
-import { getVersionInfo } from "./constants";
 import type { ViewResults } from "./webviews/types/results";
 
 // Can't put this in constants for some reason??
@@ -26,49 +25,6 @@ export class Logger {
     if (this.enabled) {
       this.channel.appendLine(message);
     }
-  }
-}
-
-// 1. Obtain from the semgrep.dev server the minimum recommended version
-//    for the CLI.
-// 2. Show a warning asking the user to upgrade their CLI.
-//
-// Unfortunately, the VSCode extension is bundled with the semgrep CLI.
-// I don't think we should encourage users to upgrade their CLI
-// independently from the VSCode extension code. We should check the version
-// of the extension, not of the CLI. VSCode does this for us already.
-// TODO: Should we simply disable this version check?
-//
-// Note that we are still interested in collecting stats about the extension
-// version that users are running but this doesn't seem to be done here.
-//
-export async function checkCliVersion(
-  currentVersion: semver.SemVer,
-): Promise<void> {
-  const versionInfo = await getVersionInfo();
-  if (!versionInfo) {
-    return;
-  }
-  // Set context for the current version so we can gate vscode UI based on it
-  vscode.commands.executeCommand(
-    "setContext",
-    "semgrep.cli.minor",
-    currentVersion.minor,
-  );
-  vscode.commands.executeCommand(
-    "setContext",
-    "semgrep.cli.major",
-    currentVersion.major,
-  );
-  if (semver.compare(currentVersion, versionInfo.min) === -1) {
-    vscode.window.showErrorMessage(
-      `The Semgrep Extension requires a Semgrep CLI version ${versionInfo.min}, the current installed version is ${currentVersion}, please upgrade.`,
-    );
-  }
-  if (semver.compare(currentVersion, versionInfo.latest) === -1) {
-    vscode.window.showWarningMessage(
-      `Some features of the Semgrep Extension require a Semgrep CLI version ${versionInfo.latest}, but the current installed version is ${currentVersion}, some features may be disabled, please upgrade.`,
-    );
   }
 }
 
