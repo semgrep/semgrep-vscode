@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extension now uses installed semgrep from the PATH correctly, before trying
   to use the bundled semgrep executable.
 
+### Fixed
+
+- Avoid extension activation error due to a failure of `osemgrep-pro --version`.
+
 ## v1.9.0 - 2024-08-28
 
 ### Added
