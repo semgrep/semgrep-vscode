@@ -3,7 +3,6 @@ import * as semver from "semver";
 import { Uri } from "vscode";
 import type { OutputChannel } from "vscode";
 import * as vscode from "vscode";
-import { getVersionInfo } from "./constants";
 import type { ViewResults } from "./webviews/types/results";
 
 // Can't put this in constants for some reason??
@@ -26,36 +25,6 @@ export class Logger {
     if (this.enabled) {
       this.channel.appendLine(message);
     }
-  }
-}
-
-export async function checkCliVersion(
-  currentVersion: semver.SemVer,
-): Promise<void> {
-  const versionInfo = await getVersionInfo();
-  if (!versionInfo) {
-    return;
-  }
-  // Set context for the current version so we can gate vscode UI based on it
-  vscode.commands.executeCommand(
-    "setContext",
-    "semgrep.cli.minor",
-    currentVersion.minor,
-  );
-  vscode.commands.executeCommand(
-    "setContext",
-    "semgrep.cli.major",
-    currentVersion.major,
-  );
-  if (semver.compare(currentVersion, versionInfo.min) === -1) {
-    vscode.window.showErrorMessage(
-      `The Semgrep Extension requires a Semgrep CLI version ${versionInfo.min}, the current installed version is ${currentVersion}, please upgrade.`,
-    );
-  }
-  if (semver.compare(currentVersion, versionInfo.latest) === -1) {
-    vscode.window.showWarningMessage(
-      `Some features of the Semgrep Extension require a Semgrep CLI version ${versionInfo.latest}, but the current installed version is ${currentVersion}, some features may be disabled, please upgrade.`,
-    );
   }
 }
 

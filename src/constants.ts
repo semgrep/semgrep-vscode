@@ -20,6 +20,8 @@ export type VersionInfo = {
   min: SemVer;
 };
 
+// We used to have a CLI version check that used this function.
+// It's now unused but could be handy for troubleshooting. Keeping it for now.
 export async function getVersionInfo(): Promise<VersionInfo | undefined> {
   const url = "https://semgrep.dev/api/check-version";
   try {
