@@ -223,8 +223,10 @@ async function lspOptions(
 
   let serverOptions;
   // if we're not using JS, we can use the native binary
+  env.logger.log("obtain LSP server options (native)");
   serverOptions = await serverOptionsCli(env);
   if (!serverOptions || env.config.get("useJS")) {
+    env.logger.log("obtain LSP server options (JS)");
     serverOptions = serverOptionsJs(env);
   }
 
