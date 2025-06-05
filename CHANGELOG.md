@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Remove unusable commands for search and search+replace from the list
+  of commands. Use the sidebar.
 - Avoid extension activation error due to a failure of `osemgrep-pro --version`.
 
 ## v1.9.0 - 2024-08-28
