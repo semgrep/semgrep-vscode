@@ -78,6 +78,7 @@ async function main() {
       ...extensionTestsEnv,
       CWD: cwd,
       NODE_ENV: "test",
+      VSCODE_EXTENSION_DIR: "/nonexistent", // empty or fake folder
     };
     for (const repo of REPOS) {
       const repoName = repo[0];
@@ -96,7 +97,11 @@ async function main() {
           extensionDevelopmentPath,
           extensionTestsPath,
           extensionTestsEnv,
-          launchArgs: [repoPath],
+          launchArgs: [
+            repoPath,
+            // DBG: Disable other extensions
+            "--disable-extensions",
+          ],
         });
       } catch (err) {
         console.error(`Failed to run tests for ${repoName}`);
