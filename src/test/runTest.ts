@@ -67,12 +67,6 @@ async function main() {
       }
     }
 
-    if (process.env["USE_JS"] !== undefined) {
-      extensionTestsEnv = {
-        ...extensionTestsEnv,
-        USE_JS: process.env["USE_JS"],
-      };
-    }
     const cwd = process.cwd();
     extensionTestsEnv = {
       ...extensionTestsEnv,
