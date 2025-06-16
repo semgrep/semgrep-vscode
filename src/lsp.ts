@@ -21,7 +21,6 @@ import {
   CLIENT_NAME,
   DIAGNOSTIC_COLLECTION_NAME,
   DIST_BINARY_PATH,
-  LSPJS_PATH,
   VERSION_PATH,
 } from "./constants";
 import type { Environment } from "./env";
@@ -141,43 +140,6 @@ async function serverOptionsCli(
   return serverOptions;
 }
 
-function serverOptionsJs(env: Environment): ServerOptions {
-  const serverModule = LSPJS_PATH;
-  const stackSize = env.config.get("stackSizeJS");
-  const heapSize = env.config.get("heapSizeJS");
-  const inspectMode = env.config.lspjsBreakBeforeStart
-    ? "inspect-brk"
-    : "inspect";
-  const serverOptionsJs = {
-    run: {
-      module: serverModule,
-      transport: TransportKind.ipc,
-      options: {
-        execArgv: [
-          `--stack-size=${stackSize}`,
-          `--max-old-space-size=${heapSize}`,
-        ],
-      },
-    },
-    debug: {
-      module: serverModule,
-      transport: TransportKind.ipc,
-      options: {
-        execArgv: [
-          "--nolazy",
-          `--${inspectMode}=9229`,
-          `--stack-size=${stackSize}`,
-          `--max-old-space-size=${heapSize}`,
-        ],
-      },
-    },
-  };
-  vscode.window.showWarningMessage(
-    "The Semgrep Extension is using the experimental JS LSP server, this is due to not finding the Semgrep executable, or of 'semgrep.useJS' being set to true. There may be bugs or performance issues!",
-  );
-  return serverOptionsJs;
-}
-
 async function lspOptions(
   env: Environment,
 ): Promise<[ServerOptions, LanguageClientOptions] | [null, null]> {
@@ -221,11 +183,15 @@ async function lspOptions(
     },
   };
 
-  let serverOptions;
-  // if we're not using JS, we can use the native binary
-  serverOptions = await serverOptionsCli(env);
-  if (!serverOptions || env.config.get("useJS")) {
-    serverOptions = serverOptionsJs(env);
+  // try to use the native binary
+  const serverOptions = await serverOptionsCli(env);
+
+  if (!serverOptions) {
+    // If we cannot find the Semgrep binary, we cannot proceed
+    vscode.window.showErrorMessage(
+      "Failed to start server, likely Semgrep binary not found.",
+    );
+    return [null, null];
   }
 
   return [serverOptions, clientOptions];

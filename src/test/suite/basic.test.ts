@@ -11,7 +11,6 @@ import {
 } from "vscode-languageclient/node";
 
 const SCAN_TIMEOUT = 180000;
-const USE_JS = process.env["USE_JS"];
 let SKIPPED_FILES: string[] = [
   "l5000.java", // Causes stack overflow
   // Currently an issue with ocaml we need to fix
@@ -22,7 +21,7 @@ let SKIPPED_FILES: string[] = [
   "Interactive_subcommand.ml",
   "semgrep-extension.demo.py", // doesn't work for some reason
 ];
-if (USE_JS || process.platform === "win32") {
+if (process.platform === "win32") {
   const additional_skipped_files = [
     "long.py", // This one times out lspjs
     "test.ts", // Another timeout for lspjs
@@ -78,14 +77,7 @@ function makeFileUntracked(cwd: string, path: string) {
 async function getEnv() {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const extension = vscode.extensions.getExtension("Semgrep.semgrep")!;
-  // set semgrep to use javascript
-  if (USE_JS) {
-    vscode.workspace
-      .getConfiguration("semgrep")
-      .update("useJS", true, vscode.ConfigurationTarget.Global);
-  } else {
-    console.log(`Using JS: false`);
-  }
+
   // set semgrep path to development
   /*vscode.workspace
     .getConfiguration("semgrep")
