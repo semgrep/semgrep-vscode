@@ -14,7 +14,7 @@ import {
 } from "./lspExtensions";
 import { handleSearch } from "./search";
 import { encodeUri } from "./showAstDocument";
-import { applyFixAndSave, replaceAll } from "./utils";
+import { applyFixAndSave, isRealFileEditor, replaceAll } from "./utils";
 import type { ViewResults } from "./webviews/types/results";
 
 /*****************************************************************************/
@@ -148,7 +148,7 @@ export function registerCommands(env: Environment): Disposable[] {
     /************/
 
     vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
-      if (vscode.window.activeTextEditor == null) {
+      if (! isRealFileEditor(vscode.window.activeTextEditor)) {
         return;
       }
       if (env.client) {
@@ -161,7 +161,7 @@ export function registerCommands(env: Environment): Disposable[] {
       }
     }),
     vscode.commands.registerCommand("semgrep.showAst", async () => {
-      if (vscode.window.activeTextEditor == null) {
+      if (! isRealFileEditor(vscode.window.activeTextEditor)) {
         return;
       }
       if (env.client) {

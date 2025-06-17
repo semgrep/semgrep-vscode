@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Avoid extension activation error due to a failure of `osemgrep-pro --version`.
+- Avoid error when requesting the AST from a window that's not a text editor.
+
 
 - ## Removed
 - Removed the experimental pure Javascript version of the extension (`Semgrep: Use JS`) in favor of native language server execution.
