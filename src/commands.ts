@@ -148,7 +148,7 @@ export function registerCommands(env: Environment): Disposable[] {
     /************/
 
     vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
-      if (! isRealFileEditor(vscode.window.activeTextEditor)) {
+      if (!isRealFileEditor(vscode.window.activeTextEditor)) {
         return;
       }
       if (env.client) {
@@ -161,7 +161,7 @@ export function registerCommands(env: Environment): Disposable[] {
       }
     }),
     vscode.commands.registerCommand("semgrep.showAst", async () => {
-      if (! isRealFileEditor(vscode.window.activeTextEditor)) {
+      if (!isRealFileEditor(vscode.window.activeTextEditor)) {
         return;
       }
       if (env.client) {

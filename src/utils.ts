@@ -61,7 +61,9 @@ export async function replaceAll(matches: ViewResults): Promise<void> {
 }
 
 // Check if the current window is an open file rather than something else
-export function isRealFileEditor(editor: vscode.TextEditor | undefined): boolean {
+export function isRealFileEditor(
+  editor: vscode.TextEditor | undefined,
+): boolean {
   if (!editor) return false;
 
   const doc = editor.document;
@@ -70,7 +72,7 @@ export function isRealFileEditor(editor: vscode.TextEditor | undefined): boolean
   if (doc.isUntitled) return false;
 
   // Check that it has a file:// URI scheme
-  if (doc.uri.scheme !== 'file') return false;
+  if (doc.uri.scheme !== "file") return false;
 
   return true;
 }
