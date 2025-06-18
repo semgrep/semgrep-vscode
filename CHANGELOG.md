@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.11.0 - 2025-06-18
+
 ### Added
 
 - New sidebar section with support information (email and slack contact; documentation)
