@@ -105,6 +105,10 @@ function semgrepCmdLineOpts(env: Environment): string[] {
     cmdlineOpts.push(...["--debug"]);
   }
 
+  if (env.config.cfg.get("useExperimentalLS")) {
+    cmdlineOpts.push(...["--x-eio-ls"]);
+  }
+
   return cmdlineOpts;
 }
 

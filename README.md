@@ -81,6 +81,7 @@ To configure the Semgrep extension, open its **Extension Settings** page:
 The following experimental features should only be used upon recommendation by Semgrep:
 
 - **Semgrep > Ignore Cli Version**: Ignore the CLI Version and enable all extension features.
+- **Semgrep > Use experimental language server**: Use the new experimental language server
 
 ## Commands
 

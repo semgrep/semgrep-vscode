@@ -121,6 +121,11 @@
           "default": false,
           "description": "Ignore CLI Version, and enable all extension features (Warning: this is mainly for extension development, and can break things if enabled!)"
         },
+        "semgrep.useExperimentalLS": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use the new experimental language server"
+        },
         "semgrep.scan.configuration": {
           "type": "array",
           "items": {
