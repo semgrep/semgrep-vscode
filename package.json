@@ -124,7 +124,7 @@
         "semgrep.useExperimentalLS": {
           "type": "boolean",
           "default": false,
-          "description": "Use the new experimental language server"
+          "description": "Use the new experimental language server (requires restart)"
         },
         "semgrep.scan.configuration": {
           "type": "array",
