@@ -121,6 +121,11 @@
           "default": false,
           "description": "Ignore CLI Version, and enable all extension features (Warning: this is mainly for extension development, and can break things if enabled!)"
         },
+        "semgrep.useExperimentalLS": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use the new experimental language server (requires restart)"
+        },
         "semgrep.scan.configuration": {
           "type": "array",
           "items": {
@@ -148,7 +153,7 @@
         "semgrep.scan.jobs": {
           "type": "integer",
           "default": 2,
-          "description": "Number of parallel jobs to run."
+          "description": "Number of parallel jobs to run. (does not apply to experimental language server)"
         },
         "semgrep.scan.maxMemory": {
           "type": "integer",
