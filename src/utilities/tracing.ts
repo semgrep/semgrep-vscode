@@ -1,12 +1,21 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { Environment } from '../env';
-import { Attributes, context, trace } from '@opentelemetry/api';
-import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_DEPLOYMENT_ENVIRONMENT } from "@opentelemetry/semantic-conventions";
-import { resourceFromAttributes} from '@opentelemetry/resources';
-import { LanguageClient } from 'vscode-languageclient/node';
-import { ProtocolRequestType, ProtocolRequestType0, RequestType, RequestType0, type Connection } from "vscode-languageserver";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { Environment } from "../env";
+import { Attributes, context, trace } from "@opentelemetry/api";
+import {
+  SEMRESATTRS_SERVICE_NAME,
+  SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
+} from "@opentelemetry/semantic-conventions";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { LanguageClient } from "vscode-languageclient/node";
+import {
+  ProtocolRequestType,
+  ProtocolRequestType0,
+  RequestType,
+  RequestType0,
+  type Connection,
+} from "vscode-languageserver";
 
 /******************************************************************************/
 /* Prelude */
@@ -25,16 +34,16 @@ import { ProtocolRequestType, ProtocolRequestType0, RequestType, RequestType0, t
 /* Types */
 /******************************************************************************/
 
-export type DevEnvironment = "dev" | "prod" | "local"
+export type DevEnvironment = "dev" | "prod" | "local";
 
 /******************************************************************************/
 /* Constants */
 /******************************************************************************/
 
 /* Coupling: these need to be kept in sync with semgrep-proprietary/tracing.py */
-const default_trace_endpoint = "https://telemetry.semgrep.dev/v1/traces"
-const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces"
-const default_local_endpoint = "http://localhost:4318/v1/traces"
+const default_trace_endpoint = "https://telemetry.semgrep.dev/v1/traces";
+const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces";
+const default_local_endpoint = "http://localhost:4318/v1/traces";
 
 const tracer = trace.getTracer("semgrep-vscode");
 
@@ -50,11 +59,14 @@ const tracer = trace.getTracer("semgrep-vscode");
  * @param f The function to run within the span. This function should return a Promise.
  * @returns A Promise that resolves to the result of the function `f`.
  */
-export async function withSpan<T>(name: string, attributes: Record<string, any> = {}, f : () => Promise<T>): Promise<T> {
+export async function withSpan<T>(
+  name: string,
+  attributes: Record<string, any> = {},
+  f: () => Promise<T>,
+): Promise<T> {
   const span = tracer.startSpan(name);
   span.setAttributes(attributes);
   try {
-    console.log("sending span")
     return await context.with(trace.setSpan(context.active(), span), f);
   } catch (err) {
     if (err instanceof Error) {
@@ -66,7 +78,6 @@ export async function withSpan<T>(name: string, attributes: Record<string, any> 
     }
     throw err;
   } finally {
-    console.log("ending span")
     span.end();
   }
 }
@@ -80,46 +91,48 @@ export async function withSpan<T>(name: string, attributes: Record<string, any> 
  * @param env The environment to use for logging and tracing.
  * @param c The language client to set up tracing for.
  */
-export async function setupLanguageClientTracing(env: Environment, c: LanguageClient) : Promise<void> {
-    const c_any : any = c as any; // TypeScript does not allow us to access private members directly, so we cast to any.
-                                  // We know what we're doing, promise.
+export async function setupLanguageClientTracing(
+  env: Environment,
+  c: LanguageClient,
+): Promise<void> {
+  const c_any: any = c as any; // TypeScript does not allow us to access private members directly, so we cast to any.
+  // We know what we're doing, promise.
 
-    const connection : Connection = await c_any.createConnection();
-    c_any.createConnection = async () =>  {
-      env.logger.log("Reused existing connection")
-      return connection;
+  const connection: Connection = await c_any.createConnection();
+  c_any.createConnection = async () => {
+    env.logger.log("Reused existing connection");
+    return connection;
+  };
+
+  const originalSendRequest = connection.sendRequest.bind(connection);
+  connection.sendRequest = (...args: any[]): Promise<any> => {
+    // It should only be possible that we get args with at least one arg, according
+    // to the type of `sendRequest`.
+    if (args.length >= 1) {
+      // First arg has to be of these types, according to the package type spec.
+      const info:
+        | ProtocolRequestType0<any, any, any, any>
+        | ProtocolRequestType<any, any, any, any, any>
+        | RequestType0<any, any>
+        | RequestType<any, any, any> = args[0];
+      const method = info.method;
+
+      env.logger.log(`Sending request ${method}`);
+
+      // Instrument the request with a span. This will let us see what kinds
+      // of requests are being sent, as well as how long they take to complete.
+      return withSpan(`sendRequest.${method}`, {}, async () => {
+        // Call back to the original sendRequest, like nothing happened :)
+        return await (originalSendRequest as any)(...args);
+      });
     }
 
-    const originalSendRequest = connection.sendRequest.bind(connection);
-    connection.sendRequest = ((...args: any[]): Promise<any> => {
-      // It should only be possible that we get args with at least one arg, according
-      // to the type of `sendRequest`.
-      if (args.length >= 1) {
-        // First arg has to be of these types, according to the package type spec.
-        const info :
-          ProtocolRequestType0<any, any, any, any>
-          | ProtocolRequestType<any, any, any, any, any>
-          | RequestType0<any, any>
-          | RequestType<any, any, any> = args[0];
-        const method = info.method;
+    // But let's gracefully handle, if possible.
+    env.logger.log(`Got zero args for sendRequest somehow, returning null`);
+    return Promise.resolve(null);
+  };
 
-        env.logger.log(`got args for sendRequest: ${JSON.stringify(args)}`);
-        env.logger.log(`sending request ${method}`);
-
-        // Instrument the request with a span. This will let us see what kinds
-        // of requests are being sent, as well as how long they take to complete.
-        return withSpan(`sendRequest.${method}`, {}, async () => {
-          // Call back to the original sendRequest, like nothing happened :)
-          return await (originalSendRequest as any)(...args);
-        });
-      }
-
-      // But let's gracefully handle, if possible.
-      env.logger.log(`Got zero args for sendRequest somehow, returning null`);
-      return Promise.resolve(null);
-    });
-
-    env.logger.log("Patched language server with tracing.");
+  env.logger.log("Patched language server with tracing.");
 }
 
 /**
@@ -131,7 +144,7 @@ export function TraceMethod(name?: string): MethodDecorator {
   return function (
     target: any,
     propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 
@@ -173,21 +186,24 @@ export function TraceMethod(name?: string): MethodDecorator {
           span.recordException(new Error(String(err)));
           span.setStatus({ code: 2, message: String(err) });
           span.end();
-          throw err
+          throw err;
         }
       }
     };
   };
 }
 
-export function startTracing(env: Environment, environment: DevEnvironment): void {
+export function startTracing(
+  env: Environment,
+  environment: DevEnvironment,
+): void {
   let endpoint: string;
   if (environment === "dev") {
-    endpoint = default_dev_endpoint
+    endpoint = default_dev_endpoint;
   } else if (environment === "prod") {
-    endpoint = default_trace_endpoint
+    endpoint = default_trace_endpoint;
   } else {
-    endpoint = default_local_endpoint
+    endpoint = default_local_endpoint;
   }
 
   const traceExporter = new OTLPTraceExporter({

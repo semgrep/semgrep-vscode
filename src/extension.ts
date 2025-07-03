@@ -13,7 +13,7 @@ import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
 
-const TELEMETRY_ENV: string = process.env.SEMGREP_DEV_ENVIRONMENT || 'prod';
+const TELEMETRY_ENV: string = process.env.SEMGREP_DEV_ENVIRONMENT || "prod";
 
 export let global_env: Environment | null = null;
 
