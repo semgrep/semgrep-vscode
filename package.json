@@ -332,6 +332,9 @@
     "typescript-plugin-css-modules": "^5.1.0"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.60.1",
+    "@opentelemetry/sdk-node": "^0.202.0",
     "@sentry/esbuild-plugin": "^2.18.0",
     "@sentry/node": "^8.7.0",
     "@sentry/types": "^8.7.0",

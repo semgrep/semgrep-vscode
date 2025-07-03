@@ -9,12 +9,12 @@ import {
   type LanguageClientOptions,
   MessageType,
   type NotificationHandler,
+  NotificationHandler0,
   type ServerOptions,
   ShowMessageNotification,
   ShowMessageParams,
   TransportKind,
 } from "vscode-languageclient/node";
-import type { NotificationHandler0 } from "vscode-languageserver";
 import which from "which";
 import {
   CLIENT_ID,
@@ -31,6 +31,7 @@ import {
   captureLspError,
   withSentryAsync,
 } from "./telemetry/sentry";
+import { setupLanguageClientTracing } from "./utilities/tracing";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -221,6 +222,12 @@ async function start(env: Environment): Promise<void> {
   );
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
+
+  // We instrument the language client with tracing so we can get
+  // spans for the requests that it is making.
+  // Because we monkeypatch several methods that it contains, we
+  // must do this as soon as possible after it is created.
+  await setupLanguageClientTracing(env, c);
 
   const notificationHandler: NotificationHandler0 = () => {
     env.logger.log("Rules loaded");

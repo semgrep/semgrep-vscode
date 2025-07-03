@@ -31,6 +31,12 @@ export function initSentry(
   const skipIntegrations = ["OnUnhandledRejection", "OnUncaughtException"];
   Sentry.init({
     dsn: SENTRY_DSN,
+    // Sentry tries to do its own OpenTelemetry setup, even though as far as I can
+    // tell we don't rely on this behavior anywhere.
+    // Because we want to start doing real OpenTelemetry tracing for the language
+    // client, we skip this, as otherwise we will get an error from attempting duplicate
+    // registration of the OpenTelemetry SDK.
+    skipOpenTelemetrySetup: true,
     // https://docs.sentry.io/platforms/javascript/guides/node/configuration/integrations/#removing-a-default-integration
     // javascript why do you look like this
     integrations: function (defaultIntegrations: Integration[]) {
