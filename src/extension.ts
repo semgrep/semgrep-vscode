@@ -8,14 +8,12 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import { startTracing, withSpan } from "./utilities/tracing";
+import { DevEnvironment, startTracing, withSpan } from "./utilities/tracing";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
-import {
-  createConnection,
-  ProposedFeatures,
-} from 'vscode-languageserver/node';
+
+const TELEMETRY_ENV: string = process.env.SEMGREP_DEV_ENVIRONMENT || 'prod';
 
 export let global_env: Environment | null = null;
 
@@ -112,7 +110,7 @@ export async function activate(
 ): Promise<Environment | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
   initTelemetry(context.extensionMode, env);
-  startTracing(env, "local");
+  startTracing(env, TELEMETRY_ENV as DevEnvironment);
   await withSpan("activateLsp", {}, () => activateLsp(env));
   await afterClientStart(context, env);
   return env;

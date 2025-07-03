@@ -22,12 +22,18 @@ import { ProtocolRequestType, ProtocolRequestType0, RequestType, RequestType0, t
  */
 
 /******************************************************************************/
+/* Types */
+/******************************************************************************/
+
+export type DevEnvironment = "dev" | "prod" | "local"
+
+/******************************************************************************/
 /* Constants */
 /******************************************************************************/
 
 /* Coupling: these need to be kept in sync with semgrep-proprietary/tracing.py */
-const default_trace_endpoint = "https://telemetry.semgrep.dev"
-const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev"
+const default_trace_endpoint = "https://telemetry.semgrep.dev/v1/traces"
+const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces"
 const default_local_endpoint = "http://localhost:4318/v1/traces"
 
 const tracer = trace.getTracer("semgrep-vscode");
@@ -173,8 +179,6 @@ export function TraceMethod(name?: string): MethodDecorator {
     };
   };
 }
-
-type DevEnvironment = "dev" | "prod" | "local"
 
 export function startTracing(env: Environment, environment: DevEnvironment): void {
   let endpoint: string;
