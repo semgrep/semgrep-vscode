@@ -157,6 +157,8 @@ export function startTracing(
     resource: resourceFromAttributes({
       [SEMRESATTRS_SERVICE_NAME]: "semgrep-vscode",
       [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: environment,
+      ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
+      ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
     }),
     instrumentations: [getNodeAutoInstrumentations()],
   });
