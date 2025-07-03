@@ -150,10 +150,6 @@ export function startTracing(
 
   const traceExporter = new OTLPTraceExporter({
     url: endpoint,
-    // TODO?
-    // headers: {
-    //   'Authorization': 'Bearer 3336af88b367d72803be908bbb192a845141fc09a092f5f76d59439d8f48cb92',
-    // },
   });
 
   const sdk = new NodeSDK({
