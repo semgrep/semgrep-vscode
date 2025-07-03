@@ -48,39 +48,39 @@ const default_local_endpoint = "http://localhost:4318/v1/traces";
 const tracer = trace.getTracer("semgrep-vscode");
 
 /******************************************************************************/
-/* Entry points */
+/* Setup */
 /******************************************************************************/
-
 /**
- * Main tracing function which allows us to run some code with a span.
+ * The problem statement: We would like to be able to instrument the requests
+ * that are sent to the language server, from the client side, so that we can
+ * measure the true "wall time" of requests.
  *
- * @param name The name of the span to create.
- * @param attributes Attributes to set on the span.
- * @param f The function to run within the span. This function should return a Promise.
- * @returns A Promise that resolves to the result of the function `f`.
+ * This will give us better signal into whether we are taking too long, causing
+ * user disruption, etc, than just the time it takes on the server side.
+ *
+ * The context: We rely on `vscode-languageclient`, which makes it very easy to
+ * set up a language client by handling all the hard bits and low-level parts of
+ * the API for us.
+ * Unfortunately, this means that we rely on the API of the language client package,
+ * which is more limited in some ways.
+ *
+ * In particular, we have to be able to make some of our custom code run on
+ * every time that `vscode-languageclient` makes a request. This happens inside of
+ * the package, when it instantiates a `Connection` object, and then invokes the
+ * `sendRequest` method on it.
+ * There is no API-level way for us to easily instrument the `sendRequest` method.
+ *
+ * Thankfully (maybe), TypeScript is really just dynamic Javascript in disguise,
+ * and so we can do blatantly unsafe things like monkeypatch methods at runtime.
+ * This is the approach we will take.
+ * Since we have to monkeypatch not just a specific method of the package, but a
+ * specific method on a specific object it will instantiate, we will:
+ * 1) instantiate the Connection object ourselves, monkeypatching `createConnection`
+ *    to instead return the same object we created earlier
+ *    - this is because `createConnection` cannot be invoked twice, we need to change
+ *      the _same_ object that the client uses
+ * 2) monkeypatch the `sendRequest` method of the Connection object that we created
  */
-export async function withSpan<T>(
-  name: string,
-  attributes: Record<string, any> = {},
-  f: () => Promise<T>,
-): Promise<T> {
-  const span = tracer.startSpan(name);
-  span.setAttributes(attributes);
-  try {
-    return await context.with(trace.setSpan(context.active(), span), f);
-  } catch (err) {
-    if (err instanceof Error) {
-      span.recordException(err);
-      span.setStatus({ code: 2, message: String(err) });
-    } else {
-      span.recordException("Unknown error");
-      span.setStatus({ code: 2, message: String(err) });
-    }
-    throw err;
-  } finally {
-    span.end();
-  }
-}
 
 /**
  * Sets up tracing for the language client.
@@ -135,64 +135,6 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
-/**
- * Decorator for tracing a method.
- *
- * @param name Optional custom span name
- */
-export function TraceMethod(name?: string): MethodDecorator {
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor,
-  ) {
-    const originalMethod = descriptor.value;
-
-    descriptor.value = function (...args: any[]) {
-      const spanName = name || String(propertyKey);
-      const span = tracer.startSpan(spanName);
-
-      const run = () => {
-        return originalMethod.apply(this, args);
-      };
-
-      try {
-        // If the method returns a Promise, bind context and end span when it resolves/rejects
-        const result = context.with(trace.setSpan(context.active(), span), run);
-        if (result instanceof Promise) {
-          return result
-            .then((res) => {
-              span.end();
-              return res;
-            })
-            .catch((err) => {
-              span.recordException(err);
-              span.setStatus({ code: 2, message: String(err) });
-              span.end();
-              throw err;
-            });
-        } else {
-          // Synchronous
-          span.end();
-          return result;
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          span.recordException(err);
-          span.setStatus({ code: 2, message: String(err) });
-          span.end();
-          throw err;
-        } else {
-          span.recordException(new Error(String(err)));
-          span.setStatus({ code: 2, message: String(err) });
-          span.end();
-          throw err;
-        }
-      }
-    };
-  };
-}
-
 export function startTracing(
   env: Environment,
   environment: DevEnvironment,
@@ -226,4 +168,39 @@ export function startTracing(
   sdk.start();
 
   env.logger.log(`Tracing initialized to ${endpoint}`);
+}
+
+/******************************************************************************/
+/* Tracing primitives */
+/******************************************************************************/
+
+/**
+ * Main tracing function which allows us to run some code with a span.
+ *
+ * @param name The name of the span to create.
+ * @param attributes Attributes to set on the span.
+ * @param f The function to run within the span. This function should return a Promise.
+ * @returns A Promise that resolves to the result of the function `f`.
+ */
+export async function withSpan<T>(
+  name: string,
+  attributes: Record<string, any> = {},
+  f: () => Promise<T>,
+): Promise<T> {
+  const span = tracer.startSpan(name);
+  span.setAttributes(attributes);
+  try {
+    return await context.with(trace.setSpan(context.active(), span), f);
+  } catch (err) {
+    if (err instanceof Error) {
+      span.recordException(err);
+      span.setStatus({ code: 2, message: String(err) });
+    } else {
+      span.recordException("Unknown error");
+      span.setStatus({ code: 2, message: String(err) });
+    }
+    throw err;
+  } finally {
+    span.end();
+  }
 }
