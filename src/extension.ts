@@ -93,12 +93,14 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   );
   vscode.commands.executeCommand("semgrep.loginStatus").then(async () => {
     vscode.commands.executeCommand("semgrep.loginNudge");
-await vscode.window.showInformationMessage(
-  `VS Code collects usage data and sends it to Semgrep to help improve our products and services. Telemetry data includes extension runtime version details, and other metrics normally collected by Semgrep, [as described here](https://semgrep.dev/docs/metrics#data-collected-as-metrics).
-  If you don't wish to send usage data to Semgrep, you can set the \`telemetry.telemetryLevel\` setting to \`off\`.`,
-);
     if (env.newInstall) {
       env.newInstall = false;
+
+      await vscode.window.showInformationMessage(
+        `VS Code collects usage data and sends it to Semgrep to help improve our products and services. Telemetry data includes extension runtime version details, and other metrics normally collected by Semgrep, [as described here](https://semgrep.dev/docs/metrics#data-collected-as-metrics).
+        If you don't wish to send usage data to Semgrep, you can set the \`telemetry.telemetryLevel\` setting to \`off\`.`,
+      );
+
       const selection = await vscode.window.showInformationMessage(
         "Semgrep Extension successfully installed. Would you like to try performing a full workspace scan (may take longer on bigger workspaces)?",
         "Scan Full Workspace",
