@@ -212,11 +212,15 @@ async function start(env: Environment): Promise<void> {
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
 
-  // We instrument the language client with tracing so we can get
-  // spans for the requests that it is making.
-  // Because we monkeypatch several methods that it contains, we
-  // must do this as soon as possible after it is created.
-  await setupLanguageClientTracing(env, c);
+  if (env.config.get("metrics")) {
+    // We instrument the language client with tracing so we can get
+    // spans for the requests that it is making.
+    // Because we monkeypatch several methods that it contains, we
+    // must do this as soon as possible after it is created.
+    await setupLanguageClientTracing(env, c);
+  } else {
+    env.logger.log("Metrics are disabled, not setting up tracing...");
+  }
 
   const notificationHandler: NotificationHandler0 = () => {
     env.logger.log("Rules loaded");
