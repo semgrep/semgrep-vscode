@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 
-import { ExtensionMode, type ConfigurationChangeEvent, type ExtensionContext} from "vscode";
+import {
+  ExtensionMode,
+  type ConfigurationChangeEvent,
+  type ExtensionContext,
+} from "vscode";
 import { registerCommands } from "./commands";
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { Environment } from "./env";
@@ -107,13 +111,13 @@ function getExtensionMode(context: ExtensionContext): ExtensionEnvironment {
   if (process.env.SEMGREP_DEV_ENVIRONMENT) {
     return process.env.SEMGREP_DEV_ENVIRONMENT as ExtensionEnvironment;
   } else {
-      if (context.extensionMode === ExtensionMode.Production) {
-        return ExtensionEnvironment.Release
-      } else if (context.extensionMode === ExtensionMode.Development) {
-        return ExtensionEnvironment.Development
-      } else {
-        return ExtensionEnvironment.Test
-      }
+    if (context.extensionMode === ExtensionMode.Production) {
+      return ExtensionEnvironment.Release;
+    } else if (context.extensionMode === ExtensionMode.Development) {
+      return ExtensionEnvironment.Development;
+    } else {
+      return ExtensionEnvironment.Test;
+    }
   }
 }
 

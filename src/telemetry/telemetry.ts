@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import type { Environment } from "../env";
-import { ExtensionEnvironment, startTracing, stopTracing } from "../utilities/tracing";
+import {
+  ExtensionEnvironment,
+  startTracing,
+  stopTracing,
+} from "../utilities/tracing";
 
 export function initTelemetry(
   extensionEnvironment: ExtensionEnvironment,

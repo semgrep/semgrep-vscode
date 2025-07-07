@@ -66,8 +66,7 @@ export class Environment {
     public config: Config,
     // rulesRefreshedEmitter is used to notify if rules are refreshed, i.e. after startup, a login, or a manual refresh
     private rulesRefreshedEmitter: EventEmitter = new EventEmitter(),
-  ) {
-  }
+  ) {}
 
   loginEvent?: vscode.EventEmitter<void> = undefined;
 
