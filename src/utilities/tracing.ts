@@ -164,6 +164,7 @@ export function startTracing(
       ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
       ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
     }),
+    autoDetectResources: false,
     instrumentations: [getNodeAutoInstrumentations()],
   });
 
