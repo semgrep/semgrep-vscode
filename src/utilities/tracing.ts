@@ -34,7 +34,11 @@ import {
 /* Types */
 /******************************************************************************/
 
-export type DevEnvironment = "dev" | "prod" | "local";
+export enum ExtensionEnvironment {
+  Release = "release",
+  Development = "development",
+  Test = "test",
+}
 
 /******************************************************************************/
 /* Constants */
@@ -137,12 +141,12 @@ export async function setupLanguageClientTracing(
 
 export function startTracing(
   env: Environment,
-  environment: DevEnvironment,
+  environment: ExtensionEnvironment,
 ): void {
   let endpoint: string;
-  if (environment === "dev") {
+  if (environment === ExtensionEnvironment.Development) {
     endpoint = default_dev_endpoint;
-  } else if (environment === "prod") {
+  } else if (environment === ExtensionEnvironment.Release) {
     endpoint = default_trace_endpoint;
   } else {
     endpoint = default_local_endpoint;
@@ -165,7 +169,13 @@ export function startTracing(
 
   sdk.start();
 
+  env.sdk = sdk;
+
   env.logger.log(`Tracing initialized to ${endpoint}`);
+}
+
+export async function stopTracing(sdk: NodeSDK): Promise<void> {
+  await sdk.shutdown();
 }
 
 /******************************************************************************/

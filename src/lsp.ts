@@ -25,12 +25,6 @@ import {
 } from "./constants";
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
-import {
-  ProxyOutputChannel,
-  SentryErrorHandler,
-  captureLspError,
-  withSentryAsync,
-} from "./telemetry/sentry";
 import { setupLanguageClientTracing } from "./utilities/tracing";
 
 const execShell = (cmd: string, args: string[]) =>
@@ -168,20 +162,15 @@ async function lspOptions(
       2,
     )}`,
   );
-  const outputChannel = new ProxyOutputChannel(env.channel);
-  const errorHandler = new SentryErrorHandler(5, () => {
-    const attachment = outputChannel.logAsAttachment();
-
-    return attachment ? [attachment] : [];
-  });
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
     documentSelector: [{ language: "*", scheme: "file" }],
-    outputChannel,
     traceOutputChannel: env.channel,
     initializationOptions: initializationOptions,
-    errorHandler,
+    // OLD: This used to be a Sentry error handler.
+    // THINK: Can we add OpenTelemetry errors that are not part of a span?
+    // errorHandler,
     markdown: {
       isTrusted: true,
       supportHtml: false,
@@ -235,12 +224,8 @@ async function start(env: Environment): Promise<void> {
   };
   // Register handlers here
   c.onNotification(rulesRefreshed, notificationHandler);
-  c.onTelemetry((e) => {
-    // We only send errors, so we can safely cast this
-    // See RPC_server.ml for the definition of LspErrorParams
-    const event = e as LspErrorParams;
-    captureLspError(event);
-  });
+  // TODO: Add OpenTelemetry telemetry handler here
+  // c.onTelemetry((e) => { })
 
   env.client = c;
   await c.start();
@@ -261,7 +246,7 @@ async function stop(env: Environment | null): Promise<void> {
 }
 
 export async function activateLsp(env: Environment): Promise<void> {
-  return withSentryAsync(() => start(env));
+  return start(env);
 }
 
 export async function deactivateLsp(env: Environment | null): Promise<void> {
@@ -271,6 +256,6 @@ export async function deactivateLsp(env: Environment | null): Promise<void> {
 export async function restartLsp(env: Environment | null): Promise<void> {
   await stop(env);
   if (env) {
-    return withSentryAsync(() => start(env));
+    return start(env);
   }
 }
