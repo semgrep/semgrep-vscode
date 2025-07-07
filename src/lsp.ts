@@ -9,12 +9,12 @@ import {
   type LanguageClientOptions,
   MessageType,
   type NotificationHandler,
+  NotificationHandler0,
   type ServerOptions,
   ShowMessageNotification,
   ShowMessageParams,
   TransportKind,
 } from "vscode-languageclient/node";
-import type { NotificationHandler0 } from "vscode-languageserver";
 import which from "which";
 import {
   CLIENT_ID,
@@ -25,12 +25,7 @@ import {
 } from "./constants";
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
-import {
-  ProxyOutputChannel,
-  SentryErrorHandler,
-  captureLspError,
-  withSentryAsync,
-} from "./telemetry/sentry";
+import { setupLanguageClientTracing } from "./utilities/tracing";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -167,20 +162,15 @@ async function lspOptions(
       2,
     )}`,
   );
-  const outputChannel = new ProxyOutputChannel(env.channel);
-  const errorHandler = new SentryErrorHandler(5, () => {
-    const attachment = outputChannel.logAsAttachment();
-
-    return attachment ? [attachment] : [];
-  });
   const clientOptions: LanguageClientOptions = {
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
     documentSelector: [{ language: "*", scheme: "file" }],
-    outputChannel,
     traceOutputChannel: env.channel,
     initializationOptions: initializationOptions,
-    errorHandler,
+    // OLD: This used to be a Sentry error handler.
+    // THINK: Can we add OpenTelemetry errors that are not part of a span?
+    // errorHandler,
     markdown: {
       isTrusted: true,
       supportHtml: false,
@@ -222,18 +212,20 @@ async function start(env: Environment): Promise<void> {
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
 
+  // We instrument the language client with tracing so we can get
+  // spans for the requests that it is making.
+  // Because we monkeypatch several methods that it contains, we
+  // must do this as soon as possible after it is created.
+  await setupLanguageClientTracing(env, c);
+
   const notificationHandler: NotificationHandler0 = () => {
     env.logger.log("Rules loaded");
     env.emitRulesRefreshedEvent();
   };
   // Register handlers here
   c.onNotification(rulesRefreshed, notificationHandler);
-  c.onTelemetry((e) => {
-    // We only send errors, so we can safely cast this
-    // See RPC_server.ml for the definition of LspErrorParams
-    const event = e as LspErrorParams;
-    captureLspError(event);
-  });
+  // TODO: Add OpenTelemetry telemetry handler here
+  // c.onTelemetry((e) => { })
 
   env.client = c;
   await c.start();
@@ -254,7 +246,7 @@ async function stop(env: Environment | null): Promise<void> {
 }
 
 export async function activateLsp(env: Environment): Promise<void> {
-  return withSentryAsync(() => start(env));
+  return start(env);
 }
 
 export async function deactivateLsp(env: Environment | null): Promise<void> {
@@ -264,6 +256,6 @@ export async function deactivateLsp(env: Environment | null): Promise<void> {
 export async function restartLsp(env: Environment | null): Promise<void> {
   await stop(env);
   if (env) {
-    return withSentryAsync(() => start(env));
+    return start(env);
   }
 }

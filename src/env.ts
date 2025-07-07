@@ -11,9 +11,9 @@ import {
 import type { LanguageClient } from "vscode-languageclient/node";
 import { VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
 import { SemgrepDocumentProvider } from "./showAstDocument";
-import { setSentryContext } from "./telemetry/sentry";
 import { Logger } from "./utils";
 import type { SemgrepSearchWebviewProvider } from "./views/webview";
+import { NodeSDK } from "@opentelemetry/sdk-node";
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -52,6 +52,10 @@ export class Environment {
    */
   public scanID: string | null = null;
 
+  // The OpenTelemetry SDK that we use for sending traces.
+  // Set in the `startTracing` function in `tracing.ts`.
+  public sdk: NodeSDK | null = null;
+
   private _client: LanguageClient | null = null;
   private _provider: SemgrepSearchWebviewProvider | null = null;
   private constructor(
@@ -62,9 +66,7 @@ export class Environment {
     public config: Config,
     // rulesRefreshedEmitter is used to notify if rules are refreshed, i.e. after startup, a login, or a manual refresh
     private rulesRefreshedEmitter: EventEmitter = new EventEmitter(),
-  ) {
-    setSentryContext(this);
-  }
+  ) {}
 
   loginEvent?: vscode.EventEmitter<void> = undefined;
 
@@ -163,7 +165,6 @@ export class Environment {
     // Reload configuration
     this.config = await Environment.loadConfig(this.context);
     this.logger.enableLogger(this.config.trace);
-    setSentryContext(this);
     return this;
   }
 

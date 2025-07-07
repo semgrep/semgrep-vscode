@@ -1,31 +1,23 @@
 import * as vscode from "vscode";
 import type { Environment } from "../env";
-import { initSentry, stopSentry } from "./sentry";
+import {
+  ExtensionEnvironment,
+  startTracing,
+  stopTracing,
+} from "../utilities/tracing";
 
-enum ExtensionEnvironment {
-  Release = "release",
-  Development = "development",
-  Test = "test",
-}
 export function initTelemetry(
-  extensionMode: vscode.ExtensionMode,
+  extensionEnvironment: ExtensionEnvironment,
   env: Environment,
 ): void {
   if (!vscode.env.isTelemetryEnabled) {
     return;
   }
-  let extensionEnvironment = ExtensionEnvironment.Release;
-  switch (extensionMode) {
-    case vscode.ExtensionMode.Development:
-      extensionEnvironment = ExtensionEnvironment.Development;
-      break;
-    case vscode.ExtensionMode.Test:
-      extensionEnvironment = ExtensionEnvironment.Test;
-      break;
-  }
-  initSentry(extensionEnvironment, env);
+  startTracing(env, extensionEnvironment);
 }
 
-export async function stopTelemetry(): Promise<void> {
-  await stopSentry();
+export async function stopTelemetry(env: Environment): Promise<void> {
+  if (env?.sdk) {
+    await stopTracing(env.sdk);
+  }
 }
