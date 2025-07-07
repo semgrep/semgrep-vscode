@@ -163,7 +163,17 @@ export function startTracing(
       [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: environment,
       ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
       ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
+      // Not exactly the same as the auto-collected OpenTelemetry
+      // resources, so don't rely on exact correctness.
+      // But, these are useful and good to collect.
+      ["arch"]: process.arch,
+      ["process.runtime.name"]: "node",
+      ["process.runtime.version"]: process.versions.node,
     }),
+    // Don't auto-detect resources, this picks up things like IP addresses
+    // and usernames, which we don't want to collect.
+    // Because it does collect some useful things, we manually add
+    // them back up above.
     autoDetectResources: false,
     instrumentations: [getNodeAutoInstrumentations()],
   });
