@@ -40,12 +40,33 @@ const execShell = (cmd: string, args: string[]) =>
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let serverPath;
   // First, check if the user has set the path to the Semgrep binary, use that always
-  if (env.config.path.length > 0) {
+  if (env.config.path.length > 0 && fs.existsSync(env.config.path)) {
     serverPath = env.config.path;
   }
 
-  // check if the path exists
-  if (!serverPath || !fs.existsSync(serverPath)) {
+  // Next, try to use the packaged Semgrep binary.
+  // We prefer this to the locally existent semgrep, because we are guaranteed to have
+  // the proprietary binary in the extension. Additionally, any devs that are doing work
+  // on `semgrep` will fall into this code path and possibly failure, if they have ever
+  // built Semgrep locally.
+  // We need the check for the existence of the binary though, because someone
+  // might have a messed up situation, or you could be using the extension
+  // locally in a dev environment.
+  if (!serverPath && fs.existsSync(DIST_BINARY_PATH)) {
+    serverPath = DIST_BINARY_PATH;
+    // Read version from extension's shipped version file
+    // This is hacky, we should instead exec the binary with --version like we did previously, but that is currently off by one release always
+    const version = fs
+      .readFileSync(VERSION_PATH)
+      .toString()
+      .trim()
+      .replace("release-", "");
+    env.semgrepVersion = version;
+    await env.reloadConfig();
+  }
+
+  // But if that fails, let's try the `semgrep` on the PATH.
+  if (!serverPath) {
     // try checking if its a binary in the PATH
     serverPath = which.sync("semgrep", { nothrow: true });
   }
@@ -59,21 +80,10 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
     await env.reloadConfig();
   }
 
-  if (!serverPath) {
-    serverPath = DIST_BINARY_PATH;
-    // Read version from extension's shipped version file
-    // This is hacky, we should instead exec the binary with --version like we did previously, but that is currently off by one release always
-    const version = fs
-      .readFileSync(VERSION_PATH)
-      .toString()
-      .trim()
-      .replace("release-", "");
-    env.semgrepVersion = version;
-    await env.reloadConfig();
-  }
-
   // one last check to see if the binary exists
-  if (fs.existsSync(serverPath)) {
+  if (serverPath && fs.existsSync(serverPath)) {
+    env.logger.log(`Found Semgrep binary at: ${serverPath}`);
+
     return {
       command: serverPath,
     };
