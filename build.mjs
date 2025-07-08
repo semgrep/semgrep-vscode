@@ -2,22 +2,6 @@
 
 import cssModulesPlugin from "esbuild-css-modules-plugin";
 import esbuild from "esbuild";
-import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
-async function buildSentrySourceMap() {
-  esbuild.build({
-    sourcemap: true, // Source map generation must be turned on
-    bundle: true,
-    platform: "node",
-    plugins: [
-      // Put the Sentry esbuild plugin after all other plugins
-      sentryEsbuildPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: "semgrep",
-        project: "ide-vscode",
-      }),
-    ],
-  });
-}
 
 async function buildExtension(watch, sourcemap, minify) {
   const options = {
@@ -84,5 +68,4 @@ const esbuildProblemMatcherPlugin = {
 await Promise.all([
   buildExtension(isWatch, isSourcemap, isMinify),
   buildWebview(isWatch, isSourcemap, isMinify),
-  buildSentrySourceMap(),
 ]);
