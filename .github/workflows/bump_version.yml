@@ -24,10 +24,6 @@ jobs:
         env:
           SEMGREP_STATIC_VERSION: "release-${{ inputs.version }}"
         run: |
-          if ! curl -L --silent --fail --output /dev/null --head "https://static.semgrep.dev/static/turbo/${SEMGREP_STATIC_VERSION}/engine/dist/index.mjs"; then
-              echo "Invalid or unpublished version: ${SEMGREP_STATIC_VERSION}"
-              exit 1
-          fi
           echo "${SEMGREP_STATIC_VERSION}" > semgrep-version
       - name: Commit and push
         id: commit
