@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.12.2 - 2025-07-08
+
+### Fixed
+
+- Fixed bug where `semgrep` in the PATH would be prioritized over the extension-bundled `semgrep` binary
+
 ## 1.12.1 - 2025-07-08
 
 ### Fixed
