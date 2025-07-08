@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.12.0 - 2025-07-08
+
+### Added
+
+- Added a `Semgrep: Metrics` setting to explicitly opt out of extension-collected telemetry
+- Added a `Semgrep: Use Experimental LS` setting to enable the proprietary `Eio`-based language server
+
 ## 1.11.0 - 2025-06-18
 
 ### Added
