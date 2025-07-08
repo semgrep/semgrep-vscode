@@ -40,7 +40,7 @@ const execShell = (cmd: string, args: string[]) =>
 async function findSemgrep(env: Environment): Promise<Executable | null> {
   let serverPath;
   // First, check if the user has set the path to the Semgrep binary, use that always
-  if (env.config.path.length > 0) {
+  if (env.config.path.length > 0 && fs.existsSync(env.config.path)) {
     serverPath = env.config.path;
   }
 
@@ -66,7 +66,7 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
   }
 
   // But if that fails, let's try the `semgrep` on the PATH.
-  if (!serverPath || !fs.existsSync(serverPath)) {
+  if (!serverPath) {
     // try checking if its a binary in the PATH
     serverPath = which.sync("semgrep", { nothrow: true });
   }
@@ -82,6 +82,8 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
 
   // one last check to see if the binary exists
   if (serverPath && fs.existsSync(serverPath)) {
+    env.logger.log(`Found Semgrep binary at: ${serverPath}`);
+
     return {
       command: serverPath,
     };
