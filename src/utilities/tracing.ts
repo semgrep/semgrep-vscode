@@ -156,6 +156,8 @@ export function startTracing(
     url: endpoint,
   });
 
+  const hasMetrics: boolean | undefined = env.config.cfg.get("metrics");
+
   const sdk = new NodeSDK({
     traceExporter,
     resource: resourceFromAttributes({
@@ -163,6 +165,7 @@ export function startTracing(
       [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: environment,
       ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
       ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
+      ["client.metrics"]: hasMetrics,
       // Not exactly the same as the auto-collected OpenTelemetry
       // resources, so don't rely on exact correctness.
       // But, these are useful and good to collect.

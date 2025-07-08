@@ -126,6 +126,11 @@
           "default": false,
           "description": "Use the new experimental language server (requires restart)"
         },
+        "semgrep.metrics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Send metrics to Semgrep to help improve our products and services. Telemetry data includes scan metrics, extension runtime version details, and other information as described here: https://semgrep.dev/docs/metrics#data-collected-as-metrics."
+        },
         "semgrep.scan.configuration": {
           "type": "array",
           "items": {
