@@ -44,7 +44,25 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
     serverPath = env.config.path;
   }
 
-  // check if the path exists
+  // Next, try to use the packaged Semgrep binary.
+  // We prefer this to the locally existent semgrep, because we are guaranteed to have
+  // the proprietary binary in the extension. Additionally, any devs that are doing work
+  // on `semgrep` will fall into this code path and possibly failure, if they have ever
+  // built Semgrep locally.
+  if (!serverPath) {
+    serverPath = DIST_BINARY_PATH;
+    // Read version from extension's shipped version file
+    // This is hacky, we should instead exec the binary with --version like we did previously, but that is currently off by one release always
+    const version = fs
+      .readFileSync(VERSION_PATH)
+      .toString()
+      .trim()
+      .replace("release-", "");
+    env.semgrepVersion = version;
+    await env.reloadConfig();
+  }
+
+  // But if that fails, let's try the `semgrep` on the PATH.
   if (!serverPath || !fs.existsSync(serverPath)) {
     // try checking if its a binary in the PATH
     serverPath = which.sync("semgrep", { nothrow: true });
@@ -59,21 +77,8 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
     await env.reloadConfig();
   }
 
-  if (!serverPath) {
-    serverPath = DIST_BINARY_PATH;
-    // Read version from extension's shipped version file
-    // This is hacky, we should instead exec the binary with --version like we did previously, but that is currently off by one release always
-    const version = fs
-      .readFileSync(VERSION_PATH)
-      .toString()
-      .trim()
-      .replace("release-", "");
-    env.semgrepVersion = version;
-    await env.reloadConfig();
-  }
-
   // one last check to see if the binary exists
-  if (fs.existsSync(serverPath)) {
+  if (serverPath && fs.existsSync(serverPath)) {
     return {
       command: serverPath,
     };
