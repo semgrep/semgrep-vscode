@@ -49,7 +49,10 @@ async function findSemgrep(env: Environment): Promise<Executable | null> {
   // the proprietary binary in the extension. Additionally, any devs that are doing work
   // on `semgrep` will fall into this code path and possibly failure, if they have ever
   // built Semgrep locally.
-  if (!serverPath) {
+  // We need the check for the existence of the binary though, because someone
+  // might have a messed up situation, or you could be using the extension
+  // locally in a dev environment.
+  if (!serverPath && fs.existsSync(DIST_BINARY_PATH)) {
     serverPath = DIST_BINARY_PATH;
     // Read version from extension's shipped version file
     // This is hacky, we should instead exec the binary with --version like we did previously, but that is currently off by one release always
