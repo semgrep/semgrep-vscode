@@ -148,9 +148,9 @@ function environmentToTraceEnvironment(
     case ExtensionEnvironment.Release:
       return "prod";
     case ExtensionEnvironment.Test:
-      return "local";
+      return "dev";
     default:
-      return "unknown";
+      return "dev";
   }
 }
 
