@@ -139,7 +139,9 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
-function environmentToTraceEnvironment(environment: ExtensionEnvironment) : string {
+function environmentToTraceEnvironment(
+  environment: ExtensionEnvironment,
+): string {
   switch (environment) {
     case ExtensionEnvironment.Development:
       return "dev";
@@ -175,7 +177,8 @@ export function startTracing(
     traceExporter,
     resource: resourceFromAttributes({
       [SEMRESATTRS_SERVICE_NAME]: "semgrep-vscode",
-      [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: environmentToTraceEnvironment(environment),
+      [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]:
+        environmentToTraceEnvironment(environment),
       ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
       ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
       ["client.metrics"]: hasMetrics,
