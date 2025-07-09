@@ -128,26 +128,22 @@ function getExtensionMode(context: ExtensionContext): ExtensionEnvironment {
   }
 }
 
-export async function activateInner(
+export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
   const extensionEnvironment: ExtensionEnvironment = getExtensionMode(context);
   initTelemetry(extensionEnvironment, env);
-  // const ctx = trace.setSpan(
-  //   otelContext.active(),
-  //   parent,
-  // );
-  const topLevelSpan = tracer.startSpan('vscode-client', {
-    attributes: {
-      'client.name': 'VSCode Language Client',
-    }
-  });
+
+  const topLevelSpan = tracer.startSpan('vscode-client');
   // set span as global current span (if there is currently no current span)
   const ctx = api.trace.setSpan(api.context.active(), topLevelSpan);
+
   api.context.bind(ctx, null);
 
-  await withSpan("activateLsp", {}, () => activateLsp(env));
+  // I can only link the spans properly if I say to run the context with the new span.
+  await
+    withSpan("activateLsp", {}, async () => activateLsp(env));
   await afterClientStart(context, env);
 
   console.log("activate");
@@ -157,30 +153,16 @@ export async function activateInner(
   return env;
 }
 
-export async function activate(
-  context: ExtensionContext,
-): Promise<Environment | undefined> {
-  const res = await Promise.any([activateInner(context)]);
-
-  if (res === null) {
-    console.log("nooo");
-    return undefined;
-  }
-  return res
-}
-
-otelContext.bind
-
-
 export async function deactivate(): Promise<void> {
+  console.log("deactivate");
   if (global_env) {
+    topLevelSpan?.end(); // End the top-level span when deactivating
+    await stopTelemetry(global_env);
+
     if (global_env.client) {
       await deactivateLsp(global_env);
     }
-    await stopTelemetry(global_env);
   }
-  console.log("deactivate");
-  topLevelSpan?.end(); // End the top-level span when deactivating
   global_env?.dispose();
   global_env = null;
 }
