@@ -55,10 +55,6 @@ const default_local_endpoint = "http://localhost:4318/v1/traces";
 const tracer = trace.getTracer("semgrep-vscode");
 
 export let topLevelSpan : api.Span | null = null;
-export let topLevelContext : api.Context = api.ROOT_CONTEXT;
-export function setTopLevelContext(context: api.Context): void {
-  topLevelContext = context;
-}
 export function setTopLevelSpan(span: api.Span): void {
   topLevelSpan = span;
 }
@@ -268,18 +264,6 @@ export function startTracing(
   const contextManager = new RootContextManager();
   contextManager.enable();
   api.context.setGlobalContextManager(contextManager);
-
-  // Some magic so we can properly nest spans and stuff
-  const span = tracer.startSpan('vscode-client', {
-    attributes: {
-      'client.name': 'VSCode Language Client',
-    }
-  });
-  // set span as global current span (if there is currently no current span)
-  const ctx = api.trace.setSpan(api.context.active(), span);
-  api.context.bind(ctx, null);
-  topLevelContext = ctx;
-  topLevelSpan = span;
 
   sdk.start();
 
