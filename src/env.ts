@@ -34,18 +34,17 @@ function getExtensionDevEnv(mode: ExtensionMode): ExtensionEnvironment {
       `Unknown SEMGREP_DEV_ENVIRONMENT value: ${env}, need 'semgrep-local', 'semgrep-dev' or 'semgrep-prod'`,
     );
   }
-    // If there is no env variable, use the mode to determine the environment.
-    switch (mode) {
-      case ExtensionMode.Development:
-        return ExtensionEnvironment.Dev;
-      case ExtensionMode.Production:
-        return ExtensionEnvironment.Prod;
-      // Importantly, test mode is the dev environment still.
-      case ExtensionMode.Test:
-        return ExtensionEnvironment.Dev;
-    }
+  // If there is no env variable, use the mode to determine the environment.
+  switch (mode) {
+    case ExtensionMode.Development:
+      return ExtensionEnvironment.Dev;
+    case ExtensionMode.Production:
+      return ExtensionEnvironment.Prod;
+    // Importantly, test mode is the dev environment still.
+    case ExtensionMode.Test:
+      return ExtensionEnvironment.Dev;
+  }
 }
-
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -95,7 +94,8 @@ export class Environment {
   // 'semgrep-local', 'semgrep-dev', or 'semgrep-prod', or falls back to being
   // derived from the extension mode, which is the mode of the VS Code extension
   // itself.
-  public extensionDevEnvironment: ExtensionEnvironment = ExtensionEnvironment.Prod;
+  public extensionDevEnvironment: ExtensionEnvironment =
+    ExtensionEnvironment.Prod;
 
   private _client: LanguageClient | null = null;
   private _provider: SemgrepSearchWebviewProvider | null = null;

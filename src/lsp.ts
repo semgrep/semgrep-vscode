@@ -25,7 +25,7 @@ import {
 } from "./constants";
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
-import { setupLanguageClientTracing} from "./utilities/tracing";
+import { setupLanguageClientTracing } from "./utilities/tracing";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -117,7 +117,9 @@ function semgrepCmdLineOpts(env: Environment): string[] {
   if (vscode.env.isTelemetryEnabled) {
     // Because we represent `extensionDevEnvironment` the same as the string that is
     // given to `--trace-endpoint`, we can just use it directly here.
-    cmdlineOpts.push(...["--trace", "--trace-endpoint", env.extensionDevEnvironment]);
+    cmdlineOpts.push(
+      ...["--trace", "--trace-endpoint", env.extensionDevEnvironment],
+    );
   }
 
   return cmdlineOpts;

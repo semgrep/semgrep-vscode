@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 
-import {
-  type ConfigurationChangeEvent,
-  type ExtensionContext,
-} from "vscode";
+import { type ConfigurationChangeEvent, type ExtensionContext } from "vscode";
 import { registerCommands } from "./commands";
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { Environment } from "./env";
@@ -118,8 +115,7 @@ export async function activate(
   const env: Environment = await createOrUpdateEnvironment(context);
   initTelemetry(env);
 
-  await
-    withSpan("activateLsp", {}, async () => activateLsp(env));
+  await withSpan("activateLsp", {}, async () => activateLsp(env));
   await afterClientStart(context, env);
   return env;
 }

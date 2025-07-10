@@ -54,7 +54,7 @@ const tracer = trace.getTracer("semgrep-vscode");
 // Some globals which let us maintain a "top-level span" so we can
 // nest our spans underneath a common parent.
 // See the large comment near `RootContextManager` for more details.
-export const topLevelSpan : api.Span | null = null;
+export const topLevelSpan: api.Span | null = null;
 
 /******************************************************************************/
 /* Helpers */
@@ -163,9 +163,7 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
-export function startTracing(
-  env: Environment,
-): void {
+export function startTracing(env: Environment): void {
   let endpoint: string;
 
   // Decide the endpoint based on the environment.
@@ -187,8 +185,9 @@ export function startTracing(
     traceExporter,
     resource: resourceFromAttributes({
       [SEMRESATTRS_SERVICE_NAME]: "semgrep-vscode",
-      [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]:
-        extensionEnvToTraceEnvironment(env.extensionDevEnvironment),
+      [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: extensionEnvToTraceEnvironment(
+        env.extensionDevEnvironment,
+      ),
       ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
       ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
       ["client.metrics"]: hasMetrics,
