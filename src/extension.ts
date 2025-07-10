@@ -12,13 +12,8 @@ import { ExtensionEnvironment, topLevelSpan, withSpan } from "./utilities/tracin
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
-import { trace, context as otelContext } from "@opentelemetry/api";
-import * as api from "@opentelemetry/api";
 
 export let global_env: Environment | null = null;
-
-// Step 2: Create a top-level span when your client starts
-const tracer = trace.getTracer('semgrep-vscode');
 
 async function initEnvironment(
   context: ExtensionContext,
@@ -135,15 +130,9 @@ export async function activate(
   const extensionEnvironment: ExtensionEnvironment = getExtensionMode(context);
   initTelemetry(extensionEnvironment, env);
 
-
-  // I can only link the spans properly if I say to run the context with the new span.
   await
     withSpan("activateLsp", {}, async () => activateLsp(env));
   await afterClientStart(context, env);
-
-  console.log("activate");
-
-  env.client?.clientOptions
 
   return env;
 }

@@ -8,11 +8,7 @@
       "runtimeExecutable": "${execPath}",
       "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
       "outFiles": ["${workspaceRoot}/out/**/*.js"],
-      "preLaunchTask": "watch",
-      "env": {
-        "OTEL_LOG_LEVEL": "debug",
-        "SEMGREP_DEV_ENVIRONMENT": "test"
-      }
+      "preLaunchTask": "watch"
     },
     {
       "type": "node",

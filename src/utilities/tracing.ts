@@ -166,9 +166,6 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
-<<<<<<< HEAD
-export function startTracing(env: Environment): void {
-=======
 function environmentToTraceEnvironment(
   environment: ExtensionEnvironment,
 ): string {
@@ -184,6 +181,32 @@ function environmentToTraceEnvironment(
   }
 }
 
+// I took this code from this GitHub thread:
+// https://github.com/open-telemetry/opentelemetry-js/issues/3558#issuecomment-2039249345
+//
+// Basically, the reason why this needs to exist is that in order
+// to get spans to nest with each other properly, we need to associate
+// each span to a context, then explicitly pass these contexts to
+// each span that we want to be a child of it.
+//
+// But, this is problematic, because we can only run a context when
+// we use the `context.with` function, which accepts a callback.
+//
+// Our language client is invoked via our `activate` and `deactivate` functions.
+// This means we have no first-party code which runs for the duration of the LSP.
+// This means we cannot just stick the entire application's code into a callback
+// and put it underneath the `context.with`.
+//
+// So somehow we have to ensure this top-level context is set-up at the language
+// client's start, and disposed of at the language client's end, while
+// only being able to run code from two distinct points.
+//
+// The solution ends up to be essentially monkeypatching the context manager,
+// and making sure that we have the ability to override the private
+// `_currentContext` field.
+// This code may be a little longer than is necessary, but gets the job done.
+// The overall effect is that `context.bind` becomes a way that we can
+// manually set the current context in a non-`with` way.
 export class RootContextManager extends StackContextManager {
     /**
      * If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
@@ -217,7 +240,6 @@ export function startTracing(
   env: Environment,
   environment: ExtensionEnvironment,
 ): void {
->>>>>>> 3885958 (init working nested spans)
   let endpoint: string;
 
   // Decide the endpoint based on the environment.
