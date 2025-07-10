@@ -21,6 +21,8 @@ function getExtensionDevEnv(mode: ExtensionMode): ExtensionEnvironment {
   if (process.env.SEMGREP_DEV_ENVIRONMENT) {
     const env = process.env.SEMGREP_DEV_ENVIRONMENT;
     switch (env) {
+      // The string is the same as the underlying representation of the
+      // `ExtensionEnvironment` type, but let's just keep the casing.
       case "semgrep-prod":
         return ExtensionEnvironment.Prod;
       case "semgrep-dev":

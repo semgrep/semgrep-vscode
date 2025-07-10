@@ -35,9 +35,9 @@ import {
 /******************************************************************************/
 
 export enum ExtensionEnvironment {
-  Prod = "prod",
-  Dev = "dev",
-  Local = "local",
+  Prod = "semgrep-prod",
+  Dev = "semgrep-dev",
+  Local = "semgrep-local",
 }
 
 /******************************************************************************/
@@ -72,18 +72,6 @@ function extensionEnvToTraceEnvironment(
       return "local";
     default:
       return "dev";
-  }
-}
-
-export function extensionEnvToCmdlineSemgrepTraceEndpoint(
-  extensionEnv: ExtensionEnvironment) : string {
-  switch (extensionEnv) {
-    case ExtensionEnvironment.Dev:
-      return "semgrep-dev";
-    case ExtensionEnvironment.Prod:
-      return "semgrep-prod";
-    case ExtensionEnvironment.Local:
-      return "semgrep-local";
   }
 }
 
@@ -173,21 +161,6 @@ export async function setupLanguageClientTracing(
   };
 
   env.logger.log("Patched language server with tracing.");
-}
-
-function environmentToTraceEnvironment(
-  environment: ExtensionEnvironment,
-): string {
-  switch (environment) {
-    case ExtensionEnvironment.Development:
-      return "dev";
-    case ExtensionEnvironment.Release:
-      return "prod";
-    case ExtensionEnvironment.Test:
-      return "dev";
-    default:
-      return "dev";
-  }
 }
 
 export function startTracing(
