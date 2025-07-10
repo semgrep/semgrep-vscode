@@ -24,7 +24,8 @@ export class Config {
   }
 
   get trace(): boolean {
-    return this.cfg.get<string>("trace.server") == "verbose";
+    const trace_setting = this.cfg.get<string>("trace.server");
+    return trace_setting == "verbose" || trace_setting == "messages";
   }
 
   get path(): string {
