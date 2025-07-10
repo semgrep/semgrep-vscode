@@ -8,12 +8,17 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import { withSpan } from "./utilities/tracing";
+import { ExtensionEnvironment, topLevelSpan, withSpan } from "./utilities/tracing";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
+import { trace, context as otelContext } from "@opentelemetry/api";
+import * as api from "@opentelemetry/api";
 
 export let global_env: Environment | null = null;
+
+// Step 2: Create a top-level span when your client starts
+const tracer = trace.getTracer('semgrep-vscode');
 
 async function initEnvironment(
   context: ExtensionContext,
@@ -109,16 +114,63 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   });
 }
 
-export async function activate(
+function getExtensionMode(context: ExtensionContext): ExtensionEnvironment {
+  if (process.env.SEMGREP_DEV_ENVIRONMENT) {
+    return process.env.SEMGREP_DEV_ENVIRONMENT as ExtensionEnvironment;
+  } else {
+    if (context.extensionMode === ExtensionMode.Production) {
+      return ExtensionEnvironment.Release;
+    } else if (context.extensionMode === ExtensionMode.Development) {
+      return ExtensionEnvironment.Development;
+    } else {
+      return ExtensionEnvironment.Test;
+    }
+  }
+}
+
+export async function activateInner(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
-  initTelemetry(env);
+  const extensionEnvironment: ExtensionEnvironment = getExtensionMode(context);
+  initTelemetry(extensionEnvironment, env);
+  // const ctx = trace.setSpan(
+  //   otelContext.active(),
+  //   parent,
+  // );
+  const topLevelSpan = tracer.startSpan('vscode-client', {
+    attributes: {
+      'client.name': 'VSCode Language Client',
+    }
+  });
+  // set span as global current span (if there is currently no current span)
+  const ctx = api.trace.setSpan(api.context.active(), topLevelSpan);
+  api.context.bind(ctx, null);
 
   await withSpan("activateLsp", {}, () => activateLsp(env));
   await afterClientStart(context, env);
+
+  console.log("activate");
+
+  env.client?.clientOptions
+
   return env;
 }
+
+export async function activate(
+  context: ExtensionContext,
+): Promise<Environment | undefined> {
+  const res = await Promise.any([activateInner(context)]);
+
+  if (res === null) {
+    console.log("nooo");
+    return undefined;
+  }
+  return res
+}
+
+otelContext.bind
+
 
 export async function deactivate(): Promise<void> {
   if (global_env) {
@@ -127,6 +179,8 @@ export async function deactivate(): Promise<void> {
     }
     await stopTelemetry(global_env);
   }
+  console.log("deactivate");
+  topLevelSpan?.end(); // End the top-level span when deactivating
   global_env?.dispose();
   global_env = null;
 }

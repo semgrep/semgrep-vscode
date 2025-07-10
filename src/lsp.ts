@@ -114,6 +114,7 @@ function semgrepCmdLineOpts(env: Environment): string[] {
     cmdlineOpts.push(...["--x-eio-ls"]);
   }
 
+<<<<<<< HEAD
   if (vscode.env.isTelemetryEnabled) {
     // Because we represent `extensionDevEnvironment` the same as the string that is
     // given to `--trace-endpoint`, we can just use it directly here.
@@ -121,6 +122,9 @@ function semgrepCmdLineOpts(env: Environment): string[] {
       ...["--trace", "--trace-endpoint", env.extensionDevEnvironment],
     );
   }
+=======
+  cmdlineOpts.push(...["--trace", "--trace-endpoint", "semgrep-local"])
+>>>>>>> 3885958 (init working nested spans)
 
   return cmdlineOpts;
 }

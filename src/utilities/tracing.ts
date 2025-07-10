@@ -7,6 +7,8 @@ import {
   SEMRESATTRS_SERVICE_NAME,
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from "@opentelemetry/semantic-conventions";
+import * as api from '@opentelemetry/api';
+import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { LanguageClient } from "vscode-languageclient/node";
 import {
@@ -16,6 +18,7 @@ import {
   RequestType0,
   type Connection,
 } from "vscode-languageserver";
+import { StackContextManager } from "@opentelemetry/sdk-trace-web";
 
 /******************************************************************************/
 /* Prelude */
@@ -50,6 +53,15 @@ const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces";
 const default_local_endpoint = "http://localhost:4318/v1/traces";
 
 const tracer = trace.getTracer("semgrep-vscode");
+
+export let topLevelSpan : api.Span | null = null;
+export let topLevelContext : api.Context = api.ROOT_CONTEXT;
+export function setTopLevelContext(context: api.Context): void {
+  topLevelContext = context;
+}
+export function setTopLevelSpan(span: api.Span): void {
+  topLevelSpan = span;
+}
 
 /******************************************************************************/
 /* Helpers */
@@ -158,7 +170,58 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
+<<<<<<< HEAD
 export function startTracing(env: Environment): void {
+=======
+function environmentToTraceEnvironment(
+  environment: ExtensionEnvironment,
+): string {
+  switch (environment) {
+    case ExtensionEnvironment.Development:
+      return "dev";
+    case ExtensionEnvironment.Release:
+      return "prod";
+    case ExtensionEnvironment.Test:
+      return "dev";
+    default:
+      return "dev";
+  }
+}
+
+export class RootContextManager extends StackContextManager {
+    /**
+     * If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
+     */
+    override active() : api.Context {
+        const span = api.trace.getSpan(this._currentContext);
+        // If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
+        if (span?.isRecording() === false) {
+            this._currentContext = api.ROOT_CONTEXT;
+        }
+        return super.active();
+    }
+
+    override bind<T>(context: api.Context, target: T): T {
+        const span = api.trace.getActiveSpan(); //getSpan(this._currentContext);
+        // only bind the context if there is no recording active span. First win, it can be only have one active span.
+        if (!span || !span.isRecording()) {
+            this._currentContext = context;
+        } else {
+            const activeSpanName = (span as any).name;
+            const newSpanName = (api.trace.getSpan(context) as any)?.name;
+            api.diag.info(
+                `There is already an open active span: '${activeSpanName}' -> '${newSpanName}' will not be used as parent span`
+            );
+        }
+        return super.bind(context, target);
+    }
+}
+
+export function startTracing(
+  env: Environment,
+  environment: ExtensionEnvironment,
+): void {
+>>>>>>> 3885958 (init working nested spans)
   let endpoint: string;
 
   // Decide the endpoint based on the environment.
@@ -201,6 +264,23 @@ export function startTracing(env: Environment): void {
     instrumentations: [getNodeAutoInstrumentations()],
   });
 
+
+  const contextManager = new RootContextManager();
+  contextManager.enable();
+  api.context.setGlobalContextManager(contextManager);
+
+  // Some magic so we can properly nest spans and stuff
+  const span = tracer.startSpan('vscode-client', {
+    attributes: {
+      'client.name': 'VSCode Language Client',
+    }
+  });
+  // set span as global current span (if there is currently no current span)
+  const ctx = api.trace.setSpan(api.context.active(), span);
+  api.context.bind(ctx, null);
+  topLevelContext = ctx;
+  topLevelSpan = span;
+
   sdk.start();
 
   env.sdk = sdk;
@@ -232,7 +312,9 @@ export async function withSpan<T>(
   const span = tracer.startSpan(name);
   span.setAttributes(attributes);
   try {
-    return await context.with(trace.setSpan(context.active(), span), f);
+    const currentContext = api.context.active();
+    // }
+    return await context.with(trace.setSpan(currentContext, span), f);
   } catch (err) {
     if (err instanceof Error) {
       span.recordException(err);
