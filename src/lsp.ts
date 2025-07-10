@@ -121,6 +121,7 @@ function semgrepCmdLineOpts(env: Environment): string[] {
     cmdlineOpts.push(
       ...["--trace", "--trace-endpoint", env.extensionDevEnvironment],
     );
+  }
 
   return cmdlineOpts;
 }
