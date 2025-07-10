@@ -51,11 +51,6 @@ const default_local_endpoint = "http://localhost:4318/v1/traces";
 
 const tracer = trace.getTracer("semgrep-vscode");
 
-// Some globals which let us maintain a "top-level span" so we can
-// nest our spans underneath a common parent.
-// See the large comment near `RootContextManager` for more details.
-export const topLevelSpan: api.Span | null = null;
-
 /******************************************************************************/
 /* Helpers */
 /******************************************************************************/
