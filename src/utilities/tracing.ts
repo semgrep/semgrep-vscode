@@ -7,7 +7,6 @@ import {
   SEMRESATTRS_SERVICE_NAME,
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from "@opentelemetry/semantic-conventions";
-import * as api from '@opentelemetry/api';
 import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { LanguageClient } from "vscode-languageclient/node";
@@ -58,25 +57,6 @@ const tracer = trace.getTracer("semgrep-vscode");
 // nest our spans underneath a common parent.
 // See the large comment near `RootContextManager` for more details.
 export let topLevelSpan : api.Span | null = null;
-
-/******************************************************************************/
-/* Helpers */
-/******************************************************************************/
-
-function environmentToTraceEnvironment(
-  environment: ExtensionEnvironment,
-): string {
-  switch (environment) {
-    case ExtensionEnvironment.Development:
-      return "dev";
-    case ExtensionEnvironment.Release:
-      return "prod";
-    case ExtensionEnvironment.Test:
-      return "dev";
-    default:
-      return "dev";
-  }
-}
 
 /******************************************************************************/
 /* Context management */
@@ -245,7 +225,6 @@ export async function setupLanguageClientTracing(
 
 export function startTracing(
   env: Environment,
-  environment: ExtensionEnvironment,
 ): void {
   let endpoint: string;
 
