@@ -25,7 +25,7 @@ import {
 } from "./constants";
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
-import { setupLanguageClientTracing } from "./utilities/tracing";
+import { extensionEnvToCmdlineSemgrepTraceEndpoint, setupLanguageClientTracing} from "./utilities/tracing";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -112,6 +112,13 @@ function semgrepCmdLineOpts(env: Environment): string[] {
 
   if (env.config.cfg.get("useExperimentalLS")) {
     cmdlineOpts.push(...["--x-eio-ls"]);
+  }
+
+  if (vscode.env.isTelemetryEnabled) {
+    const cmdlineTraceEndpoint = extensionEnvToCmdlineSemgrepTraceEndpoint(
+      env.extensionDevEnvironment,
+    );
+    cmdlineOpts.push(...["--trace", "--trace-endpoint", cmdlineTraceEndpoint])
   }
 
   return cmdlineOpts;

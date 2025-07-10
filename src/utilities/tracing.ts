@@ -1,4 +1,4 @@
-import { NodeSDK } from "@opentelemetry/sdk-node";
+import { api, NodeSDK } from "@opentelemetry/sdk-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { Environment } from "../env";
@@ -35,9 +35,9 @@ import {
 /******************************************************************************/
 
 export enum ExtensionEnvironment {
-  Release = "release",
-  Development = "development",
-  Test = "test",
+  Prod = "prod",
+  Dev = "dev",
+  Local = "local",
 }
 
 /******************************************************************************/
@@ -50,6 +50,42 @@ const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces";
 const default_local_endpoint = "http://localhost:4318/v1/traces";
 
 const tracer = trace.getTracer("semgrep-vscode");
+
+// Some globals which let us maintain a "top-level span" so we can
+// nest our spans underneath a common parent.
+// See the large comment near `RootContextManager` for more details.
+export const topLevelSpan : api.Span | null = null;
+
+/******************************************************************************/
+/* Helpers */
+/******************************************************************************/
+
+function extensionEnvToTraceEnvironment(
+  extensionEnv: ExtensionEnvironment,
+): string {
+  switch (extensionEnv) {
+    case ExtensionEnvironment.Dev:
+      return "dev";
+    case ExtensionEnvironment.Prod:
+      return "prod";
+    case ExtensionEnvironment.Local:
+      return "local";
+    default:
+      return "dev";
+  }
+}
+
+export function extensionEnvToCmdlineSemgrepTraceEndpoint(
+  extensionEnv: ExtensionEnvironment) : string {
+  switch (extensionEnv) {
+    case ExtensionEnvironment.Dev:
+      return "semgrep-dev";
+    case ExtensionEnvironment.Prod:
+      return "semgrep-prod";
+    case ExtensionEnvironment.Local:
+      return "semgrep-local";
+  }
+}
 
 /******************************************************************************/
 /* Setup */
@@ -156,12 +192,13 @@ function environmentToTraceEnvironment(
 
 export function startTracing(
   env: Environment,
-  environment: ExtensionEnvironment,
 ): void {
   let endpoint: string;
-  if (environment === ExtensionEnvironment.Development) {
+
+  // Decide the endpoint based on the environment.
+  if (env.extensionDevEnvironment === ExtensionEnvironment.Dev) {
     endpoint = default_dev_endpoint;
-  } else if (environment === ExtensionEnvironment.Release) {
+  } else if (env.extensionDevEnvironment === ExtensionEnvironment.Prod) {
     endpoint = default_trace_endpoint;
   } else {
     endpoint = default_local_endpoint;
@@ -178,7 +215,7 @@ export function startTracing(
     resource: resourceFromAttributes({
       [SEMRESATTRS_SERVICE_NAME]: "semgrep-vscode",
       [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]:
-        environmentToTraceEnvironment(environment),
+        extensionEnvToTraceEnvironment(env.extensionDevEnvironment),
       ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
       ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
       ["client.metrics"]: hasMetrics,

@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 
 import {
-  ExtensionMode,
   type ConfigurationChangeEvent,
   type ExtensionContext,
 } from "vscode";
@@ -12,7 +11,7 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import { ExtensionEnvironment, withSpan } from "./utilities/tracing";
+import { withSpan } from "./utilities/tracing";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
@@ -113,27 +112,14 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   });
 }
 
-function getExtensionMode(context: ExtensionContext): ExtensionEnvironment {
-  if (process.env.SEMGREP_DEV_ENVIRONMENT) {
-    return process.env.SEMGREP_DEV_ENVIRONMENT as ExtensionEnvironment;
-  } else {
-    if (context.extensionMode === ExtensionMode.Production) {
-      return ExtensionEnvironment.Release;
-    } else if (context.extensionMode === ExtensionMode.Development) {
-      return ExtensionEnvironment.Development;
-    } else {
-      return ExtensionEnvironment.Test;
-    }
-  }
-}
-
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
   const env: Environment = await createOrUpdateEnvironment(context);
-  const extensionEnvironment: ExtensionEnvironment = getExtensionMode(context);
-  initTelemetry(extensionEnvironment, env);
-  await withSpan("activateLsp", {}, () => activateLsp(env));
+  initTelemetry(env);
+
+  await
+    withSpan("activateLsp", {}, async () => activateLsp(env));
   await afterClientStart(context, env);
   return env;
 }

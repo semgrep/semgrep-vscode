@@ -3,6 +3,7 @@ import { EventEmitter } from "node:stream";
 import * as vscode from "vscode";
 import {
   type ExtensionContext,
+  ExtensionMode,
   type OutputChannel,
   type WorkspaceConfiguration,
   window,
@@ -14,6 +15,35 @@ import { SemgrepDocumentProvider } from "./showAstDocument";
 import { Logger } from "./utils";
 import type { SemgrepSearchWebviewProvider } from "./views/webview";
 import { NodeSDK } from "@opentelemetry/sdk-node";
+import { ExtensionEnvironment } from "./utilities/tracing";
+
+function getExtensionDevEnv(mode: ExtensionMode): ExtensionEnvironment {
+  if (process.env.SEMGREP_DEV_ENVIRONMENT) {
+    const env = process.env.SEMGREP_DEV_ENVIRONMENT;
+    switch (env) {
+      case "semgrep-prod":
+        return ExtensionEnvironment.Prod;
+      case "semgrep-dev":
+        return ExtensionEnvironment.Dev;
+      case "semgrep-local":
+        return ExtensionEnvironment.Local;
+    }
+    throw new Error(
+      `Unknown SEMGREP_DEV_ENVIRONMENT value: ${env}, need 'semgrep-local', 'semgrep-dev' or 'semgrep-prod'`,
+    );
+  }
+    // If there is no env variable, use the mode to determine the environment.
+    switch (mode) {
+      case ExtensionMode.Development:
+        return ExtensionEnvironment.Dev;
+      case ExtensionMode.Production:
+        return ExtensionEnvironment.Prod;
+      // Importantly, test mode is the dev environment still.
+      case ExtensionMode.Test:
+        return ExtensionEnvironment.Dev;
+    }
+}
+
 
 export class Config {
   get cfg(): WorkspaceConfiguration {
@@ -57,6 +87,14 @@ export class Environment {
   // Set in the `startTracing` function in `tracing.ts`.
   public sdk: NodeSDK | null = null;
 
+  // `extensionDevEnvironment` is the environment that the extension wants to
+  // report its traces in. This can be configured by setting the
+  // SEMGREP_DEV_ENVIRONMENT environment variable to one of
+  // 'semgrep-local', 'semgrep-dev', or 'semgrep-prod', or falls back to being
+  // derived from the extension mode, which is the mode of the VS Code extension
+  // itself.
+  public extensionDevEnvironment: ExtensionEnvironment = ExtensionEnvironment.Prod;
+
   private _client: LanguageClient | null = null;
   private _provider: SemgrepSearchWebviewProvider | null = null;
   private constructor(
@@ -67,7 +105,9 @@ export class Environment {
     public config: Config,
     // rulesRefreshedEmitter is used to notify if rules are refreshed, i.e. after startup, a login, or a manual refresh
     private rulesRefreshedEmitter: EventEmitter = new EventEmitter(),
-  ) {}
+  ) {
+    this.extensionDevEnvironment = getExtensionDevEnv(context.extensionMode);
+  }
 
   loginEvent?: vscode.EventEmitter<void> = undefined;
 
