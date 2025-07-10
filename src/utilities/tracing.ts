@@ -270,9 +270,18 @@ export function startTracing(
   env.sdk = sdk;
 
   env.logger.log(`Tracing initialized to ${endpoint}`);
+
+  // We need to start this span stuff after the SDK is started,
+  // or spans won't nest properly. I'm not sure why.
+  const topLevelSpan = tracer.startSpan('vscode-client');
+  // set span as global current span (if there is currently no current span)
+  const ctx = api.trace.setSpan(api.context.active(), topLevelSpan);
+  api.context.bind(ctx, null);
 }
 
 export async function stopTracing(sdk: NodeSDK): Promise<void> {
+  topLevelSpan?.end(); // End the top-level span
+
   await sdk.shutdown();
 }
 

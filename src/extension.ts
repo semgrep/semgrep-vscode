@@ -135,11 +135,6 @@ export async function activate(
   const extensionEnvironment: ExtensionEnvironment = getExtensionMode(context);
   initTelemetry(extensionEnvironment, env);
 
-  const topLevelSpan = tracer.startSpan('vscode-client');
-  // set span as global current span (if there is currently no current span)
-  const ctx = api.trace.setSpan(api.context.active(), topLevelSpan);
-
-  api.context.bind(ctx, null);
 
   // I can only link the spans properly if I say to run the context with the new span.
   await
@@ -156,7 +151,6 @@ export async function activate(
 export async function deactivate(): Promise<void> {
   console.log("deactivate");
   if (global_env) {
-    topLevelSpan?.end(); // End the top-level span when deactivating
     await stopTelemetry(global_env);
 
     if (global_env.client) {
