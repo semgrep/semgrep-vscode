@@ -138,7 +138,6 @@ export async function activate(
 }
 
 export async function deactivate(): Promise<void> {
-  console.log("deactivate");
   if (global_env) {
     await stopTelemetry(global_env);
 

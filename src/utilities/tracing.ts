@@ -54,9 +54,90 @@ const default_local_endpoint = "http://localhost:4318/v1/traces";
 
 const tracer = trace.getTracer("semgrep-vscode");
 
+// Some globals which let us maintain a "top-level span" so we can
+// nest our spans underneath a common parent.
+// See the large comment near `RootContextManager` for more details.
 export let topLevelSpan : api.Span | null = null;
+
+/******************************************************************************/
+/* Helpers */
+/******************************************************************************/
+
 export function setTopLevelSpan(span: api.Span): void {
   topLevelSpan = span;
+}
+
+function environmentToTraceEnvironment(
+  environment: ExtensionEnvironment,
+): string {
+  switch (environment) {
+    case ExtensionEnvironment.Development:
+      return "dev";
+    case ExtensionEnvironment.Release:
+      return "prod";
+    case ExtensionEnvironment.Test:
+      return "dev";
+    default:
+      return "dev";
+  }
+}
+
+/******************************************************************************/
+/* Context management */
+/******************************************************************************/
+// I took this code from this GitHub thread:
+// https://github.com/open-telemetry/opentelemetry-js/issues/3558#issuecomment-2039249345
+//
+// Basically, the reason why this needs to exist is that in order
+// to get spans to nest with each other properly, we need to associate
+// each span to a context, then explicitly pass these contexts to
+// each span that we want to be a child of it.
+//
+// But, this is problematic, because we can only run a context when
+// we use the `context.with` function, which accepts a callback.
+//
+// Our language client is invoked via our `activate` and `deactivate` functions.
+// This means we have no first-party code which runs for the duration of the LSP.
+// This means we cannot just stick the entire application's code into a callback
+// and put it underneath the `context.with`.
+//
+// So somehow we have to ensure this top-level context is set-up at the language
+// client's start, and disposed of at the language client's end, while
+// only being able to run code from two distinct points.
+//
+// The solution ends up to be essentially monkeypatching the context manager,
+// and making sure that we have the ability to override the private
+// `_currentContext` field.
+// This code may be a little longer than is necessary, but gets the job done.
+// The overall effect is that `context.bind` becomes a way that we can
+// manually set the current context in a non-`with` way.
+export class RootContextManager extends StackContextManager {
+    /**
+     * If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
+     */
+    override active() : api.Context {
+        const span = api.trace.getSpan(this._currentContext);
+        // If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
+        if (span?.isRecording() === false) {
+            this._currentContext = api.ROOT_CONTEXT;
+        }
+        return super.active();
+    }
+
+    override bind<T>(context: api.Context, target: T): T {
+        const span = api.trace.getActiveSpan(); //getSpan(this._currentContext);
+        // only bind the context if there is no recording active span. First win, it can be only have one active span.
+        if (!span || !span.isRecording()) {
+            this._currentContext = context;
+        } else {
+            const activeSpanName = (span as any).name;
+            const newSpanName = (api.trace.getSpan(context) as any)?.name;
+            api.diag.info(
+                `There is already an open active span: '${activeSpanName}' -> '${newSpanName}' will not be used as parent span`
+            );
+        }
+        return super.bind(context, target);
+    }
 }
 
 /******************************************************************************/
@@ -166,76 +247,6 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
-function environmentToTraceEnvironment(
-  environment: ExtensionEnvironment,
-): string {
-  switch (environment) {
-    case ExtensionEnvironment.Development:
-      return "dev";
-    case ExtensionEnvironment.Release:
-      return "prod";
-    case ExtensionEnvironment.Test:
-      return "dev";
-    default:
-      return "dev";
-  }
-}
-
-// I took this code from this GitHub thread:
-// https://github.com/open-telemetry/opentelemetry-js/issues/3558#issuecomment-2039249345
-//
-// Basically, the reason why this needs to exist is that in order
-// to get spans to nest with each other properly, we need to associate
-// each span to a context, then explicitly pass these contexts to
-// each span that we want to be a child of it.
-//
-// But, this is problematic, because we can only run a context when
-// we use the `context.with` function, which accepts a callback.
-//
-// Our language client is invoked via our `activate` and `deactivate` functions.
-// This means we have no first-party code which runs for the duration of the LSP.
-// This means we cannot just stick the entire application's code into a callback
-// and put it underneath the `context.with`.
-//
-// So somehow we have to ensure this top-level context is set-up at the language
-// client's start, and disposed of at the language client's end, while
-// only being able to run code from two distinct points.
-//
-// The solution ends up to be essentially monkeypatching the context manager,
-// and making sure that we have the ability to override the private
-// `_currentContext` field.
-// This code may be a little longer than is necessary, but gets the job done.
-// The overall effect is that `context.bind` becomes a way that we can
-// manually set the current context in a non-`with` way.
-export class RootContextManager extends StackContextManager {
-    /**
-     * If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
-     */
-    override active() : api.Context {
-        const span = api.trace.getSpan(this._currentContext);
-        // If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
-        if (span?.isRecording() === false) {
-            this._currentContext = api.ROOT_CONTEXT;
-        }
-        return super.active();
-    }
-
-    override bind<T>(context: api.Context, target: T): T {
-        const span = api.trace.getActiveSpan(); //getSpan(this._currentContext);
-        // only bind the context if there is no recording active span. First win, it can be only have one active span.
-        if (!span || !span.isRecording()) {
-            this._currentContext = context;
-        } else {
-            const activeSpanName = (span as any).name;
-            const newSpanName = (api.trace.getSpan(context) as any)?.name;
-            api.diag.info(
-                `There is already an open active span: '${activeSpanName}' -> '${newSpanName}' will not be used as parent span`
-            );
-        }
-        return super.bind(context, target);
-    }
-}
-
 export function startTracing(
   env: Environment,
   environment: ExtensionEnvironment,
@@ -283,15 +294,17 @@ export function startTracing(
   });
 
 
-  const contextManager = new RootContextManager();
-  contextManager.enable();
-  api.context.setGlobalContextManager(contextManager);
-
   sdk.start();
 
   env.sdk = sdk;
 
   env.logger.log(`Tracing initialized to ${endpoint}`);
+
+  // See the large comment near `RootContextManager` for more details
+  // on why we need all the stuff below.
+  const contextManager = new RootContextManager();
+  contextManager.enable();
+  api.context.setGlobalContextManager(contextManager);
 
   // We need to start this span stuff after the SDK is started,
   // or spans won't nest properly. I'm not sure why.
