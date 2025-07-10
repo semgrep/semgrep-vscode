@@ -63,10 +63,6 @@ export let topLevelSpan : api.Span | null = null;
 /* Helpers */
 /******************************************************************************/
 
-export function setTopLevelSpan(span: api.Span): void {
-  topLevelSpan = span;
-}
-
 function environmentToTraceEnvironment(
   environment: ExtensionEnvironment,
 ): string {
@@ -293,25 +289,31 @@ export function startTracing(
     instrumentations: [getNodeAutoInstrumentations()],
   });
 
-
-  sdk.start();
-
-  env.sdk = sdk;
-
-  env.logger.log(`Tracing initialized to ${endpoint}`);
-
+  // For reasons that are unclear to me, we need the context manager
+  // set before the SDK is started, but the top level span stuff
+  // after the SDK is started.
+  // I'm sure my therapist will love hearing about this in 15 years.
+  //
   // See the large comment near `RootContextManager` for more details
   // on why we need all the stuff below.
   const contextManager = new RootContextManager();
   contextManager.enable();
   api.context.setGlobalContextManager(contextManager);
 
+  sdk.start();
+
+  env.sdk = sdk;
+
   // We need to start this span stuff after the SDK is started,
   // or spans won't nest properly. I'm not sure why.
-  const topLevelSpan = tracer.startSpan('vscode-client');
+  const span = tracer.startSpan('vscode-client');
   // set span as global current span (if there is currently no current span)
-  const ctx = api.trace.setSpan(api.context.active(), topLevelSpan);
+  const ctx = api.trace.setSpan(api.context.active(), span);
+  topLevelSpan = span;
   api.context.bind(ctx, null);
+
+  env.logger.log(`Tracing initialized to ${endpoint}`);
+  env.logger.log(`Tracing initialized with span ID: ${span.spanContext().spanId} and trace ID: ${span.spanContext().traceId}`);
 }
 
 export async function stopTracing(sdk: NodeSDK): Promise<void> {
