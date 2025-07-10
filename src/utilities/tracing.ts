@@ -327,9 +327,7 @@ export async function withSpan<T>(
   const span = tracer.startSpan(name);
   span.setAttributes(attributes);
   try {
-    const currentContext = api.context.active();
-    // }
-    return await context.with(trace.setSpan(currentContext, span), f);
+    return await context.with(trace.setSpan(api.context.active(), span), f);
   } catch (err) {
     if (err instanceof Error) {
       span.recordException(err);
