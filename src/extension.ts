@@ -115,7 +115,7 @@ export async function activate(
   const env: Environment = await createOrUpdateEnvironment(context);
   initTelemetry(env);
 
-  await withSpan("activateLsp", {}, async () => activateLsp(env));
+  await withSpan("activateLsp", {}, () => activateLsp(env));
   await afterClientStart(context, env);
   return env;
 }
