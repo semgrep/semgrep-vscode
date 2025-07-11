@@ -114,13 +114,13 @@ function semgrepCmdLineOpts(env: Environment): string[] {
     cmdlineOpts.push(...["--x-eio-ls"]);
   }
 
-  if (vscode.env.isTelemetryEnabled) {
-    // Because we represent `extensionDevEnvironment` the same as the string that is
-    // given to `--trace-endpoint`, we can just use it directly here.
-    cmdlineOpts.push(
-      ...["--trace", "--trace-endpoint", env.extensionDevEnvironment],
-    );
-  }
+  // if (vscode.env.isTelemetryEnabled) {
+  //   // Because we represent `extensionDevEnvironment` the same as the string that is
+  //   // given to `--trace-endpoint`, we can just use it directly here.
+  //   cmdlineOpts.push(
+  //     ...["--trace", "--trace-endpoint", env.extensionDevEnvironment],
+  //   );
+  // }
 
   return cmdlineOpts;
 }
