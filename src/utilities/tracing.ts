@@ -283,12 +283,11 @@ export function startTracing(
 
   env.sdk = sdk;
 
-  // We need to start this span stuff after the SDK is started,
-  // or spans won't nest properly. I'm not sure why.
+  // Spawn the top-level span and context.
+  // Important: We bind it here to activate the logic we added in `RootContextManager`.
   const span = tracer.startSpan('vscode-client');
-  // set span as global current span (if there is currently no current span)
-  const ctx = api.trace.setSpan(api.context.active(), span);
   topLevelSpan = span;
+  const ctx = api.trace.setSpan(api.context.active(), span);
   api.context.bind(ctx, null);
 
   env.logger.log(`Tracing initialized to ${endpoint}`);
