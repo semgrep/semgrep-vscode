@@ -8,7 +8,11 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import { ExtensionEnvironment, topLevelSpan, withSpan } from "./utilities/tracing";
+import {
+  ExtensionEnvironment,
+  topLevelSpan,
+  withSpan,
+} from "./utilities/tracing";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
@@ -115,8 +119,7 @@ export async function activate(
   const env: Environment = await createOrUpdateEnvironment(context);
   initTelemetry(env);
 
-  await
-    withSpan("activateLsp", {}, async () => activateLsp(env));
+  await withSpan("activateLsp", {}, async () => activateLsp(env));
   await afterClientStart(context, env);
 
   return env;

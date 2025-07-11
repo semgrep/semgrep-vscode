@@ -7,7 +7,7 @@ import {
   SEMRESATTRS_SERVICE_NAME,
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from "@opentelemetry/semantic-conventions";
-import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
+import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import { LanguageClient } from "vscode-languageclient/node";
 import {
@@ -56,7 +56,7 @@ const tracer = trace.getTracer("semgrep-vscode");
 // Some globals which let us maintain a "top-level span" so we can
 // nest our spans underneath a common parent.
 // See the large comment near `RootContextManager` for more details.
-export let topLevelSpan : api.Span | null = null;
+export let topLevelSpan: api.Span | null = null;
 
 /******************************************************************************/
 /* Context management */
@@ -88,32 +88,32 @@ export let topLevelSpan : api.Span | null = null;
 // The overall effect is that `context.bind` becomes a way that we can
 // manually set the current context in a non-`with` way.
 export class RootContextManager extends StackContextManager {
-    /**
-     * If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
-     */
-    override active() : api.Context {
-        const span = api.trace.getSpan(this._currentContext);
-        // If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
-        if (span?.isRecording() === false) {
-            this._currentContext = api.ROOT_CONTEXT;
-        }
-        return super.active();
+  /**
+   * If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
+   */
+  override active(): api.Context {
+    const span = api.trace.getSpan(this._currentContext);
+    // If the current span is terminated (span.end() was called), reset the context to ROOT_CONTEXT
+    if (span?.isRecording() === false) {
+      this._currentContext = api.ROOT_CONTEXT;
     }
+    return super.active();
+  }
 
-    override bind<T>(context: api.Context, target: T): T {
-        const span = api.trace.getActiveSpan(); //getSpan(this._currentContext);
-        // only bind the context if there is no recording active span. First win, it can be only have one active span.
-        if (!span || !span.isRecording()) {
-            this._currentContext = context;
-        } else {
-            const activeSpanName = (span as any).name;
-            const newSpanName = (api.trace.getSpan(context) as any)?.name;
-            api.diag.info(
-                `There is already an open active span: '${activeSpanName}' -> '${newSpanName}' will not be used as parent span`
-            );
-        }
-        return super.bind(context, target);
+  override bind<T>(context: api.Context, target: T): T {
+    const span = api.trace.getActiveSpan(); //getSpan(this._currentContext);
+    // only bind the context if there is no recording active span. First win, it can be only have one active span.
+    if (!span || !span.isRecording()) {
+      this._currentContext = context;
+    } else {
+      const activeSpanName = (span as any).name;
+      const newSpanName = (api.trace.getSpan(context) as any)?.name;
+      api.diag.info(
+        `There is already an open active span: '${activeSpanName}' -> '${newSpanName}' will not be used as parent span`,
+      );
     }
+    return super.bind(context, target);
+  }
 }
 
 /******************************************************************************/
@@ -223,9 +223,7 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
-export function startTracing(
-  env: Environment,
-): void {
+export function startTracing(env: Environment): void {
   let endpoint: string;
 
   // Decide the endpoint based on the environment.
@@ -285,13 +283,15 @@ export function startTracing(
 
   // Spawn the top-level span and context.
   // Important: We bind it here to activate the logic we added in `RootContextManager`.
-  const span = tracer.startSpan('vscode-client');
+  const span = tracer.startSpan("vscode-client");
   topLevelSpan = span;
   const ctx = api.trace.setSpan(api.context.active(), span);
   api.context.bind(ctx, null);
 
   env.logger.log(`Tracing initialized to ${endpoint}`);
-  env.logger.log(`Tracing initialized with span ID: ${span.spanContext().spanId} and trace ID: ${span.spanContext().traceId}`);
+  env.logger.log(
+    `Tracing initialized with span ID: ${span.spanContext().spanId} and trace ID: ${span.spanContext().traceId}`,
+  );
 }
 
 export async function stopTracing(sdk: NodeSDK): Promise<void> {

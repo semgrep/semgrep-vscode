@@ -143,9 +143,10 @@ async function serverOptionsCli(
   const cmdlineOpts = semgrepCmdLineOpts(env);
   server.args = cmdlineOpts;
 
-  const options: ExecutableOptions = {}
+  const options: ExecutableOptions = {};
   if (topLevelSpan) {
-    options.env = { ...process.env,
+    options.env = {
+      ...process.env,
       SEMGREP_TRACE_PARENT_SPAN_ID: topLevelSpan.spanContext().spanId,
       SEMGREP_TRACE_PARENT_TRACE_ID: topLevelSpan.spanContext().traceId,
     };
