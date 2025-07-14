@@ -26,7 +26,7 @@ export interface LoginStartResponse {
 }
 
 export interface LoginStatusResponse {
-  loggedIn: boolean;
+  deploymentName: string | null;
 }
 
 // These are the parameters sent from the webview to the extnesion, which

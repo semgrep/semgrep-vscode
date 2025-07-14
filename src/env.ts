@@ -71,16 +71,20 @@ export class Environment {
 
   loginEvent?: vscode.EventEmitter<void> = undefined;
 
-  get loggedIn(): boolean {
-    return this.context.globalState.get("loggedIn", false);
+  get deploymentName(): string | null {
+    return this.context.globalState.get("deploymentName", null);
   }
 
-  set loggedIn(val: boolean) {
-    vscode.commands.executeCommand("setContext", "semgrep.loggedIn", val);
+  set deploymentName(val: string | null) {
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.loggedIn",
+      val !== null,
+    );
     if (this.loginEvent) {
       this.loginEvent.fire();
     }
-    this.context.globalState.update("loggedIn", val);
+    this.context.globalState.update("deploymentName", val);
   }
 
   get showNudges(): boolean {

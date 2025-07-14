@@ -127,6 +127,8 @@ function getExtensionMode(context: ExtensionContext): ExtensionEnvironment {
   }
 }
 
+// Automatically invoked by VS Code's extension API
+// https://code.visualstudio.com/api/get-started/extension-anatomy#extension-entry-file
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
