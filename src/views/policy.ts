@@ -36,7 +36,7 @@ export class SemgrepPolicyViewProvider
       // Show org policy if logged in
       if (this.env.deploymentName) {
         const loginStatus = new PolicyItem(
-          `Using ${this.env.deploymentName}'s policy`,
+          `Using deployment (${this.env.deploymentName})'s policy`,
           vscode.TreeItemCollapsibleState.None,
         );
         loginStatus.iconPath = new vscode.ThemeIcon("cloud-download");
