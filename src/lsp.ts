@@ -115,7 +115,7 @@ function semgrepCmdLineOpts(env: Environment): string[] {
     cmdlineOpts.push(...["--x-eio-ls"]);
   }
 
-  if (vscode.env.isTelemetryEnabled) {
+  if (vscode.env.isTelemetryEnabled && (env.config.get("metrics") ?? false)) {
     // Because we represent `extensionDevEnvironment` the same as the string that is
     // given to `--trace-endpoint`, we can just use it directly here.
     cmdlineOpts.push(
