@@ -241,23 +241,31 @@ export function startTracing(env: Environment): void {
 
   const hasMetrics: boolean | undefined = env.config.cfg.get("metrics");
 
+  const attributes: Attributes = {
+    [SEMRESATTRS_SERVICE_NAME]: "semgrep-vscode",
+    [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: extensionEnvToTraceEnvironment(
+      env.extensionDevEnvironment,
+    ),
+    ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
+    ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
+    ["client.metrics"]: hasMetrics,
+    // Not exactly the same as the auto-collected OpenTelemetry
+    // resources, so don't rely on exact correctness.
+    // But, these are useful and good to collect.
+    ["arch"]: process.arch,
+    ["process.runtime.name"]: "node",
+    ["process.runtime.version"]: process.versions.node,
+    ["trace_id"]: topLevelSpan?.spanContext().traceId,
+  };
+
+  // We want this so that we can correlate logs in Datadog with reported trace IDs.
+  if (topLevelSpan) {
+    attributes["trace_id"] = topLevelSpan.spanContext().traceId;
+  }
+
   const sdk = new NodeSDK({
     traceExporter,
-    resource: resourceFromAttributes({
-      [SEMRESATTRS_SERVICE_NAME]: "semgrep-vscode",
-      [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: extensionEnvToTraceEnvironment(
-        env.extensionDevEnvironment,
-      ),
-      ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
-      ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
-      ["client.metrics"]: hasMetrics,
-      // Not exactly the same as the auto-collected OpenTelemetry
-      // resources, so don't rely on exact correctness.
-      // But, these are useful and good to collect.
-      ["arch"]: process.arch,
-      ["process.runtime.name"]: "node",
-      ["process.runtime.version"]: process.versions.node,
-    }),
+    resource: resourceFromAttributes(attributes),
     // Don't auto-detect resources, this picks up things like IP addresses
     // and usernames, which we don't want to collect.
     // Because it does collect some useful things, we manually add
