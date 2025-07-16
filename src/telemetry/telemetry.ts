@@ -10,10 +10,9 @@ export function initTelemetry(
   extensionEnvironment: ExtensionEnvironment,
   env: Environment,
 ): void {
-  if (!vscode.env.isTelemetryEnabled) {
-    return;
+  if (env.config.cfg.get("metrics")) {
+    startTracing(env, extensionEnvironment);
   }
-  startTracing(env, extensionEnvironment);
 }
 
 export async function stopTelemetry(env: Environment): Promise<void> {

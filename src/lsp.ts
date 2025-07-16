@@ -158,7 +158,7 @@ async function lspOptions(
     sessionId: vscode.env.sessionId,
     extensionVersion: env.context.extension.packageJSON.version,
     extensionType: "vscode",
-    enabled: vscode.env.isTelemetryEnabled,
+    enabled: env.config.cfg.get("metrics") ?? false,
   };
   const initializationOptions = {
     ...env.config.cfg,
