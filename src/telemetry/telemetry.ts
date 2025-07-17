@@ -10,7 +10,7 @@ export function initTelemetry(
   extensionEnvironment: ExtensionEnvironment,
   env: Environment,
 ): void {
-  if (env.config.cfg.get("metrics")) {
+  if (env.hasTracingEnabled) {
     startTracing(env, extensionEnvironment);
   }
 }

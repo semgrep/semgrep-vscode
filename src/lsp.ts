@@ -158,7 +158,7 @@ async function lspOptions(
     sessionId: vscode.env.sessionId,
     extensionVersion: env.context.extension.packageJSON.version,
     extensionType: "vscode",
-    enabled: env.config.cfg.get("metrics") ?? false,
+    enabled: vscode.env.isTelemetryEnabled && env.hasTracingEnabled,
   };
   const initializationOptions = {
     ...env.config.cfg,
@@ -222,7 +222,7 @@ async function start(env: Environment): Promise<void> {
   // Start the client. This will also launch the server
   env.logger.log("Starting language client...");
 
-  if (env.config.get("metrics")) {
+  if (env.hasTracingEnabled) {
     // We instrument the language client with tracing so we can get
     // spans for the requests that it is making.
     // Because we monkeypatch several methods that it contains, we
