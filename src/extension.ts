@@ -112,6 +112,9 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
+  // We want to deregister any existing OpenTelemetry global state
+  // as soon as we can, when the language server is started.
+  // See the description of this function for more.
   deregisterExistingOtel();
 
   const env: Environment = await createOrUpdateEnvironment(context);
