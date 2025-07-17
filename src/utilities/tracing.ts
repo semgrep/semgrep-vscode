@@ -20,8 +20,6 @@ import {
 } from "vscode-languageserver";
 import { StackContextManager } from "@opentelemetry/sdk-trace-web";
 
-deregisterExistingOtel();
-
 /******************************************************************************/
 /* Prelude */
 /******************************************************************************/
@@ -53,8 +51,6 @@ export enum ExtensionEnvironment {
 const default_trace_endpoint = "https://telemetry.semgrep.dev/v1/traces";
 const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces";
 const default_local_endpoint = "http://localhost:4318/v1/traces";
-
-const tracer = trace.getTracer("semgrep-vscode");
 
 // Some globals which let us maintain a "top-level span" so we can
 // nest our spans underneath a common parent.
@@ -296,6 +292,8 @@ export function startTracing(env: Environment): void {
 
   env.sdk = sdk;
 
+  const tracer = trace.getTracer("semgrep-vscode");
+
   // Spawn the top-level span and context.
   // Important: We bind it here to activate the logic we added in `RootContextManager`.
   const span = tracer.startSpan("vscode-client");
@@ -332,6 +330,8 @@ export async function withSpan<T>(
   attributes: Record<string, any> = {},
   f: () => Promise<T>,
 ): Promise<T> {
+  const tracer = trace.getTracer("semgrep-vscode");
+
   const span = tracer.startSpan(name);
   span.setAttributes(attributes);
   try {

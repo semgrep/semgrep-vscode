@@ -8,7 +8,7 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import { withSpan } from "./utilities/tracing";
+import { deregisterExistingOtel, withSpan } from "./utilities/tracing";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
@@ -112,6 +112,8 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
+  deregisterExistingOtel();
+
   const env: Environment = await createOrUpdateEnvironment(context);
   initTelemetry(env);
 
