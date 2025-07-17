@@ -8,11 +8,7 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import {
-  ExtensionEnvironment,
-  topLevelSpan,
-  withSpan,
-} from "./utilities/tracing";
+import { withSpan } from "./utilities/tracing";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";

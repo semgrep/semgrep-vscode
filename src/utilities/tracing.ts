@@ -1,4 +1,5 @@
 import { api, NodeSDK } from "@opentelemetry/sdk-node";
+
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { Environment } from "../env";
@@ -18,6 +19,8 @@ import {
   type Connection,
 } from "vscode-languageserver";
 import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+
+deregisterExistingOtel();
 
 /******************************************************************************/
 /* Prelude */
@@ -57,6 +60,20 @@ const tracer = trace.getTracer("semgrep-vscode");
 // nest our spans underneath a common parent.
 // See the large comment near `RootContextManager` for more details.
 export let topLevelSpan: api.Span | null = null;
+
+export function deregisterExistingOtel(): void {
+  // Helps us avoid type errors.
+  const globalThis_any = globalThis as any;
+
+  // Warning! This will change if we upgrade to OpenTelemetry 2 or greater!
+  const otelSymbol = Symbol.for("opentelemetry.js.api.1");
+  const existing = globalThis_any[otelSymbol];
+
+  if (existing) {
+    console.log("Found existing OpenTelemetry instance, deregistering it");
+    globalThis_any[otelSymbol] = undefined;
+  }
+}
 
 /******************************************************************************/
 /* Context management */
@@ -272,18 +289,8 @@ export function startTracing(env: Environment): void {
     // them back up above.
     autoDetectResources: false,
     instrumentations: [getNodeAutoInstrumentations()],
+    contextManager: new RootContextManager(),
   });
-
-  // For reasons that are unclear to me, we need the context manager
-  // set before the SDK is started, but the top level span stuff
-  // after the SDK is started.
-  // I'm sure my therapist will love hearing about this in 15 years.
-  //
-  // See the large comment near `RootContextManager` for more details
-  // on why we need all the stuff below.
-  const contextManager = new RootContextManager();
-  contextManager.enable();
-  api.context.setGlobalContextManager(contextManager);
 
   sdk.start();
 
