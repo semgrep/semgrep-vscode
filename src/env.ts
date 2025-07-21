@@ -98,6 +98,12 @@ export class Environment {
     this.context.globalState.update("newInstall", val);
   }
 
+  get hasTracingEnabled(): boolean {
+    return (
+      vscode.env.isTelemetryEnabled && (this.config.cfg.get("metrics") ?? false)
+    );
+  }
+
   set client(client: LanguageClient | null) {
     this._client = client;
   }
