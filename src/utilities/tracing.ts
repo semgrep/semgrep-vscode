@@ -84,6 +84,8 @@ export function deregisterExistingOtel(): void {
   const existing = globalThis_any[otelSymbol];
 
   if (existing) {
+    // Can't leave an `env.logger.log` because we did this super early on.
+    // nosem:
     console.log("Found existing OpenTelemetry instance, deregistering it");
     globalThis_any[otelSymbol] = undefined;
   }
