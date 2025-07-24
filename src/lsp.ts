@@ -5,6 +5,7 @@ import * as semver from "semver";
 import * as vscode from "vscode";
 import {
   type Executable,
+  ExecutableOptions,
   LanguageClient,
   type LanguageClientOptions,
   MessageType,
@@ -25,7 +26,7 @@ import {
 } from "./constants";
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
-import { setupLanguageClientTracing } from "./utilities/tracing";
+import { setupLanguageClientTracing, topLevelSpan } from "./utilities/tracing";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -114,7 +115,7 @@ function semgrepCmdLineOpts(env: Environment): string[] {
     cmdlineOpts.push(...["--x-eio-ls"]);
   }
 
-  if (vscode.env.isTelemetryEnabled) {
+  if (vscode.env.isTelemetryEnabled && (env.config.get("metrics") ?? false)) {
     // Because we represent `extensionDevEnvironment` the same as the string that is
     // given to `--trace-endpoint`, we can just use it directly here.
     cmdlineOpts.push(
@@ -141,11 +142,17 @@ async function serverOptionsCli(
   env.logger.log(`  ... cwd := ${cwd}`);
   const cmdlineOpts = semgrepCmdLineOpts(env);
   server.args = cmdlineOpts;
-  if (server.options) {
-    server.options.cwd = cwd;
-  }
 
-  const serverOptions: ServerOptions = server;
+  const options: ExecutableOptions = {};
+  if (topLevelSpan) {
+    options.env = {
+      ...process.env,
+      SEMGREP_TRACE_PARENT_SPAN_ID: topLevelSpan.spanContext().spanId,
+      SEMGREP_TRACE_PARENT_TRACE_ID: topLevelSpan.spanContext().traceId,
+    };
+  }
+  server.options = options;
+
   env.logger.log(
     `Semgrep LSP server configuration := ${JSON.stringify(server, null, 2)}`,
   );
@@ -154,7 +161,7 @@ async function serverOptionsCli(
       "The Semgrep Extension on Windows is experimental. Please report any issues here: https://github.com/semgrep/semgrep-vscode/issues",
     );
   }
-  return serverOptions;
+  return server;
 }
 
 async function lspOptions(
