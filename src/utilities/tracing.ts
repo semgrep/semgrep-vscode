@@ -1,4 +1,5 @@
 import { api, NodeSDK } from "@opentelemetry/sdk-node";
+
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { Environment } from "../env";
@@ -51,12 +52,44 @@ const default_trace_endpoint = "https://telemetry.semgrep.dev/v1/traces";
 const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces";
 const default_local_endpoint = "http://localhost:4318/v1/traces";
 
-const tracer = trace.getTracer("semgrep-vscode");
-
 // Some globals which let us maintain a "top-level span" so we can
 // nest our spans underneath a common parent.
 // See the large comment near `RootContextManager` for more details.
 export let topLevelSpan: api.Span | null = null;
+
+/**
+ * Deregisters any existing OpenTelemetry global state.
+ *
+ * This is important because we want to avoid any potential
+ * conflicts with other OpenTelemetry instances.
+ *
+ * For instance, Cursor ships with its own OpenTelemetry code and
+ * state, which will result in a conflict when we attempt to register
+ * our own (e.g. trace providers, context managers)
+ *
+ * This conflict ends up preventing our ability to sent OpenTelemetry
+ * spans whatsoever in Cursor.
+ */
+export function deregisterExistingOtel(): void {
+  // Helps us avoid type errors.
+  const globalThis_any = globalThis as any;
+
+  // Warning! This will change if we upgrade to OpenTelemetry 2 or greater!
+  // Why is this the solution?
+  // https://github.com/open-telemetry/opentelemetry-js/blob/cb42f7d511a1b54d12d32a6a6bdc6266d5569c1b/api/src/internal/global-utils.ts#L39
+  // Registration of OpenTelemetry globals is done via indexing into the
+  // globalThis with a particular symbol, derived from `opentelemetry.js.api.${major}`
+  // So to deregister, we just need to set those fields of globalThis back to undefined.
+  const otelSymbol = Symbol.for("opentelemetry.js.api.1");
+  const existing = globalThis_any[otelSymbol];
+
+  if (existing) {
+    // Can't leave an `env.logger.log` because we did this super early on.
+    // nosem:
+    console.log("Found existing OpenTelemetry instance, deregistering it");
+    globalThis_any[otelSymbol] = undefined;
+  }
+}
 
 /******************************************************************************/
 /* Context management */
@@ -272,22 +305,14 @@ export function startTracing(env: Environment): void {
     // them back up above.
     autoDetectResources: false,
     instrumentations: [getNodeAutoInstrumentations()],
+    contextManager: new RootContextManager(),
   });
-
-  // For reasons that are unclear to me, we need the context manager
-  // set before the SDK is started, but the top level span stuff
-  // after the SDK is started.
-  // I'm sure my therapist will love hearing about this in 15 years.
-  //
-  // See the large comment near `RootContextManager` for more details
-  // on why we need all the stuff below.
-  const contextManager = new RootContextManager();
-  contextManager.enable();
-  api.context.setGlobalContextManager(contextManager);
 
   sdk.start();
 
   env.sdk = sdk;
+
+  const tracer = trace.getTracer("semgrep-vscode");
 
   // Spawn the top-level span and context.
   // Important: We bind it here to activate the logic we added in `RootContextManager`.
@@ -325,6 +350,8 @@ export async function withSpan<T>(
   attributes: Record<string, any> = {},
   f: () => Promise<T>,
 ): Promise<T> {
+  const tracer = trace.getTracer("semgrep-vscode");
+
   const span = tracer.startSpan(name);
   span.setAttributes(attributes);
   try {
