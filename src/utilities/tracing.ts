@@ -35,9 +35,9 @@ import {
 /******************************************************************************/
 
 export enum ExtensionEnvironment {
-  Release = "release",
-  Development = "development",
-  Test = "test",
+  Prod = "semgrep-prod",
+  Dev = "semgrep-dev",
+  Local = "semgrep-local",
 }
 
 /******************************************************************************/
@@ -50,6 +50,25 @@ const default_dev_endpoint = "https://telemetry.dev2.semgrep.dev/v1/traces";
 const default_local_endpoint = "http://localhost:4318/v1/traces";
 
 const tracer = trace.getTracer("semgrep-vscode");
+
+/******************************************************************************/
+/* Helpers */
+/******************************************************************************/
+
+function extensionEnvToTraceEnvironment(
+  extensionEnv: ExtensionEnvironment,
+): string {
+  switch (extensionEnv) {
+    case ExtensionEnvironment.Dev:
+      return "dev";
+    case ExtensionEnvironment.Prod:
+      return "prod";
+    case ExtensionEnvironment.Local:
+      return "local";
+    default:
+      return "dev";
+  }
+}
 
 /******************************************************************************/
 /* Setup */
@@ -139,29 +158,13 @@ export async function setupLanguageClientTracing(
   env.logger.log("Patched language server with tracing.");
 }
 
-function environmentToTraceEnvironment(
-  environment: ExtensionEnvironment,
-): string {
-  switch (environment) {
-    case ExtensionEnvironment.Development:
-      return "dev";
-    case ExtensionEnvironment.Release:
-      return "prod";
-    case ExtensionEnvironment.Test:
-      return "dev";
-    default:
-      return "dev";
-  }
-}
-
-export function startTracing(
-  env: Environment,
-  environment: ExtensionEnvironment,
-): void {
+export function startTracing(env: Environment): void {
   let endpoint: string;
-  if (environment === ExtensionEnvironment.Development) {
+
+  // Decide the endpoint based on the environment.
+  if (env.extensionDevEnvironment === ExtensionEnvironment.Dev) {
     endpoint = default_dev_endpoint;
-  } else if (environment === ExtensionEnvironment.Release) {
+  } else if (env.extensionDevEnvironment === ExtensionEnvironment.Prod) {
     endpoint = default_trace_endpoint;
   } else {
     endpoint = default_local_endpoint;
@@ -177,8 +180,9 @@ export function startTracing(
     traceExporter,
     resource: resourceFromAttributes({
       [SEMRESATTRS_SERVICE_NAME]: "semgrep-vscode",
-      [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]:
-        environmentToTraceEnvironment(environment),
+      [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: extensionEnvToTraceEnvironment(
+        env.extensionDevEnvironment,
+      ),
       ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
       ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
       ["client.metrics"]: hasMetrics,
