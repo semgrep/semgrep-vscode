@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import type { Environment } from "../env";
 import { startTracing, stopTracing } from "../utilities/tracing";
 

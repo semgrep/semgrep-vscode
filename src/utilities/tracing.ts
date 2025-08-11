@@ -19,6 +19,7 @@ import {
   type Connection,
 } from "vscode-languageserver";
 import { StackContextManager } from "@opentelemetry/sdk-trace-web";
+import * as vscode from "vscode";
 
 /******************************************************************************/
 /* Prelude */
@@ -288,6 +289,7 @@ export function startTracing(env: Environment): void {
     ["arch"]: process.arch,
     ["process.runtime.name"]: "node",
     ["process.runtime.version"]: process.versions.node,
+    ["machine_id"]: vscode.env.machineId,
     ["trace_id"]: topLevelSpan?.spanContext().traceId,
   };
 
