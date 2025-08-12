@@ -102,12 +102,15 @@ export function registerCommands(env: Environment): Disposable[] {
     }),
 
     vscode.commands.registerCommand("semgrep.mcpSetup", async () => {
-      // For now, only set up MCP for Cursor
       const repoPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
       if (
+        // make sure the repo path is valid
         !repoPath ||
+        // For now, only set up MCP for Cursor
         vscode.env.uriScheme !== "cursor" ||
+        // and not if the user has already said no
         env.foldersWithNoMcpSetupNudges.includes(repoPath) ||
+        // and not if the user seems to have set it up already
         fs.existsSync(path.join(repoPath, ".cursor", "rules", "semgrep.mdc"))
       ) {
         return;
