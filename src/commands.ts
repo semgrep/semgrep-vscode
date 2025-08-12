@@ -16,6 +16,9 @@ import { handleSearch } from "./search";
 import { encodeUri } from "./showAstDocument";
 import { applyFixAndSave, isRealFileEditor, replaceAll } from "./utils";
 import type { ViewResults } from "./webviews/types/results";
+import { setupMcp } from "./mcp";
+import fs from "fs";
+import path from "node:path";
 
 /*****************************************************************************/
 /* Prelude */
@@ -95,6 +98,35 @@ export function registerCommands(env: Environment): Disposable[] {
         } else if (resp == "Do not show again") {
           env.showNudges = false;
         }
+      }
+    }),
+
+    vscode.commands.registerCommand("semgrep.mcpSetup", async () => {
+      // For now, only set up MCP for Cursor
+      const repoPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+      if (
+        !repoPath ||
+        vscode.env.uriScheme !== "cursor" ||
+        env.foldersWithNoMcpSetupNudges.includes(repoPath) ||
+        fs.existsSync(path.join(repoPath, ".cursor", "rules", "semgrep.mdc"))
+      ) {
+        return;
+      }
+      const resp = await vscode.window.showInformationMessage(
+        "Would you like to set up MCP scanning with Semgrep in this repository?",
+        "Yes",
+        "No",
+      );
+      if (resp == "Yes") {
+        // TODO: handle multi-workspace case?
+        if (repoPath) {
+          await setupMcp(repoPath);
+        }
+      } else if (resp == "No") {
+        env.foldersWithNoMcpSetupNudges = [
+          ...env.foldersWithNoMcpSetupNudges,
+          repoPath,
+        ];
       }
     }),
 
