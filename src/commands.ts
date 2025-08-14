@@ -116,16 +116,16 @@ export function registerCommands(env: Environment): Disposable[] {
         return;
       }
       const resp = await vscode.window.showInformationMessage(
-        "Would you like to set up MCP scanning with Semgrep in this repository?",
-        "Yes",
-        "No",
+        "Would you like to set up remote MCP scanning with Semgrep in this repository? [Learn more](https://mcp.semgrep.ai/)",
+        "Set up",
+        "Do not show again",
       );
-      if (resp == "Yes") {
+      if (resp == "Set up") {
         // TODO: handle multi-workspace case?
         if (repoPath) {
           await setupMcp(repoPath);
         }
-      } else if (resp == "No") {
+      } else if (resp == "Do not show again") {
         env.foldersWithNoMcpSetupNudges = [
           ...env.foldersWithNoMcpSetupNudges,
           repoPath,
