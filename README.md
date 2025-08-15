@@ -82,6 +82,7 @@ The following experimental features should only be used upon recommendation by S
 
 - **Semgrep > Ignore Cli Version**: Ignore the CLI Version and enable all extension features.
 - **Semgrep > Use experimental language server**: Use the new experimental language server
+- **Semgrep › Scan: Secrets**: Enable Secrets scanning using the Pro Engine.
 
 ## Commands
 
