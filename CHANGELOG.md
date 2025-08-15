@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The Policy menu now shows your deployment's name (if logged in)
 
+## 1.13.0 - 2025-07-28
+
+### Fixed
+
+- Fixed bug preventing OpenTelemetry traces from being sent from Cursor users
+
 ## 1.12.2 - 2025-07-08
 
 ### Fixed

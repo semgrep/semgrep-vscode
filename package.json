@@ -2,7 +2,7 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Security scans in a snap. Speedy SAST with a powerful rule registry for seamless detection and remediation of code vulnerabilities with each save.",
-  "version": "1.12.2",
+  "version": "1.13.0",
   "engines": {
     "vscode": "^1.86.0"
   },
@@ -340,6 +340,7 @@
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.60.1",
     "@opentelemetry/sdk-node": "^0.202.0",
+    "@opentelemetry/sdk-trace-web": "^2.0.1",
     "@opentelemetry/semantic-conventions": "^1.34.0",
     "@types/node-fetch": "^2.5.7",
     "@vscode/webview-ui-toolkit": "^1.4.0",

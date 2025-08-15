@@ -1,10 +1,6 @@
 import * as vscode from "vscode";
 
-import {
-  ExtensionMode,
-  type ConfigurationChangeEvent,
-  type ExtensionContext,
-} from "vscode";
+import { type ConfigurationChangeEvent, type ExtensionContext } from "vscode";
 import { registerCommands } from "./commands";
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { DeploymentInfo, Environment } from "./env";
@@ -12,7 +8,7 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
-import { ExtensionEnvironment, withSpan } from "./utilities/tracing";
+import { deregisterExistingOtel, withSpan } from "./utilities/tracing";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
@@ -113,39 +109,32 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   });
 }
 
-function getExtensionMode(context: ExtensionContext): ExtensionEnvironment {
-  if (process.env.SEMGREP_DEV_ENVIRONMENT) {
-    return process.env.SEMGREP_DEV_ENVIRONMENT as ExtensionEnvironment;
-  } else {
-    if (context.extensionMode === ExtensionMode.Production) {
-      return ExtensionEnvironment.Release;
-    } else if (context.extensionMode === ExtensionMode.Development) {
-      return ExtensionEnvironment.Development;
-    } else {
-      return ExtensionEnvironment.Test;
-    }
-  }
-}
-
 // Automatically invoked by VS Code's extension API
 // https://code.visualstudio.com/api/get-started/extension-anatomy#extension-entry-file
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
+  // We want to deregister any existing OpenTelemetry global state
+  // as soon as we can, when the language server is started.
+  // See the description of this function for more.
+  deregisterExistingOtel();
+
   const env: Environment = await createOrUpdateEnvironment(context);
-  const extensionEnvironment: ExtensionEnvironment = getExtensionMode(context);
-  initTelemetry(extensionEnvironment, env);
-  await withSpan("activateLsp", {}, () => activateLsp(env));
+  initTelemetry(env);
+
+  await withSpan("activateLsp", {}, async () => activateLsp(env));
   await afterClientStart(context, env);
+
   return env;
 }
 
 export async function deactivate(): Promise<void> {
   if (global_env) {
+    await stopTelemetry(global_env);
+
     if (global_env.client) {
       await deactivateLsp(global_env);
     }
-    await stopTelemetry(global_env);
   }
   global_env?.dispose();
   global_env = null;

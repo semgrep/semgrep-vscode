@@ -1,19 +1,10 @@
-import * as vscode from "vscode";
 import type { Environment } from "../env";
-import {
-  ExtensionEnvironment,
-  startTracing,
-  stopTracing,
-} from "../utilities/tracing";
+import { startTracing, stopTracing } from "../utilities/tracing";
 
-export function initTelemetry(
-  extensionEnvironment: ExtensionEnvironment,
-  env: Environment,
-): void {
-  if (!vscode.env.isTelemetryEnabled) {
-    return;
+export function initTelemetry(env: Environment): void {
+  if (env.hasTracingEnabled) {
+    startTracing(env);
   }
-  startTracing(env, extensionEnvironment);
 }
 
 export async function stopTelemetry(env: Environment): Promise<void> {
