@@ -7,7 +7,7 @@ import {
 } from "vscode";
 import { registerCommands } from "./commands";
 import { VSCODE_CONFIG_KEY } from "./constants";
-import { Environment } from "./env";
+import { DeploymentInfo, Environment } from "./env";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";

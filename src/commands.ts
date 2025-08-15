@@ -64,27 +64,27 @@ export function registerCommands(env: Environment): Disposable[] {
       const result = await env.client?.sendRequest(loginStart);
       if (result) {
         vscode.env.openExternal(vscode.Uri.parse(result.url));
-        const status = await env.client?.sendRequest(loginFinish, result);
-        if (status) {
-          env.deploymentName = status.deploymentName;
+        const info = await env.client?.sendRequest(loginFinish, result);
+        if (info) {
+          env.deploymentInfo = info;
         }
       }
     }),
 
     vscode.commands.registerCommand("semgrep.logout", async () => {
       await env.client?.sendNotification(logout);
-      env.deploymentName = null;
+      env.deploymentInfo = null;
     }),
 
     vscode.commands.registerCommand("semgrep.loginStatus", async () => {
       const result = await env.client?.sendRequest(loginStatus);
-      if (result) {
-        env.deploymentName = result.deploymentName;
+      if (result !== undefined) {
+        env.deploymentInfo = result;
       }
     }),
 
     vscode.commands.registerCommand("semgrep.loginNudge", async () => {
-      if (!env.deploymentName && env.showNudges) {
+      if (!env.deploymentInfo && env.showNudges) {
         const resp = await vscode.window.showInformationMessage(
           "Sign in to use your team's shared Semgrep rule configuration",
           "Sign in",

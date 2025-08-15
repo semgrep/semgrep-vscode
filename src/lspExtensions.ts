@@ -1,5 +1,6 @@
 import * as lc from "vscode-languageclient";
 import type { SearchResult } from "./search";
+import { DeploymentInfo } from "./env";
 
 // https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts
 
@@ -23,10 +24,6 @@ export const scanWorkspace = new lc.NotificationType<ScanWorkspaceParams>(
 export interface LoginStartResponse {
   url: string;
   sessionId: string;
-}
-
-export interface LoginStatusResponse {
-  deploymentName: string | null;
 }
 
 // These are the parameters sent from the webview to the extnesion, which
@@ -55,13 +52,13 @@ export interface LspErrorParams {
   stack: string;
 }
 
-export const loginStart = new lc.RequestType0<LoginStartResponse | null, void>(
+export const loginStart = new lc.RequestType0<LoginStartResponse, void>(
   "semgrep/loginStart",
 );
 
 export const loginFinish = new lc.RequestType<
   LoginStartResponse,
-  LoginStatusResponse,
+  DeploymentInfo | null,
   void
 >("semgrep/loginFinish");
 
@@ -77,10 +74,9 @@ export const workspaceRules = new lc.RequestType0<any[], void>(
   "semgrep/workspaceRules",
 );
 
-export const loginStatus = new lc.RequestType0<
-  LoginStatusResponse | null,
-  void
->("semgrep/loginStatus");
+export const loginStatus = new lc.RequestType0<DeploymentInfo | null, void>(
+  "semgrep/loginStatus",
+);
 
 export const search = new lc.RequestType<LspSearchParams, SearchResults, void>(
   "semgrep/search",
