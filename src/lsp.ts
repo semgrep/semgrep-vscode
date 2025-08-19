@@ -269,7 +269,7 @@ async function stop(env: Environment | null): Promise<void> {
   }
   await client.sendRequest("shutdown");
   env?.logger.log("Exiting");
-  await client.sendNotification(exit);
+  await client.sendNotification("exit");
   client.stop();
   env?.logger.log("Language client stopped...");
 }
