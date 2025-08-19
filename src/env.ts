@@ -71,6 +71,12 @@ export class Config {
   }
 }
 
+export interface DeploymentInfo {
+  deploymentName: string;
+  deploymentId: number;
+  authToken: string;
+}
+
 export class Environment {
   public semgrepVersion: string | undefined;
 
@@ -113,16 +119,20 @@ export class Environment {
 
   loginEvent?: vscode.EventEmitter<void> = undefined;
 
-  get loggedIn(): boolean {
-    return this.context.globalState.get("loggedIn", false);
+  get deploymentInfo(): DeploymentInfo | null {
+    return this.context.globalState.get("deploymentInfo", null);
   }
 
-  set loggedIn(val: boolean) {
-    vscode.commands.executeCommand("setContext", "semgrep.loggedIn", val);
+  set deploymentInfo(val: DeploymentInfo | null) {
+    vscode.commands.executeCommand(
+      "setContext",
+      "semgrep.loggedIn",
+      val !== null,
+    );
     if (this.loginEvent) {
       this.loginEvent.fire();
     }
-    this.context.globalState.update("loggedIn", val);
+    this.context.globalState.update("deploymentInfo", val);
   }
 
   get showNudges(): boolean {

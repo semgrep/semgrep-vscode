@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { type ConfigurationChangeEvent, type ExtensionContext } from "vscode";
 import { registerCommands } from "./commands";
 import { VSCODE_CONFIG_KEY } from "./constants";
-import { Environment } from "./env";
+import { DeploymentInfo, Environment } from "./env";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
@@ -110,6 +110,8 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   vscode.commands.executeCommand("semgrep.mcpSetup");
 }
 
+// Automatically invoked by VS Code's extension API
+// https://code.visualstudio.com/api/get-started/extension-anatomy#extension-entry-file
 export async function activate(
   context: ExtensionContext,
 ): Promise<Environment | undefined> {
