@@ -27,6 +27,7 @@ import {
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
 import { setupLanguageClientTracing, topLevelSpan } from "./utilities/tracing";
+import { exit } from "./lspExtensions";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
@@ -268,7 +269,7 @@ async function stop(env: Environment | null): Promise<void> {
   }
   await client.sendRequest("shutdown");
   env?.logger.log("Exiting");
-  await client.sendRequest("exit");
+  await client.sendNotification(exit);
   client.stop();
   env?.logger.log("Language client stopped...");
 }
