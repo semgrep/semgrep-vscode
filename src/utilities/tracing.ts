@@ -281,6 +281,7 @@ export function startTracing(env: Environment): void {
       env.extensionDevEnvironment,
     ),
     ["client.proIntrafile"]: env.config.cfg.get("scan.pro_intrafile"),
+    ["client.secrets"]: env.config.cfg.get("scan.secrets"),
     ["client.experimentalLs"]: env.config.cfg.get("useExperimentalLS"),
     ["client.metrics"]: hasMetrics,
     // Not exactly the same as the auto-collected OpenTelemetry

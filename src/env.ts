@@ -143,6 +143,14 @@ export class Environment {
     this.context.globalState.update("showNudges", val);
   }
 
+  get foldersWithNoMcpSetupNudges(): string[] {
+    return this.context.globalState.get("foldersWithNoMcpSetupNudges", []);
+  }
+
+  set foldersWithNoMcpSetupNudges(val: string[]) {
+    this.context.globalState.update("foldersWithNoMcpSetupNudges", val);
+  }
+
   get newInstall(): boolean {
     return this.context.globalState.get("newInstall", true);
   }
