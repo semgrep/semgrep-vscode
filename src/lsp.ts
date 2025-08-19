@@ -27,7 +27,6 @@ import {
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
 import { setupLanguageClientTracing, topLevelSpan } from "./utilities/tracing";
-import { exit } from "./lspExtensions";
 
 const execShell = (cmd: string, args: string[]) =>
   new Promise<string>((resolve, reject) => {
