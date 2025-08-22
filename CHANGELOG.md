@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.14.0 - 2025-08-22
+
+## Fixed
+
+- Fixed a process leak that would cause numerous `semgrep` LSP daemons to accumulate
+
 ## Added
 
 - The Policy menu now shows your deployment's name (if logged in)
 - Added new experimental `Semgrep: Secrets` setting to use Secrets product in experimental IDE
+- Added a new MCP onboarding flow for Cursor users on startup which automatically
+  installs the Semgrep MCP in the current repository.
 
 ## 1.13.0 - 2025-07-28
 
