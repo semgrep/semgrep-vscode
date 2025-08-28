@@ -178,44 +178,6 @@ export function registerCommands(env: Environment): Disposable[] {
       return "Refreshed rules";
     }),
 
-    /************/
-    /* SHOW AST */
-    /************/
-
-    vscode.commands.registerCommand("semgrep.showAstNamed", async () => {
-      if (
-        !isRealFileEditor(vscode.window.activeTextEditor) ||
-        !vscode.window.activeTextEditor
-      ) {
-        return;
-      }
-      if (env.client) {
-        const ast_text = await env.client.sendRequest(showAst, {
-          named: true,
-          uri: vscode.window.activeTextEditor?.document.uri.fsPath,
-        });
-        const uri = encodeUri(vscode.window.activeTextEditor.document.uri);
-
-        replaceAndOpenUriContent(uri, ast_text, vscode.window.activeTextEditor);
-      }
-    }),
-    vscode.commands.registerCommand("semgrep.showAst", async () => {
-      if (
-        !isRealFileEditor(vscode.window.activeTextEditor) ||
-        !vscode.window.activeTextEditor
-      ) {
-        return;
-      }
-      if (env.client) {
-        const ast_text = await env.client.sendRequest(showAst, {
-          named: false,
-          uri: vscode.window.activeTextEditor?.document.uri.fsPath,
-        });
-        const uri = encodeUri(vscode.window.activeTextEditor.document.uri);
-        replaceAndOpenUriContent(uri, ast_text, vscode.window.activeTextEditor);
-      }
-    }),
-
     /**********/
     /* SEARCH */
     /**********/

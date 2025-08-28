@@ -227,18 +227,6 @@
       ]
     },
     "menus": {
-      "editor/context": [
-        {
-          "command": "semgrep.showAst",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "semgrep.showAstNamed",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        }
-      ],
       "commandPalette": [
         {
           "command": "semgrep.login",
