@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Removed
 
-- Removed the "Show AST" comands from right-click
+- Removed the "Show AST" and "Show named AST" commands from right-click
 
 ## 1.14.0 - 2025-08-22
 
