@@ -169,9 +169,6 @@ export class Environment {
   }
 
   get client(): LanguageClient | null {
-    if (!this._client) {
-      window.showWarningMessage("Semgrep Language Server not active");
-    }
     return this._client;
   }
 
