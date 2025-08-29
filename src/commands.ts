@@ -10,10 +10,8 @@ import {
   logout,
   refreshRules,
   scanWorkspace,
-  showAst,
 } from "./lspExtensions";
 import { handleSearch } from "./search";
-import { encodeUri } from "./showAstDocument";
 import { applyFixAndSave, isRealFileEditor, replaceAll } from "./utils";
 import type { ViewResults } from "./webviews/types/results";
 import { setupMcp } from "./mcp";
@@ -32,26 +30,6 @@ import path from "node:path";
 
    See `package.json` which also defines where some of these commands are used.
  */
-
-/*****************************************************************************/
-/* Helpers */
-/*****************************************************************************/
-
-// We need to do this, or openTextDocument will open the same text document, if previously
-// opened. This means that running showAst twice will always show the same thing.
-async function replaceAndOpenUriContent(
-  uri: vscode.Uri,
-  content: string,
-  active_editor: vscode.TextEditor,
-): Promise<void> {
-  const doc = await vscode.workspace.openTextDocument(uri);
-  const edit = new vscode.WorkspaceEdit();
-  edit.replace(uri, new vscode.Range(0, 0, doc.lineCount, 0), content);
-  vscode.workspace.applyEdit(edit);
-  if (active_editor.viewColumn) {
-    vscode.window.showTextDocument(doc, active_editor.viewColumn + 1 || 0);
-  }
-}
 
 /*****************************************************************************/
 /* Commands */

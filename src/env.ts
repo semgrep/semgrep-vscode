@@ -11,7 +11,6 @@ import {
 } from "vscode";
 import type { LanguageClient } from "vscode-languageclient/node";
 import { VSCODE_CONFIG_KEY, VSCODE_EXT_NAME } from "./constants";
-import { SemgrepDocumentProvider } from "./showAstDocument";
 import { Logger } from "./utils";
 import type { SemgrepSearchWebviewProvider } from "./views/webview";
 import { NodeSDK } from "@opentelemetry/sdk-node";
@@ -107,7 +106,6 @@ export class Environment {
   private _provider: SemgrepSearchWebviewProvider | null = null;
   private constructor(
     readonly context: ExtensionContext,
-    readonly documentView: SemgrepDocumentProvider,
     readonly channel: OutputChannel,
     readonly logger: Logger,
     public config: Config,
@@ -211,8 +209,7 @@ export class Environment {
     const config = await Environment.loadConfig(context);
     const channel = window.createOutputChannel(VSCODE_EXT_NAME);
     const logger = new Logger(config.trace, channel);
-    const documentView = new SemgrepDocumentProvider();
-    return new Environment(context, documentView, channel, logger, config);
+    return new Environment(context, channel, logger, config);
   }
 
   static async loadConfig(context: ExtensionContext): Promise<Config> {

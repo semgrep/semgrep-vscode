@@ -5,7 +5,6 @@ import { registerCommands } from "./commands";
 import { VSCODE_CONFIG_KEY } from "./constants";
 import { DeploymentInfo, Environment } from "./env";
 import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
-import { SemgrepDocumentProvider } from "./showAstDocument";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
 import { deregisterExistingOtel, withSpan } from "./utilities/tracing";
@@ -69,13 +68,6 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
     ),
   );
 
-  // register content provider for the AST showing document
-  context.subscriptions.push(
-    vscode.workspace.registerTextDocumentContentProvider(
-      SemgrepDocumentProvider.scheme,
-      env.documentView,
-    ),
-  );
   // Handle configuration changes
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(
