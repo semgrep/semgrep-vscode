@@ -209,7 +209,7 @@ export class Environment {
 
   static async create(context: ExtensionContext): Promise<Environment> {
     const config = await Environment.loadConfig(context);
-    const channel = window.createOutputChannel(VSCODE_EXT_NAME);
+    const channel = window.createOutputChannel(VSCODE_EXT_NAME + " (Client)");
     const logger = new Logger(config.trace, channel);
     const documentView = new SemgrepDocumentProvider();
     return new Environment(context, documentView, channel, logger, config);

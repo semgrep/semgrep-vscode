@@ -23,6 +23,7 @@ import {
   DIAGNOSTIC_COLLECTION_NAME,
   DIST_BINARY_PATH,
   VERSION_PATH,
+  VSCODE_EXT_NAME,
 } from "./constants";
 import type { Environment } from "./env";
 import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
@@ -191,6 +192,7 @@ async function lspOptions(
     diagnosticCollectionName: DIAGNOSTIC_COLLECTION_NAME,
     // TODO: should we limit to support languages and keep the list manually updated?
     documentSelector: [{ language: "*", scheme: "file" }],
+    outputChannelName: VSCODE_EXT_NAME + " (Server)",
     traceOutputChannel: env.channel,
     initializationOptions: initializationOptions,
     // OLD: This used to be a Sentry error handler.
