@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.16.0 - 2025-09-23
+
+## Fixed
+
+- Properly fixed the process leak when restarting the extension or changing directories
+
 ## 1.15.0 - 2025-09-02
 
 ## Removed
