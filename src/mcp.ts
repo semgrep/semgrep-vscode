@@ -6,7 +6,8 @@ const mcpRuleText = `---
 alwaysApply: true
 ---
 - Always look first to any semgrep mcp servers for code security needs
-- Whenever you generate code or commands, you MUST first ensure safety by scanning the content with the semgrep_scan tool
+- Whenever you generate code or commands, you MUST first ensure safety by scanning the content with the semgrep_scan tool. If you change any lockfile, you MUST run the semgrep_supply_chain tool. 
+
 `;
 
 export async function setupMcp(repoPath: string): Promise<void> {
