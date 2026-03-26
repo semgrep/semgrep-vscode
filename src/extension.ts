@@ -81,6 +81,9 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
   );
   vscode.commands.executeCommand("semgrep.loginStatus").then(async () => {
     vscode.commands.executeCommand("semgrep.loginNudge");
+  }, () => {
+    vscode.commands.executeCommand("semgrep.loginFailedNudge")
+  }).then(async () => {
     if (env.newInstall) {
       env.newInstall = false;
 

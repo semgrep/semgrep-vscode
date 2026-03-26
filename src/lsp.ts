@@ -26,7 +26,11 @@ import {
   VSCODE_EXT_NAME,
 } from "./constants";
 import type { Environment } from "./env";
-import { type LspErrorParams, rulesRefreshed } from "./lspExtensions";
+import {
+  type LspErrorParams,
+  rulesRefreshed,
+  transientLoginError,
+} from "./lspExtensions";
 import { setupLanguageClientTracing, topLevelSpan } from "./utilities/tracing";
 
 const execShell = (cmd: string, args: string[]) =>
@@ -261,6 +265,19 @@ async function start(env: Environment): Promise<void> {
   };
   // Register handlers here
   c.onNotification(rulesRefreshed, notificationHandler);
+  c.onNotification(transientLoginError, async () => {
+    const resp = await vscode.window.showWarningMessage(
+      "Semgrep could not connect to verify your login status.",
+      "Reload Window",
+      "Login",
+      "Ignore",
+    );
+    if (resp === "Reload Window") {
+      vscode.commands.executeCommand("workbench.action.reloadWindow");
+    } else if (resp === "Login") {
+      vscode.commands.executeCommand("semgrep.login");
+    }
+  });
   // TODO: Add OpenTelemetry telemetry handler here
   // c.onTelemetry((e) => { })
 
