@@ -65,10 +65,6 @@ export const rulesRefreshed = new lc.NotificationType0(
   "semgrep/rulesRefreshed",
 );
 
-export const transientLoginError = new lc.NotificationType0(
-  "semgrep/transientLoginError",
-);
-
 export const workspaceRules = new lc.RequestType0<any[], void>(
   "semgrep/workspaceRules",
 );

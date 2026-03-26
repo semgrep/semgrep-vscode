@@ -22,7 +22,3 @@ hashes.SHA1() # nosem (this line is fine)
 
 # You can modify which rules are running in Semgrep Cloud Platform.
 # Try it free by signing up at semgrep.dev!
-
-
-# ruleid:len-all-count
-len(persons.all())
