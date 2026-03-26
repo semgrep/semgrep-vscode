@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 
-- When the Semgrep extension starts up, it checks your login status via the LSP. Previously, if this check failed due to errors unrelated to authorization, the failure was reported as an authorization error. Now, a notification is shown informing the user that Semgrep couldn't verify their login status, with options to reload the window, log in again, or dismiss.
+- Startup login verification: unrelated LSP failures are no longer misreported as auth errors; users get a notification with reload, sign in again, or dismiss.
 
 ## 1.16.0 - 2025-09-23
 
