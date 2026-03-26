@@ -79,29 +79,35 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
       },
     ),
   );
-  vscode.commands.executeCommand("semgrep.loginStatus").then(async () => {
-    vscode.commands.executeCommand("semgrep.loginNudge");
-  }, () => {
-    vscode.commands.executeCommand("semgrep.loginFailedNudge")
-  }).then(async () => {
-    if (env.newInstall) {
-      env.newInstall = false;
+  vscode.commands
+    .executeCommand("semgrep.loginStatus")
+    .then(
+      async () => {
+        vscode.commands.executeCommand("semgrep.loginNudge");
+      },
+      () => {
+        vscode.commands.executeCommand("semgrep.loginFailedNudge");
+      },
+    )
+    .then(async () => {
+      if (env.newInstall) {
+        env.newInstall = false;
 
-      await vscode.window.showInformationMessage(
-        `VS Code collects usage data and sends it to Semgrep to help improve our products and services. Telemetry data includes extension runtime version details, and other metrics normally collected by Semgrep, [as described here](https://semgrep.dev/docs/metrics#data-collected-as-metrics).
+        await vscode.window.showInformationMessage(
+          `VS Code collects usage data and sends it to Semgrep to help improve our products and services. Telemetry data includes extension runtime version details, and other metrics normally collected by Semgrep, [as described here](https://semgrep.dev/docs/metrics#data-collected-as-metrics).
         If you don't wish to send usage data to Semgrep, you can unset the \`Semgrep: Metrics\` setting.`,
-      );
+        );
 
-      const selection = await vscode.window.showInformationMessage(
-        "Semgrep Extension successfully installed. Would you like to try performing a full workspace scan (may take longer on bigger workspaces)?",
-        "Scan Full Workspace",
-        "Dismiss",
-      );
-      if (selection == "Scan Full Workspace") {
-        vscode.commands.executeCommand("semgrep.scanWorkspaceFull");
+        const selection = await vscode.window.showInformationMessage(
+          "Semgrep Extension successfully installed. Would you like to try performing a full workspace scan (may take longer on bigger workspaces)?",
+          "Scan Full Workspace",
+          "Dismiss",
+        );
+        if (selection == "Scan Full Workspace") {
+          vscode.commands.executeCommand("semgrep.scanWorkspaceFull");
+        }
       }
-    }
-  });
+    });
   vscode.commands.executeCommand("semgrep.mcpSetup");
 }
 
