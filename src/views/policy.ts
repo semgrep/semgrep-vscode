@@ -1,9 +1,7 @@
 import * as vscode from "vscode";
 import type { Environment } from "../env";
 
-export class SemgrepPolicyViewProvider
-  implements vscode.TreeDataProvider<PolicyItem>
-{
+export class SemgrepPolicyViewProvider implements vscode.TreeDataProvider<PolicyItem> {
   public static readonly viewType = "semgrep.view.policy";
 
   //  [ + add more? ]
