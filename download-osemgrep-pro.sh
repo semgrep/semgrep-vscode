@@ -11,24 +11,24 @@ is_musl() {
 # the released tags we must make sure they match
 case "${uname}" in
     linux-x64*)
-        if is_musl; then
+	if is_musl; then
 	    # NOTE: not manylinux! this is a musl binary
-            machine=manylinux
-            PLATFORM="musllinux_1_2_x86_64"
-        else
-            machine=manylinux-x86
-            PLATFORM="manylinux_2_35_x86_64"
-        fi
-        ;;
+	    machine=manylinux
+	    PLATFORM="musllinux_1_2_x86_64"
+	else
+	    machine=manylinux-x86
+	    PLATFORM="manylinux_2_35_x86_64"
+	fi
+	;;
     linux-arm64*)
-        if is_musl; then
-            machine=linux-arm64
-            PLATFORM="musllinux_1_2_aarch64"
-        else
-            machine=manylinux-arm64
-            PLATFORM="manylinux_2_35_aarch64"
-        fi
-        ;;
+	if is_musl; then
+	    machine=linux-arm64
+	    PLATFORM="musllinux_1_2_aarch64"
+	else
+	    machine=manylinux-arm64
+	    PLATFORM="manylinux_2_35_aarch64"
+	fi
+	;;
     darwin-x64*)   machine=osx;   PLATFORM="macosx_10_14_x86_64";;
     darwin-arm64)  machine=osx-m1; PLATFORM="macosx_11_0_arm64";;
     win32-x64*)    machine=windows; PLATFORM="win_amd64";;
@@ -37,7 +37,14 @@ esac
 # NOT the same as the semgrep version!!!!
 release_char_count=$(echo "release-" | wc -c)
 OSEMGREP_PRO_VERSION=$(cat ./semgrep-version | cut -c $((release_char_count))-)
-BINARY=semgrep-core-proprietary-${machine}-${OSEMGREP_PRO_VERSION}
+
+# This is the binary build on develop that should be dynamically linked
+BINARY=semgrep-core-proprietary-${machine}-700949001a161764c222df56ed330ee0093b23c2
+
+# purely for testing
+TEST_PYPI_VERSION="1.157.123"
+OSEMGREP_PRO_VERSION=$TEST_PYPI_VERSION
+
 if [ "${machine}" = "windows" ]; then
     EXT=".exe"
 else
@@ -51,6 +58,8 @@ fi
 mkdir -p dist
 echo "Downloading osemgrep-pro binary from S3 for version ${machine}-${OSEMGREP_PRO_VERSION}"
 aws s3 cp "s3://deep-semgrep-artifacts/${BINARY}${EXT}" dist/osemgrep-pro${EXT}
+# simple test on mac
+otool -L dist/osemgrep-pro || true
 echo "Downloaded osemgrep-pro binary"
 
 version_gt() {
@@ -59,7 +68,7 @@ version_gt() {
 
 if [ "${machine}" = "windows" ]; then
     echo "Downloading the Windows wheel for the DLLs"
-    pip download "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --platform ${PLATFORM} -d /tmp/
+    pip download -i https://test.pypi.org/simple/ "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --platform ${PLATFORM} -d /tmp/
     echo "Unzipping the Windows wheel"
     unzip -q -o /tmp/"semgrep-${OSEMGREP_PRO_VERSION}"-*.whl -d /tmp/
     echo "Copying the DLLs to the dist directory"
@@ -71,10 +80,10 @@ else
     # binaries
     if version_gt "${OSEMGREP_PRO_VERSION}" "1.157.0"; then
         echo "Downloading the wheel for the shared libraries"
-        pip download "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --platform ${PLATFORM} -d /tmp/
+        pip download -i https://test.pypi.org/simple/ "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --platform ${PLATFORM} -d /tmp/
         echo "Extracting the wheel"
 	unzip -q -o /tmp/"semgrep-${OSEMGREP_PRO_VERSION}"-*.whl -d /tmp/
         echo "Copying the shared libraries to the dist directory"
-        cp -r /tmp/"semgrep-${OSEMGREP_PRO_VERSION}.data"/purelib/semgrep/bin/libs/* dist/
+        cp -LR /tmp/"semgrep-${OSEMGREP_PRO_VERSION}.data"/purelib/semgrep/bin/libs/ dist/libs
     fi
 fi
