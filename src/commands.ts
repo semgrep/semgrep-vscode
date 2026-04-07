@@ -79,6 +79,20 @@ export function registerCommands(env: Environment): Disposable[] {
       }
     }),
 
+    vscode.commands.registerCommand("semgrep.loginFailedNudge", async () => {
+      const resp = await vscode.window.showInformationMessage(
+        "Semgrep could not connect to verify your login status. This doesn't mean your login status is invalid, but it may mean you need to try again.",
+        "Reload Window",
+        "Login",
+        "Dismiss",
+      );
+      if (resp === "Reload Window") {
+        vscode.commands.executeCommand("workbench.action.reloadWindow");
+      } else if (resp === "Login") {
+        vscode.commands.executeCommand("semgrep.login");
+      }
+    }),
+
     vscode.commands.registerCommand("semgrep.mcpSetup", async () => {
       const repoPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
       if (
