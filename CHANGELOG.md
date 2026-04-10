@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.17.0 - 2026-04-10
+
 ## Fixed
 
 - Startup login verification: unrelated LSP failures are no longer misreported as auth errors; users get a notification with reload, sign in again, or dismiss.
