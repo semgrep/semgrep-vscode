@@ -190,6 +190,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable hovering for AST node viewing (requires restart)"
+        },
+        "semgrep.appUrl": {
+          "type": "string",
+          "default": "",
+          "description": "URL of the Semgrep App to use (e.g. https://semgrep.dev). Passed to the language server as SEMGREP_APP_URL. Leave empty to use the default."
         }
       }
     },
