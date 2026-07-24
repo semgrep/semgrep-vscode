@@ -11,10 +11,6 @@ jobs:
   # Running pre-commit in CI. See .pre-commit-config.yaml for our pre-commit
   # configuration. Dogfood: we run Semgrep inside pre-commit, so this also
   # tests how semgrep interacts with pre-commit.
-  #
-  # Inlined (rather than calling the shared reusable workflow) because this is
-  # a public repo, and public repos can't call reusable workflows in the
-  # internal semgrep/release-workflows repo. Actions are SHA-pinned to match.
   pre-commit:
     runs-on: ubuntu-latest
     steps:
