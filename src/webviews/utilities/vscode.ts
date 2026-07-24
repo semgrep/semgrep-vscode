@@ -21,8 +21,7 @@ class VSCodeAPIWrapper {
   // This is set by the webview App.tsx!
   public onUpdate: ((results: ViewResults) => void) | null = null;
   public onUpdateActiveLang:
-    | ((activeLang: SearchLanguage | null) => void)
-    | null = null;
+    ((activeLang: SearchLanguage | null) => void) | null = null;
   public onClear: (() => void) | null = null;
   public onExportRule: (() => void) | null = null;
 
