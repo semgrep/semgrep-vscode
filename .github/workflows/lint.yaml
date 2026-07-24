@@ -8,25 +8,12 @@ on:
       - develop
 
 jobs:
-  # Running pre-commit in CI. See semgrep/.pre-commit-config.yaml for
-  # our pre-commit configuration.
-  # Dogfood: note that we run Semgrep inside pre-commit, so this is also dogfooding
-  # and testing how semgrep interact with pre-commit.
+  # Running pre-commit in CI via the shared reusable workflow. See
+  # .pre-commit-config.yaml for our pre-commit configuration.
+  # Dogfood: we run Semgrep inside pre-commit, so this also tests how
+  # semgrep interacts with pre-commit.
   pre-commit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-        with:
-          persist-credentials: false
-      # pre-commit is a Python script, this speedup things from Xmin to Ymin?
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-        with:
-          python-version: "3.11"
-      # note that in a CI context pre-commit runs the hooks with the '--all' flag, so
-      # semgrep for example is passed all the files in the repository, not just
-      # the one modifed in the PR (as it is the case when it's ran from git hooks locally).
-      # This is why sometimes pre-commit passes locally but fails in CI, for the same PR.
-      - uses: pre-commit/action@646c83fcd040023954eafda54b4db0192ce70507 # v3.0.0
+    uses: semgrep/release-workflows/.github/workflows/pre-commit.yaml@c04907222197635bc8fc0d80b1d5fec8f945eb43 # develop
   github-actions:
     runs-on: ubuntu-latest
     steps:
