@@ -145,12 +145,16 @@ async function serverOptionsCli(
   server.args = cmdlineOpts;
 
   const options: ExecutableOptions = {};
+  const extraEnv: Record<string, string> = {};
   if (topLevelSpan) {
-    options.env = {
-      ...process.env,
-      SEMGREP_TRACE_PARENT_SPAN_ID: topLevelSpan.spanContext().spanId,
-      SEMGREP_TRACE_PARENT_TRACE_ID: topLevelSpan.spanContext().traceId,
-    };
+    extraEnv.SEMGREP_TRACE_PARENT_SPAN_ID = topLevelSpan.spanContext().spanId;
+    extraEnv.SEMGREP_TRACE_PARENT_TRACE_ID = topLevelSpan.spanContext().traceId;
+  }
+  if (env.config.appUrl) {
+    extraEnv.SEMGREP_APP_URL = env.config.appUrl;
+  }
+  if (Object.keys(extraEnv).length > 0) {
+    options.env = { ...process.env, ...extraEnv };
   }
   server.options = options;
 
