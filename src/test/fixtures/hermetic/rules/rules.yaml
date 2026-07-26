@@ -1,0 +1,31 @@
+# Hermetic local rules for the findings-panel PR 1 baseline suite.
+# No network, no --config=auto: deterministic findings at known lines/severities.
+# The suite asserts the diagnostic contract the findings view depends on
+# (source, code, severity, range) against these.
+rules:
+  - id: tainted-sql-string
+    languages: [python]
+    severity: ERROR
+    message: "User input reaches a SQL query string; possible SQL injection."
+    metadata:
+      category: security
+      cwe: ["CWE-89: SQL Injection"]
+    patterns:
+      - pattern: $CUR.execute("..." % $X)
+
+  - id: hardcoded-aws-key
+    languages: [python]
+    severity: WARNING
+    message: "Hardcoded AWS access key detected."
+    metadata:
+      category: security
+      cwe: ["CWE-798: Use of Hard-coded Credentials"]
+    patterns:
+      - pattern-regex: 'AKIA[0-9A-Z]{16}'
+
+  - id: placeholder-password-note
+    languages: [python]
+    severity: INFO
+    message: "Informational finding used to exercise INFO-severity mapping."
+    patterns:
+      - pattern: password = "..."
