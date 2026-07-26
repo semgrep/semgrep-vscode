@@ -5,7 +5,6 @@ import * as vscode from "vscode";
 import {
   type LanguageClient,
   PublishDiagnosticsNotification,
-  type PublishDiagnosticsParams,
 } from "vscode-languageclient/node";
 
 // PR 1 baseline / contract suite for the dedicated findings panel.
@@ -55,16 +54,45 @@ async function getEnv() {
   return extension.exports;
 }
 
-function waitForDiagnostics(
-  client: LanguageClient,
-  uriString: string,
-): Promise<PublishDiagnosticsParams> {
+// Resolve once rules refresh, or after `ms` if the event already fired.
+function waitForRulesOrTimeout(
+  env: { onRulesRefreshed: (cb: () => void, once?: boolean) => void },
+  ms: number,
+): Promise<void> {
   return new Promise((resolve) => {
-    client.onNotification(PublishDiagnosticsNotification.type, (params) => {
-      if (params.uri === uriString && params.diagnostics.length > 0) {
-        resolve(params);
+    let settled = false;
+    const done = () => {
+      if (!settled) {
+        settled = true;
+        resolve();
       }
+    };
+    env.onRulesRefreshed(done, true);
+    setTimeout(done, ms);
+  });
+}
+
+// Poll the diagnostic collection until every expected fixture file has its
+// Semgrep diagnostics, or the deadline passes (tests then assert and report).
+function waitForAllExpectedDiagnostics(timeoutMs: number): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  const ready = () =>
+    Object.entries(EXPECTED).every(([file, expected]) => {
+      const uri = vscode.Uri.file(path.join(WS as string, file));
+      const got = vscode.languages
+        .getDiagnostics(uri)
+        .filter((d) => d.source === "Semgrep");
+      return got.length >= expected.length;
     });
+  return new Promise((resolve) => {
+    const tick = () => {
+      if (ready() || Date.now() > deadline) {
+        resolve();
+        return;
+      }
+      setTimeout(tick, 1000);
+    };
+    tick();
   });
 }
 
@@ -95,67 +123,48 @@ suite("Findings panel — PR 1 baseline (hermetic)", function () {
 
     // Wait for rules to load, but don't hang forever: the rulesRefreshed event
     // may already have fired before we subscribed (activation completed during
-    // getEnv), so race it against a timeout and proceed either way. A later
-    // scan step re-confirms rules are actually loaded via real diagnostics.
-    await new Promise<void>((resolve) => {
-      let settled = false;
-      const done = () => {
-        if (!settled) {
-          settled = true;
-          resolve();
-        }
-      };
-      env.onRulesRefreshed(done, true);
-      setTimeout(done, 30000);
-    });
+    // getEnv), so race it against a timeout and proceed either way.
+    await waitForRulesOrTimeout(env, 30000);
 
-    // Restart the LS so it definitely picks up the workspace config set above,
-    // then give rules a moment to reload. This removes the ordering dependency
-    // between config-update and activation that made setup flaky in CI.
-    if (client) {
-      await vscode.commands.executeCommand("semgrep.restartLanguageServer");
-      await new Promise<void>((resolve) => {
-        let settled = false;
-        const done = () => {
-          if (!settled) {
-            settled = true;
-            resolve();
-          }
-        };
-        env.onRulesRefreshed(done, true);
-        setTimeout(done, 30000);
-      });
-      client = env.client;
-    }
+    // Deterministically scan the whole workspace and wait until diagnostics for
+    // every expected file have been published. Relying on open-triggered scans
+    // was racy in CI; an explicit full scan + a diagnostics barrier is stable.
+    await vscode.commands.executeCommand("semgrep.scanWorkspaceFull");
+    await waitForAllExpectedDiagnostics(90000);
   });
 
   // ---- Contract: the fields the findings view depends on ----
   for (const [file, expected] of Object.entries(EXPECTED)) {
-    test(`diagnostic contract for ${file}`, async () => {
+    test(`diagnostic contract for ${file}`, () => {
       const uri = vscode.Uri.file(path.join(WS as string, file));
-      const diagsPromise = waitForDiagnostics(client, uri.toString());
-      const doc = await vscode.workspace.openTextDocument(uri);
-      await vscode.window.showTextDocument(doc);
-      const params = await diagsPromise;
+      // Read from the diagnostic collection (what the findings view will do),
+      // not by racing a publish notification.
+      const diagnostics = vscode.languages
+        .getDiagnostics(uri)
+        .filter((d) => d.source === "Semgrep");
 
       assert.strictEqual(
-        params.diagnostics.length,
+        diagnostics.length,
         expected.length,
         `${file}: finding count`,
       );
 
-      for (const d of params.diagnostics) {
+      for (const d of diagnostics) {
         // Filter key the findings view keys on.
         assert.strictEqual(d.source, "Semgrep", `${file}: source`);
         // Rule id — may be prefixed by the config/file stem (see EXPECTED note).
         const code = String(
-          typeof d.code === "object" ? (d.code as any).value : d.code,
+          typeof d.code === "object"
+            ? (d.code as { value: string }).value
+            : d.code,
         );
         const match = expected.find((e) => code.endsWith(e.ruleIdSuffix));
         assert.ok(match, `${file}: unexpected rule id ${code}`);
         assert.strictEqual(
           d.severity,
-          match.severity,
+          // VS Code DiagnosticSeverity: Error=0,Warning=1,Information=2,Hint=3.
+          // Our EXPECTED uses the LSP wire enum (1/2/3); convert to the API enum.
+          match.severity - 1,
           `${file}: severity for ${code}`,
         );
         assert.strictEqual(

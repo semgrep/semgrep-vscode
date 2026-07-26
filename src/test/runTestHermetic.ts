@@ -21,7 +21,10 @@ async function main() {
   const extensionDevelopmentPath = path.resolve(__dirname, "../../../");
   const extensionTestsPath = path.resolve(__dirname, "./suite/hermetic");
 
-  // Source fixtures live in the repo; copy them somewhere git can't suppress them.
+  // Copy the fixtures into a fresh tmp dir OUTSIDE this repo, then make the
+  // workspace its own git repo with the fixtures committed. The Semgrep LS is
+  // git-aware and only scans tracked/changed files (this is why the heavy suite
+  // uses makeFileUntracked); a plain non-git dir yields ZERO LSP diagnostics.
   const fixtureSrc = path.resolve(__dirname, "./fixtures/hermetic");
   const tmpDir = tmp.dirSync({ unsafeCleanup: true });
   const realTmpDir = cp
@@ -35,8 +38,15 @@ async function main() {
   cp.execSync(`cp -R ${path.join(fixtureSrc, "ws")} ${wsDir}`);
   cp.execSync(`cp -R ${path.join(fixtureSrc, "rules")} ${rulesDir}`);
   const rulesPath = path.join(rulesDir, "rules.yaml");
-  console.log(`Hermetic workspace: ${wsDir}`);
-  console.log(`Hermetic rules:     ${rulesPath}`);
+
+  // Initialize the workspace as a git repo but leave the fixtures UNTRACKED.
+  // Verified empirically: the Semgrep LS only scans untracked/changed files —
+  // a non-git dir yields zero diagnostics, and so does a repo where the
+  // fixtures are committed clean. Untracked is the state that gets scanned
+  // (this is what the heavy suite achieves via `git rm --cached`).
+  cp.execSync("git init -q", { cwd: wsDir });
+  console.log(`Hermetic workspace (git, untracked): ${wsDir}`);
+  console.log(`Hermetic rules:                      ${rulesPath}`);
 
   // Headless display plumbing (mirrors runTest.ts).
   const extensionTestsEnv: NodeJS.ProcessEnv = {
