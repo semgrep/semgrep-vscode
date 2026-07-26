@@ -12,10 +12,7 @@
 // The optional login leg (SEMGREP_APP_TOKEN) is handled inside the suite.
 import path from "node:path";
 import * as cp from "node:child_process";
-import {
-  downloadAndUnzipVSCode,
-  runTests,
-} from "@vscode/test-electron";
+import { downloadAndUnzipVSCode, runTests } from "@vscode/test-electron";
 import * as tmp from "tmp";
 
 async function main() {
@@ -25,10 +22,7 @@ async function main() {
   const extensionTestsPath = path.resolve(__dirname, "./suite/hermetic");
 
   // Source fixtures live in the repo; copy them somewhere git can't suppress them.
-  const fixtureSrc = path.resolve(
-    __dirname,
-    "./fixtures/hermetic",
-  );
+  const fixtureSrc = path.resolve(__dirname, "./fixtures/hermetic");
   const tmpDir = tmp.dirSync({ unsafeCleanup: true });
   const realTmpDir = cp
     .execSync(`pwd -P`, { cwd: tmpDir.name })

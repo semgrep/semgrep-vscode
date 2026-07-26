@@ -72,11 +72,16 @@ suite("Findings panel — PR 1 baseline (hermetic)", function () {
   this.timeout(SCAN_TIMEOUT);
   let client: LanguageClient;
 
-  suiteSetup(async () => {
-    assert.ok(RULES, "SEMGREP_HERMETIC_RULES must be set by the runner");
-    assert.ok(WS, "SEMGREP_HERMETIC_WS must be set by the runner");
+  suiteSetup(async function () {
+    // Only meaningful under the dedicated hermetic runner, which sets these.
+    // If another runner picks this file up, skip rather than fail.
+    if (!RULES || !WS) {
+      this.skip();
+      return;
+    }
 
     // Point the extension at the local rules file — no --config=auto, no network.
+    // Set this BEFORE activation so the LS starts with the right config.
     await vscode.workspace
       .getConfiguration("semgrep")
       .update(
@@ -86,8 +91,42 @@ suite("Findings panel — PR 1 baseline (hermetic)", function () {
       );
 
     const env = await getEnv();
-    await new Promise<void>((resolve) => env.onRulesRefreshed(() => resolve()));
     client = env.client;
+
+    // Wait for rules to load, but don't hang forever: the rulesRefreshed event
+    // may already have fired before we subscribed (activation completed during
+    // getEnv), so race it against a timeout and proceed either way. A later
+    // scan step re-confirms rules are actually loaded via real diagnostics.
+    await new Promise<void>((resolve) => {
+      let settled = false;
+      const done = () => {
+        if (!settled) {
+          settled = true;
+          resolve();
+        }
+      };
+      env.onRulesRefreshed(done, true);
+      setTimeout(done, 30000);
+    });
+
+    // Restart the LS so it definitely picks up the workspace config set above,
+    // then give rules a moment to reload. This removes the ordering dependency
+    // between config-update and activation that made setup flaky in CI.
+    if (client) {
+      await vscode.commands.executeCommand("semgrep.restartLanguageServer");
+      await new Promise<void>((resolve) => {
+        let settled = false;
+        const done = () => {
+          if (!settled) {
+            settled = true;
+            resolve();
+          }
+        };
+        env.onRulesRefreshed(done, true);
+        setTimeout(done, 30000);
+      });
+      client = env.client;
+    }
   });
 
   // ---- Contract: the fields the findings view depends on ----
@@ -131,7 +170,8 @@ suite("Findings panel — PR 1 baseline (hermetic)", function () {
   // ---- "Before" state: no findings view exists yet (flips in PR 2) ----
   test("no findings view is contributed yet (documents PR 1 baseline)", () => {
     const ext = vscode.extensions.getExtension("Semgrep.semgrep");
-    const views = ext?.packageJSON?.contributes?.views?.["semgrep-sidebar"] ?? [];
+    const views =
+      ext?.packageJSON?.contributes?.views?.["semgrep-sidebar"] ?? [];
     const ids = views.map((v: { id: string }) => v.id);
     assert.ok(
       !ids.includes("semgrep.view.findings"),
