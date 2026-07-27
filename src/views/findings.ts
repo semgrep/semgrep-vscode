@@ -37,29 +37,29 @@ export function registerOpenFindingCommand(): vscode.Disposable {
       const editor = await vscode.window.showTextDocument(doc, {
         preview: false,
       });
+      // Clamp the range to the opened document. The diagnostic range was
+      // captured when the tree item was built; if the file shrank before the
+      // LS republished, range.{start,end}.line can be past doc.lineCount and
+      // doc.lineAt() would throw, breaking navigation.
+      const lastLine = Math.max(doc.lineCount - 1, 0);
+      const startLine = Math.min(range.start.line, lastLine);
+      const endLineNo = Math.min(range.end.line, lastLine);
+      const endLine = doc.lineAt(endLineNo);
+
       // Select the full span of the finding's lines and center it.
-      const start = new vscode.Position(range.start.line, 0);
-      const endLine = doc.lineAt(range.end.line);
-      const selection = new vscode.Selection(start, endLine.range.end);
+      const selection = new vscode.Selection(
+        new vscode.Position(startLine, 0),
+        endLine.range.end,
+      );
       editor.selection = selection;
       editor.revealRange(selection, vscode.TextEditorRevealType.InCenter);
 
-      // Flash a whole-line highlight, then clear it after a moment.
-      const lineRange = new vscode.Range(
-        range.start.line,
-        0,
-        range.end.line,
-        endLine.range.end.character,
-      );
-      editor.setDecorations(findingHighlight, [lineRange]);
+      // Flash a whole-line highlight, then clear it after a moment. Clear on the
+      // captured editor unconditionally — guarding on the active editor would
+      // leave the highlight stuck if the user switched tabs during the timeout.
+      editor.setDecorations(findingHighlight, [selection]);
       setTimeout(() => {
-        // Only clear if the same editor is still showing this document.
-        if (
-          vscode.window.activeTextEditor === editor &&
-          editor.document.uri.toString() === uri.toString()
-        ) {
-          editor.setDecorations(findingHighlight, []);
-        }
+        editor.setDecorations(findingHighlight, []);
       }, 2500);
     },
   );
