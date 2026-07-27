@@ -17,7 +17,16 @@
       "label": "npm: watch:esbuild",
       "script": "watch:esbuild",
       "isBackground": true,
-      "problemMatcher": "$esbuild-watch",
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "\\[watch\\] build started",
+          "endsPattern": "\\[watch\\] build finished"
+        }
+      },
       "presentation": {
         "reveal": "never"
       },
