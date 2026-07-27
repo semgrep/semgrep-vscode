@@ -7,6 +7,11 @@ import { codeToString, groupByFile } from "../../views/findings";
 // diagnostics and exercise groupByFile/codeToString directly — no language
 // server, no scan, no VS Code UI — so they are fast and deterministic. They run
 // in the existing integration host only because `vscode` types resolve there.
+//
+// The fake diagnostics below mirror the real diagnostic contract documented in
+// src/test/fixtures/hermetic/README.md (source "Semgrep", rule id in `code`
+// possibly config-prefixed, 0-based line ranges) — that file also carries the
+// deterministic fixtures used for manual F5 verification of the view.
 suite("Findings view — grouping logic", () => {
   const uri = (p: string) => vscode.Uri.file(p);
   const diag = (
