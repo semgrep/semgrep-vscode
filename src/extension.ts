@@ -8,6 +8,10 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
 import { deregisterExistingOtel, withSpan } from "./utilities/tracing";
+import {
+  SemgrepFindingsViewProvider,
+  registerOpenFindingCommand,
+} from "./views/findings";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
@@ -66,6 +70,13 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
       SemgrepPolicyViewProvider.viewType,
       new SemgrepPolicyViewProvider(context.extensionUri, env),
     ),
+  );
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      SemgrepFindingsViewProvider.viewType,
+      new SemgrepFindingsViewProvider(),
+    ),
+    registerOpenFindingCommand(),
   );
 
   // Handle configuration changes
