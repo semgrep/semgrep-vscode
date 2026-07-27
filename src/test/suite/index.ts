@@ -15,33 +15,27 @@ export function run(): Promise<void> {
   const testsRoot = path.resolve(__dirname, "..");
 
   return new Promise((c, e) => {
-    // Exclude *.hermetic.test.js — those run under the dedicated hermetic
-    // runner (runTestHermetic.ts), which sets the env vars they require.
-    glob(
-      "**/**.test.js",
-      { cwd: testsRoot, ignore: "**/*.hermetic.test.js" },
-      (err, files) => {
-        if (err) {
-          return e(err);
-        }
+    glob("**/**.test.js", { cwd: testsRoot }, (err, files) => {
+      if (err) {
+        return e(err);
+      }
 
-        // Add files to the test suite
-        files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
+      // Add files to the test suite
+      files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
 
-        try {
-          // Run the mocha test
-          mocha.run((failures) => {
-            if (failures > 0) {
-              e(new Error(`${failures} tests failed.`));
-            } else {
-              c();
-            }
-          });
-        } catch (err) {
-          console.error(err);
-          e(err);
-        }
-      },
-    );
+      try {
+        // Run the mocha test
+        mocha.run((failures) => {
+          if (failures > 0) {
+            e(new Error(`${failures} tests failed.`));
+          } else {
+            c();
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        e(err);
+      }
+    });
   });
 }

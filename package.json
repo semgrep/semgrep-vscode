@@ -292,7 +292,6 @@
     "test-compile": "tsc -p ./ && npm run esbuild",
     "pretest": "npm run test-compile && npm run lint && cp -rf src/test/fixtures out/src/test",
     "test": "node ./out/src/test/runTest.js",
-    "test-hermetic": "node ./out/src/test/runTestHermetic.js",
     "clean": "rm -rf ./out",
     "install:all": "npm install"
   },
