@@ -66,17 +66,50 @@ export function registerOpenFindingCommand(): vscode.Disposable {
   );
 }
 
-export class SemgrepFindingsViewProvider implements vscode.TreeDataProvider<FindingNode> {
+export class SemgrepFindingsViewProvider
+  implements vscode.TreeDataProvider<FindingNode>, vscode.Disposable
+{
   public static readonly viewType = "semgrep.view.findings";
 
   private _onDidChangeTreeData = new vscode.EventEmitter<void>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+  // Own the TreeView (not just registerTreeDataProvider) so we can set a count
+  // badge on the activity-bar icon.
+  private readonly view: vscode.TreeView<FindingNode>;
+  private readonly disposables: vscode.Disposable[] = [];
+
   constructor() {
-    // Refresh whenever diagnostics change (scan finishes, file edited/closed).
-    vscode.languages.onDidChangeDiagnostics(() =>
-      this._onDidChangeTreeData.fire(),
+    this.view = vscode.window.createTreeView(
+      SemgrepFindingsViewProvider.viewType,
+      { treeDataProvider: this },
     );
+    this.disposables.push(this.view);
+    this.updateBadge();
+
+    // Refresh the tree and badge whenever diagnostics change (scan finishes,
+    // file edited/closed).
+    this.disposables.push(
+      vscode.languages.onDidChangeDiagnostics(() => {
+        this._onDidChangeTreeData.fire();
+        this.updateBadge();
+      }),
+    );
+  }
+
+  private updateBadge(): void {
+    const total = totalSemgrepFindings(vscode.languages.getDiagnostics());
+    this.view.badge =
+      total > 0
+        ? {
+            value: total,
+            tooltip: `${total} Semgrep finding${total === 1 ? "" : "s"}`,
+          }
+        : undefined;
+  }
+
+  dispose(): void {
+    for (const d of this.disposables) d.dispose();
   }
 
   // All URIs that currently have at least one Semgrep finding, sorted by path.
@@ -186,6 +219,17 @@ export function compareBySeverityThenLine(
   b: vscode.Diagnostic,
 ): number {
   return a.severity - b.severity || a.range.start.line - b.range.start.line;
+}
+
+// Total number of Semgrep findings across all files — the activity-bar badge.
+export function totalSemgrepFindings(
+  all: [vscode.Uri, readonly vscode.Diagnostic[]][],
+): number {
+  return all.reduce(
+    (sum, [, diags]) =>
+      sum + diags.filter((d) => d.source === SEMGREP_SOURCE).length,
+    0,
+  );
 }
 
 // A diagnostic `code` may be a string, number, or { value, target }.

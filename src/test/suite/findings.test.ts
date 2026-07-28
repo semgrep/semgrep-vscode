@@ -6,6 +6,7 @@ import {
   compareBySeverityThenLine,
   groupByFile,
   severityIcon,
+  totalSemgrepFindings,
 } from "../../views/findings";
 
 // Pure logic tests for the Findings view grouping. These construct fake
@@ -95,6 +96,18 @@ suite("Findings view — grouping logic", () => {
         [vscode.DiagnosticSeverity.Warning, 1],
       ],
     );
+  });
+
+  test("totalSemgrepFindings counts only Semgrep diagnostics across files", () => {
+    assert.strictEqual(
+      totalSemgrepFindings([
+        [uri("/a.py"), [diag(1), diag(2), diag(3, { source: "eslint" })]],
+        [uri("/b.py"), [diag(1)]],
+        [uri("/c.py"), [diag(1, { source: "eslint" })]],
+      ]),
+      3,
+    );
+    assert.strictEqual(totalSemgrepFindings([]), 0);
   });
 
   test("severityIcon maps severities to distinct themed codicons", () => {

@@ -71,11 +71,10 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
       new SemgrepPolicyViewProvider(context.extensionUri, env),
     ),
   );
+  // The provider creates and owns its TreeView (so it can set a count badge);
+  // registering it as a subscription disposes the view on deactivate.
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider(
-      SemgrepFindingsViewProvider.viewType,
-      new SemgrepFindingsViewProvider(),
-    ),
+    new SemgrepFindingsViewProvider(),
     registerOpenFindingCommand(),
   );
 
