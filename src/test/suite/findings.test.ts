@@ -1,7 +1,12 @@
 import assert from "node:assert";
 import * as vscode from "vscode";
 
-import { codeToString, groupByFile } from "../../views/findings";
+import {
+  codeToString,
+  compareBySeverityThenLine,
+  groupByFile,
+  severityIcon,
+} from "../../views/findings";
 
 // Pure logic tests for the Findings view grouping. These construct fake
 // diagnostics and exercise groupByFile/codeToString directly — no language
@@ -20,12 +25,13 @@ suite("Findings view — grouping logic", () => {
       source?: string;
       code?: vscode.Diagnostic["code"];
       message?: string;
+      severity?: vscode.DiagnosticSeverity;
     } = {},
   ): vscode.Diagnostic => {
     const d = new vscode.Diagnostic(
       new vscode.Range(line, 0, line, 1),
       opts.message ?? `finding at ${line}`,
-      vscode.DiagnosticSeverity.Warning,
+      opts.severity ?? vscode.DiagnosticSeverity.Warning,
     );
     d.source = opts.source ?? "Semgrep";
     if (opts.code !== undefined) d.code = opts.code;
@@ -74,5 +80,32 @@ suite("Findings view — grouping logic", () => {
       "a.b.c",
     );
     assert.strictEqual(codeToString(undefined), "");
+  });
+
+  test("compareBySeverityThenLine orders most-severe first, then by line", () => {
+    const err = diag(9, { severity: vscode.DiagnosticSeverity.Error });
+    const warn = diag(1, { severity: vscode.DiagnosticSeverity.Warning });
+    const errEarly = diag(2, { severity: vscode.DiagnosticSeverity.Error });
+    const sorted = [warn, err, errEarly].sort(compareBySeverityThenLine);
+    assert.deepStrictEqual(
+      sorted.map((d) => [d.severity, d.range.start.line]),
+      [
+        [vscode.DiagnosticSeverity.Error, 2],
+        [vscode.DiagnosticSeverity.Error, 9],
+        [vscode.DiagnosticSeverity.Warning, 1],
+      ],
+    );
+  });
+
+  test("severityIcon maps severities to distinct themed codicons", () => {
+    const e = severityIcon(vscode.DiagnosticSeverity.Error);
+    const w = severityIcon(vscode.DiagnosticSeverity.Warning);
+    const i = severityIcon(vscode.DiagnosticSeverity.Information);
+    const h = severityIcon(vscode.DiagnosticSeverity.Hint);
+    assert.strictEqual(e.id, "error");
+    assert.strictEqual(w.id, "warning");
+    assert.strictEqual(i.id, "info");
+    // Hint (unused by Semgrep today) falls through to the info icon.
+    assert.strictEqual(h.id, "info");
   });
 });

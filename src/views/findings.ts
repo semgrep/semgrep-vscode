@@ -13,9 +13,10 @@ type FindingNode =
  * diagnostics that populate the Problems tab (the "semgrep-findings"
  * collection, filtered by `source === "Semgrep"`).
  *
- * This is intentionally minimal (PR 2): file -> finding, click-to-open. No
- * severity icons, product grouping, or badges yet — the LSP diagnostic does not
- * carry the metadata those need (see fixtures/hermetic/README.md).
+ * Findings show a severity icon (Error/Warning/Info) and sort most-severe
+ * first. Product grouping and a 4th ("Critical") severity are not possible yet:
+ * the LSP diagnostic carries no product field and no level beyond Info (see
+ * fixtures/hermetic/README.md), so those await a language-server change.
  */
 // Command that opens a finding and makes its location obvious: it selects the
 // finding's line range and reveals it centered in the viewport. Registered once
@@ -94,7 +95,7 @@ export class SemgrepFindingsViewProvider implements vscode.TreeDataProvider<Find
     return vscode.languages
       .getDiagnostics(uri)
       .filter((d) => d.source === SEMGREP_SOURCE)
-      .sort((a, b) => a.range.start.line - b.range.start.line);
+      .sort(compareBySeverityThenLine);
   }
 
   getChildren(element?: FindingNode): vscode.ProviderResult<FindingNode[]> {
@@ -140,6 +141,7 @@ export class SemgrepFindingsViewProvider implements vscode.TreeDataProvider<Find
     );
     const ruleId = codeToString(d.code);
     item.description = `:${d.range.start.line + 1}`; // 1-based for humans
+    item.iconPath = severityIcon(d.severity);
     item.tooltip = new vscode.MarkdownString(`**${ruleId}**\n\n${d.message}`);
     // Click opens the file and selects/centers the finding's line so it is easy
     // to see (plain vscode.open with a narrow selection was hard to spot).
@@ -150,6 +152,40 @@ export class SemgrepFindingsViewProvider implements vscode.TreeDataProvider<Find
     };
     return item;
   }
+}
+
+// Map a diagnostic severity to a themed codicon, matching how VS Code renders
+// severities elsewhere (Problems tab, editor gutter). The extension only
+// receives Error/Warning/Information today; Hint falls through to info.
+export function severityIcon(
+  severity: vscode.DiagnosticSeverity,
+): vscode.ThemeIcon {
+  switch (severity) {
+    case vscode.DiagnosticSeverity.Error:
+      return new vscode.ThemeIcon(
+        "error",
+        new vscode.ThemeColor("problemsErrorIcon.foreground"),
+      );
+    case vscode.DiagnosticSeverity.Warning:
+      return new vscode.ThemeIcon(
+        "warning",
+        new vscode.ThemeColor("problemsWarningIcon.foreground"),
+      );
+    default:
+      return new vscode.ThemeIcon(
+        "info",
+        new vscode.ThemeColor("problemsInfoIcon.foreground"),
+      );
+  }
+}
+
+// Order findings most-severe first (Error=0 < Warning=1 < Information=2), then
+// by line. VS Code's DiagnosticSeverity enum is already ascending by severity.
+export function compareBySeverityThenLine(
+  a: vscode.Diagnostic,
+  b: vscode.Diagnostic,
+): number {
+  return a.severity - b.severity || a.range.start.line - b.range.start.line;
 }
 
 // A diagnostic `code` may be a string, number, or { value, target }.
@@ -169,7 +205,7 @@ export function groupByFile(
       uri,
       findings: diags
         .filter((d) => d.source === SEMGREP_SOURCE)
-        .sort((a, b) => a.range.start.line - b.range.start.line),
+        .sort(compareBySeverityThenLine),
     }))
     .filter((f) => f.findings.length > 0)
     .sort((a, b) => a.uri.fsPath.localeCompare(b.uri.fsPath));
