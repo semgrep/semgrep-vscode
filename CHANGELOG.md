@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Added
+
+- New "Findings" view in the Semgrep sidebar. Runs `semgrep scan --json` on demand and groups the results by vulnerability class, showing the rule that caught each finding and its location. Group by rule, file or severity instead from the view's Group By menu. Because it reads the CLI's output rather than editor diagnostics, it can show each rule's vulnerability class and distinguishes CRITICAL from ERROR.
+
 ## 1.17.0 - 2026-04-10
 
 ## Fixed
