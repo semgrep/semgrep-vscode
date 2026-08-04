@@ -26,8 +26,8 @@ import {
      already been flattened into Error.
 
    The view runs on diagnostics until a scan has been run, then switches to the
-   scan's results. `sourceLabel` in the view header says which one you are
-   looking at, because the difference is visible in the rows.
+   scan's results. `updateHeader` spells out which of the two is in use, because
+   the difference is visible in the rows.
  */
 
 /*****************************************************************************/
@@ -244,9 +244,7 @@ function severityOfDiagnostic(
 
 /* Fill in the two fields that can only be decided once the whole result set is
    known. */
-function withRuleNames(
-  findings: Omit<Finding, "ruleName">[],
-): Finding[] {
+function withRuleNames(findings: Omit<Finding, "ruleName">[]): Finding[] {
   const names = ruleDisplayNames(findings.map((finding) => finding.ruleId));
   return findings.map((finding) => ({
     ...finding,
@@ -397,7 +395,8 @@ class FindingNode extends vscode.TreeItem {
       /* The label says what; the description says where. Only the file name and
          line, never the full path — a deep tree's shared prefix would fill the
          description and clip the part that identifies the row. */
-      this.description = groupBy === "rule" ? shortLocation : `${ruleName}:${line}`;
+      this.description =
+        groupBy === "rule" ? shortLocation : `${ruleName}:${line}`;
     } else if (groupBy === "rule") {
       /* No class to name, so the location took the label and the directory is
          the remainder — and it is the part that may safely be clipped. */
@@ -747,25 +746,27 @@ export class SemgrepFindingsProvider
       }
     }
 
-    return [...byRule.entries()]
-      .map(([ruleId, group]) => {
-        /* The header is the rule's own id and nothing else. The vulnerability
+    return (
+      [...byRule.entries()]
+        .map(([ruleId, group]) => {
+          /* The header is the rule's own id and nothing else. The vulnerability
            class belongs on the findings underneath — putting it here too is
            what made the header and its rows repeat each other. */
-        return new GroupNode(group[0].ruleName, group, {
-          icon: new vscode.ThemeIcon("law"),
-          // The authored id is what fits; the namespaced one is a hover away.
-          tooltip: ruleId,
-        });
-      })
-      /* Most severe rule first, then the noisiest, so whatever most deserves
+          return new GroupNode(group[0].ruleName, group, {
+            icon: new vscode.ThemeIcon("law"),
+            // The authored id is what fits; the namespaced one is a hover away.
+            tooltip: ruleId,
+          });
+        })
+        /* Most severe rule first, then the noisiest, so whatever most deserves
          attention is at the top. */
-      .sort(
-        (a, b) =>
-          worstSeverity(a) - worstSeverity(b) ||
-          b.findings.length - a.findings.length ||
-          compareLabels(a, b),
-      );
+        .sort(
+          (a, b) =>
+            worstSeverity(a) - worstSeverity(b) ||
+            b.findings.length - a.findings.length ||
+            compareLabels(a, b),
+        )
+    );
   }
 
   dispose(): void {
@@ -852,9 +853,7 @@ export function registerFindingsCommands(
         if (!finding) {
           return;
         }
-        vscode.env.clipboard.writeText(
-          `${finding.ruleId}\n${finding.message}`,
-        );
+        vscode.env.clipboard.writeText(`${finding.ruleId}\n${finding.message}`);
       },
     ),
   ];
