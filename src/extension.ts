@@ -108,7 +108,6 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
         }
       }
     });
-  vscode.commands.executeCommand("semgrep.mcpSetup");
 }
 
 // Automatically invoked by VS Code's extension API
