@@ -9,6 +9,7 @@
     "outDir": "out",
     "lib": ["es2021", "dom", "dom.iterable"],
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "rootDir": ".",
     "strict": true,
