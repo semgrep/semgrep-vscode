@@ -2,7 +2,7 @@
   "name": "semgrep",
   "displayName": "Semgrep",
   "description": "Security scans in a snap. Speedy SAST with a powerful rule registry for seamless detection and remediation of code vulnerabilities with each save.",
-  "version": "1.17.0",
+  "version": "1.17.1",
   "engines": {
     "vscode": "^1.86.0"
   },
@@ -309,7 +309,7 @@
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
     "@vitejs/plugin-react": "^1.0.7",
-    "@vscode/test-electron": "^2.3.8",
+    "@vscode/test-electron": "^3.1.0",
     "esbuild": "^0.17.19",
     "esbuild-css-modules-plugin": "^3.1.0",
     "eslint": "^7.6.0",

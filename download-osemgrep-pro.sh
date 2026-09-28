@@ -34,6 +34,11 @@ case "${uname}" in
     win32-x64*)    machine=windows; PLATFORM="win_amd64";;
     *)             machine=manylinux; PLATFORM="manylinux_2_35_x86_64";;
 esac
+# Keep both tags: Semgrep 1.159 wheels use 2_35, while 1.178 wheels use 2_34.
+PLATFORM_ARGS=(--platform "${PLATFORM}")
+if [[ "${PLATFORM}" == manylinux_2_35_* ]]; then
+    PLATFORM_ARGS+=(--platform "${PLATFORM/2_35/2_34}")
+fi
 # NOT the same as the semgrep version!!!!
 release_char_count=$(echo "release-" | wc -c)
 OSEMGREP_PRO_VERSION=$(cat ./semgrep-version | cut -c $((release_char_count))-)
@@ -59,7 +64,7 @@ version_gt() {
 
 if [ "${machine}" = "windows" ]; then
     echo "Downloading the Windows wheel for the DLLs"
-    pip download "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --platform ${PLATFORM} -d /tmp/
+    pip download "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --only-binary=:all: "${PLATFORM_ARGS[@]}" -d /tmp/
     echo "Unzipping the Windows wheel"
     unzip -q -o /tmp/"semgrep-${OSEMGREP_PRO_VERSION}"-*.whl -d /tmp/
     echo "Copying the DLLs to the dist directory"
@@ -71,7 +76,7 @@ else
     # binaries
     if version_gt "${OSEMGREP_PRO_VERSION}" "1.157.0"; then
         echo "Downloading the wheel for the shared libraries"
-        pip download "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --platform ${PLATFORM} -d /tmp/
+        pip download "semgrep==${OSEMGREP_PRO_VERSION}" --no-deps --only-binary=:all: "${PLATFORM_ARGS[@]}" -d /tmp/
         echo "Extracting the wheel"
         unzip -q -o /tmp/"semgrep-${OSEMGREP_PRO_VERSION}"-*.whl -d /tmp/
         echo "Copying the shared libraries to the dist directory"
