@@ -14,9 +14,6 @@ import {
 import { handleSearch } from "./search";
 import { applyFixAndSave, isRealFileEditor, replaceAll } from "./utils";
 import type { ViewResults } from "./webviews/types/results";
-import { setupMcp } from "./mcp";
-import fs from "fs";
-import path from "node:path";
 
 /*****************************************************************************/
 /* Prelude */
@@ -90,38 +87,6 @@ export function registerCommands(env: Environment): Disposable[] {
         vscode.commands.executeCommand("workbench.action.reloadWindow");
       } else if (resp === "Login") {
         vscode.commands.executeCommand("semgrep.login");
-      }
-    }),
-
-    vscode.commands.registerCommand("semgrep.mcpSetup", async () => {
-      const repoPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-      if (
-        // make sure the repo path is valid
-        !repoPath ||
-        // For now, only set up MCP for Cursor
-        vscode.env.uriScheme !== "cursor" ||
-        // and not if the user has already said no
-        env.foldersWithNoMcpSetupNudges.includes(repoPath) ||
-        // and not if the user seems to have set it up already
-        fs.existsSync(path.join(repoPath, ".cursor", "rules", "semgrep.mdc"))
-      ) {
-        return;
-      }
-      const resp = await vscode.window.showInformationMessage(
-        "Would you like to set up remote MCP scanning with Semgrep in this repository? [Learn more](https://mcp.semgrep.ai/)",
-        "Set up",
-        "Do not show again",
-      );
-      if (resp == "Set up") {
-        // TODO: handle multi-workspace case?
-        if (repoPath) {
-          await setupMcp(repoPath);
-        }
-      } else if (resp == "Do not show again") {
-        env.foldersWithNoMcpSetupNudges = [
-          ...env.foldersWithNoMcpSetupNudges,
-          repoPath,
-        ];
       }
     }),
 
