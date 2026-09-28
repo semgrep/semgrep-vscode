@@ -8,6 +8,10 @@ import { activateLsp, deactivateLsp, restartLsp } from "./lsp";
 import { createStatusBar } from "./statusBar";
 import { initTelemetry, stopTelemetry } from "./telemetry/telemetry";
 import { deregisterExistingOtel, withSpan } from "./utilities/tracing";
+import {
+  SemgrepFindingsProvider,
+  registerFindingsCommands,
+} from "./views/findings";
 import { SemgrepPolicyViewProvider } from "./views/policy";
 import { SemgrepHelpProvider } from "./views/support";
 import { SemgrepSearchWebviewProvider } from "./views/webview";
@@ -51,6 +55,15 @@ async function afterClientStart(context: ExtensionContext, env: Environment) {
     ),
   );
   env.provider = provider;
+
+  // Dedicated findings tree. It reads the diagnostics the language client
+  // already publishes, so it needs no extra wiring to the LSP.
+  const findingsProvider = new SemgrepFindingsProvider(env);
+  findingsProvider.register();
+  context.subscriptions.push(
+    findingsProvider,
+    ...registerFindingsCommands(findingsProvider),
+  );
 
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider(

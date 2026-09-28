@@ -41,7 +41,8 @@
     "commands": [
       {
         "command": "semgrep.scanWorkspace",
-        "title": "Semgrep: Scan changed files in workspace"
+        "title": "Semgrep: Scan changed files in workspace",
+        "icon": "$(refresh)"
       },
       {
         "command": "semgrep.scanWorkspaceFull",
@@ -86,6 +87,41 @@
       {
         "command": "semgrep.restartLanguageServer",
         "title": "Semgrep: Restart Language Server"
+      },
+      {
+        "command": "semgrep.findings.scan",
+        "title": "Semgrep Findings: Scan workspace",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "semgrep.findings.groupByClass",
+        "title": "Semgrep Findings: Group by Vulnerability Class",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "semgrep.findings.groupByFile",
+        "title": "Semgrep Findings: Group by File",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "semgrep.findings.groupBySeverity",
+        "title": "Semgrep Findings: Group by Severity",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "semgrep.findings.groupByRule",
+        "title": "Semgrep Findings: Group by Rule",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "semgrep.findings.openRuleDocs",
+        "title": "Semgrep Findings: Open Rule Documentation",
+        "icon": "$(book)"
+      },
+      {
+        "command": "semgrep.findings.copyMessage",
+        "title": "Semgrep Findings: Copy Message",
+        "icon": "$(copy)"
       }
     ],
     "configuration": {
@@ -204,6 +240,10 @@
     },
     "viewsWelcome": [
       {
+        "view": "semgrep.view.findings",
+        "contents": "No Semgrep findings.\n[Scan workspace](command:semgrep.findings.scan)\nA scan reports the vulnerability class for each finding. Saving a file also reports findings here, without the classification."
+      },
+      {
         "view": "semgrep.view.policy",
         "contents": "Using Semgrep with your organization? \n[Sign in](command:semgrep.login)\n or [configure a local policy](command:workbench.action.openSettings?%22semgrep.scan.configuration%22) in the settings",
         "when": "!semgrep.loggedIn && (config.semgrep.scan.configuration.length === 0)"
@@ -211,6 +251,10 @@
     ],
     "views": {
       "semgrep-sidebar": [
+        {
+          "id": "semgrep.view.findings",
+          "name": "Findings"
+        },
         {
           "id": "semgrep.view.policy",
           "name": "Policy Configuration"
@@ -226,6 +270,13 @@
         }
       ]
     },
+    "submenus": [
+      {
+        "id": "semgrep.findings.groupBy",
+        "label": "Group By",
+        "icon": "$(list-tree)"
+      }
+    ],
     "menus": {
       "commandPalette": [
         {
@@ -235,6 +286,70 @@
         {
           "command": "semgrep.logout",
           "when": "semgrep.loggedIn"
+        },
+        {
+          "command": "semgrep.findings.openRuleDocs",
+          "when": "false"
+        },
+        {
+          "command": "semgrep.findings.copyMessage",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "semgrep.findings.scan",
+          "when": "view == semgrep.view.findings",
+          "group": "navigation@1"
+        },
+        {
+          "submenu": "semgrep.findings.groupBy",
+          "when": "view == semgrep.view.findings",
+          "group": "navigation@2"
+        },
+        {
+          "command": "semgrep.scanWorkspaceFull",
+          "when": "view == semgrep.view.findings",
+          "group": "1_scan@1"
+        }
+      ],
+      "semgrep.findings.groupBy": [
+        {
+          "command": "semgrep.findings.groupByClass",
+          "when": "semgrep.findings.groupBy != class",
+          "group": "1_group@1"
+        },
+        {
+          "command": "semgrep.findings.groupByRule",
+          "when": "semgrep.findings.groupBy != rule",
+          "group": "1_group@2"
+        },
+        {
+          "command": "semgrep.findings.groupByFile",
+          "when": "semgrep.findings.groupBy != file",
+          "group": "1_group@3"
+        },
+        {
+          "command": "semgrep.findings.groupBySeverity",
+          "when": "semgrep.findings.groupBy != severity",
+          "group": "1_group@4"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "semgrep.findings.openRuleDocs",
+          "when": "view == semgrep.view.findings && viewItem == semgrep.finding.documented",
+          "group": "inline@1"
+        },
+        {
+          "command": "semgrep.findings.openRuleDocs",
+          "when": "view == semgrep.view.findings && viewItem == semgrep.finding.documented",
+          "group": "1_finding@1"
+        },
+        {
+          "command": "semgrep.findings.copyMessage",
+          "when": "view == semgrep.view.findings && viewItem =~ /^semgrep.finding/",
+          "group": "1_finding@2"
         }
       ]
     },
