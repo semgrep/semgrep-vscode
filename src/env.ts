@@ -62,6 +62,10 @@ export class Config {
     return this.cfg.get<string>("path") ?? "semgrep";
   }
 
+  get appUrl(): string {
+    return this.cfg.get<string>("appUrl") ?? "";
+  }
+
   get onlyGitDirty(): boolean {
     return this.cfg.get<boolean>("scan.onlyGitDirty") ?? false;
   }
