@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Fixed
+
+- The language server no longer fails to start when `semgrep.scan.pro_intrafile` is enabled. The extension stopped passing `--pro` to `semgrep lsp`, which Semgrep 1.178.0 and later reject. The setting still reaches the server through its initialization options.
+
 ## 1.17.0 - 2026-04-10
 
 ## Fixed
